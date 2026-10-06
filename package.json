@@ -1,0 +1,9 @@
+{
+  "name": "ieobom",
+  "private": true,
+  "packageManager": "pnpm@10.34.6",
+  "scripts": {
+    "structure": "node scripts/update-structure.mjs",
+    "structure:check": "node scripts/update-structure.mjs --check"
+  }
+}
