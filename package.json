@@ -8,7 +8,6 @@
   },
   "scripts": {
     "structure": "node scripts/update-structure.mjs",
-    "structure:check": "node scripts/update-structure.mjs --check",
-    "cost": "node scripts/cost-model.mjs"
+    "structure:check": "node scripts/update-structure.mjs --check"
   }
 }
