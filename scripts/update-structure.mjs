@@ -21,8 +21,13 @@ const IGNORE = new Set([
 
 /** 경로(폴더는 끝에 /) → 한 줄 설명 */
 const DESC = {
+  ".github/": "",
+  ".github/workflows/": "",
+  ".github/workflows/ci.yml": "올릴 때마다 설치 · 구조도 검사",
+  ".vscode/": "팀 공통 편집기 설정 (서버 함수는 Deno)",
   "apps/": "앱",
   "apps/mobile/": "Expo 앱 (자녀 · 부모님이 같은 앱)",
+  "apps/mobile/.env.example": "앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)",
   "docs/": "개발 문서",
   "docs/tech-stack.md": "기술 스택 · 정할 것",
   "packages/": "앱이 같이 쓰는 패키지",
@@ -35,6 +40,9 @@ const DESC = {
   "supabase/migrations/": "표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)",
   "supabase/functions/": "Edge Functions — AI · 말 → 글 · 통화 · 알림",
   "supabase/functions/_shared/": "서버 함수끼리 쓰는 코드와 DB 타입",
+  "supabase/functions/.env.example": "서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)",
+  ".nvmrc": "Node 버전 (24)",
+  ".npmrc": "pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)",
   "CLAUDE.md": "Claude 작업 규칙",
   "README.md": "이 문서",
   "package.json": "pnpm 버전 고정 · 스크립트",

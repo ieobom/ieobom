@@ -1,13 +1,42 @@
-# 열쇠·비밀값 (카카오, OpenAI, 음성 인식, 음성 통화, Supabase service_role)
+# ── 열쇠 · 비밀값 ─────────────────────────────
+# 카카오, OpenAI, 음성 인식, 음성 통화, Apple·Google 알림, Supabase service_role
 .env
 .env.*
 !.env.example
+# 앱 서명 · 알림 인증서
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
 
+# ── 의존성 · 빌드 결과 ────────────────────────
 node_modules/
-.expo/
 dist/
-ios/
-android/
+build/
+web-build/
+coverage/
+*.tsbuildinfo
+
+# ── Expo · React Native (apps/*) ─────────────
+.expo/
+expo-env.d.ts
+.metro-health-check*
+apps/*/ios/
+apps/*/android/
+*.orig.*
+
+# ── Supabase ─────────────────────────────────
 supabase/.temp/
 supabase/.branches/
+
+# ── 기기 · 편집기 · 로그 ──────────────────────
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+*.log

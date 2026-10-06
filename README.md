@@ -7,8 +7,13 @@
 <!-- structure:start -->
 ```
 ieobom/
+├── .github/
+│   └── workflows/
+│       └── ci.yml                        올릴 때마다 설치 · 구조도 검사
+├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
+│       └── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 ├── docs/                                 개발 문서
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
@@ -19,8 +24,11 @@ ieobom/
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
-│   │   └── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
+│   │   ├── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
+│   │   └── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
 │   └── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
+├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
+├── .nvmrc                                Node 버전 (24)
 ├── CLAUDE.md                             Claude 작업 규칙
 ├── package.json                          pnpm 버전 고정 · 스크립트
 ├── pnpm-workspace.yaml                   워크스페이스 목록
@@ -41,12 +49,20 @@ ieobom/
 
 ## 시작하기
 
+Node 24와 pnpm이 필요합니다. pnpm 버전은 `package.json`의 `packageManager`에 고정되어 있고, corepack이 그 버전을 받아 씁니다.
+
 ```bash
 corepack enable pnpm
 pnpm install
-pnpm dlx supabase init
+cp apps/mobile/.env.example apps/mobile/.env
+cp supabase/functions/.env.example supabase/functions/.env
 ```
 
-pnpm 버전은 `package.json`의 `packageManager`에 고정되어 있고, corepack이 그 버전을 받아 씁니다.
+`.env` 값은 팀 비밀 공유 채널에서 받습니다. 저장소에는 `.env.example`(이름만)만 올립니다.
 
-앱은 `apps/mobile`에 Expo로 만듭니다. 열쇠(카카오 · OpenAI · 음성 인식 · 음성 통화)는 `.env`에만 두고 올리지 않습니다.
+- `apps/mobile/.env`: 앱에 들어가는 공개 값만 (`EXPO_PUBLIC_`)
+- `supabase/functions/.env`: 서버 함수 비밀값. 배포할 때 `supabase secrets set`으로 올립니다.
+
+VS Code를 쓰면 추천 확장(Deno · ESLint · Prettier · EditorConfig)을 설치합니다. `supabase/functions`는 Deno로 검사됩니다.
+
+이 저장소는 비공개이고 라이선스를 두지 않습니다(All rights reserved). 공개 여부는 대회 뒤 창업 여부와 함께 정합니다.
