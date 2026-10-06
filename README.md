@@ -15,12 +15,14 @@ ieobom/
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
 │       └── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 ├── docs/                                 개발 문서
+│   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화 · 운영 비용
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
 │       └── src/
 │           └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값
 ├── scripts/                              개발용 스크립트
+│   ├── cost-model.mjs                    월 운영 비용 계산 (pnpm cost)
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
@@ -42,7 +44,9 @@ ieobom/
 
 ## 기준 문서
 
+- 개발 계획: `docs/dev-plan.md` (작업 단위와 커밋 · 일정과 관문 · 최적화 · 운영 비용)
 - 기술 스택: `docs/tech-stack.md` (서버 · 앱 · 바깥 서비스 · 정할 것)
+- 운영 비용 계산: `pnpm cost` (가정은 `scripts/cost-model.mjs` 맨 위)
 - 데이터 구조: `../19_이어봄_ERD.html` (38차 시안 기준)
 - 서버 함수 · 정해진 시간 작업: `../16_이어봄_서비스_아키텍처.html` (27차 기준이라 앱 안 통화 · 근황은 19를 따름)
 - 화면 동작: `../이어봄_39차시안.html` (바뀐 내용은 `../20_이어봄_39차시안_변경내역.html`)
