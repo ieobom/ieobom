@@ -1,5 +1,5 @@
 # ── 열쇠 · 비밀값 ─────────────────────────────
-# 카카오, AI(Gemini), 음성 인식, 음성 통화, Apple·Google 알림, Supabase service_role
+# 카카오, AI(Gemini), 음성 인식, 음성 통화, Apple·Google 알림, Supabase 비밀 키(sb_secret_…)
 .env
 .env.*
 !.env.example

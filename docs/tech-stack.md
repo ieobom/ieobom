@@ -59,7 +59,7 @@ ieobom/  (pnpm 모노레포 · TypeScript)
 | pg_cron | 질문 보내기, 하루 한 번 알림 시작, 보관 기간 지난 기록 지우기 |
 | Edge Functions | 메모 정리·여쭤볼 이야기(AI), 말 → 글, 전화 걸기·울리기, 알림 발송, 탈퇴(카카오 연결 끊기) |
 
-- Edge Functions가 쓰는 관리자 열쇠(service_role)는 RLS를 건너뛴다. 그래서 서버 함수 안에서는 규칙을 코드로 직접 지킨다.
+- Edge Functions가 쓰는 비밀 키(`sb_secret_…`, 예전 이름 service_role)는 RLS를 건너뛴다. 그래서 서버 함수 안에서는 규칙을 코드로 직접 지킨다.
 - DB 타입은 `supabase gen types`로 `supabase/functions/_shared/database.types.ts`에 만들고 `packages/shared`가 다시 내보낸다. 서버 함수(Deno)가 `packages/`를 바로 못 읽기 때문이다.
 
 ## 3. 바깥 서비스
@@ -107,7 +107,7 @@ Flutter는 쓰지 않는다(확정). 프론트 12차 비교조사는 숙련도�
 - **늦게 온 응답은 버린다.** 메모를 고치거나 지운 뒤 도착한 AI 결과가 화면을 되돌리면 안 된다.
 - **저장·답 보내기·초대 수락은 자동으로 다시 보내지 않는다.** 보내는 중엔 버튼을 잠그고, 중복 방지는 DB 함수에서 한다.
 - **큰 글씨**는 실제 기기 글자 확대 설정에서 줄바꿈·버튼 높이·읽기 순서를 확인한다.
-- **`EXPO_PUBLIC_`에는 공개해도 되는 값만.** Supabase 공개 키(anon)만 앱에 넣고 service_role 키는 절대 넣지 않는다.
+- **`EXPO_PUBLIC_`에는 공개해도 되는 값만.** Supabase 공개 키(`sb_publishable_…`)만 앱에 넣고 비밀 키(`sb_secret_…`)는 절대 넣지 않는다.
 - 시안의 시연용 시간(6초, 15초 등)을 실제 값으로 옮기지 않는다.
 
 ## 6. 넣지 않는 것

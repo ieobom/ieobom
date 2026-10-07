@@ -38,6 +38,7 @@ const DESC = {
   "scripts/": "개발용 스크립트",
   "scripts/update-structure.mjs": "이 구조도를 다시 만든다 (pnpm structure)",
   "supabase/": "서버 (Supabase)",
+  "supabase/config.toml": "Supabase CLI 설정",
   "supabase/migrations/": "표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)",
   "supabase/functions/": "Edge Functions — AI · 말 → 글 · 통화 · 알림",
   "supabase/functions/_shared/": "서버 함수끼리 쓰는 코드와 DB 타입",

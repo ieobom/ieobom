@@ -27,7 +27,8 @@ ieobom/
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
 │   │   ├── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
 │   │   └── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
-│   └── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
+│   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
+│   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
 ├── CLAUDE.md                             Claude 작업 규칙
@@ -64,6 +65,22 @@ cp supabase/functions/.env.example supabase/functions/.env
 
 - `apps/mobile/.env`: 앱에 들어가는 공개 값만 (`EXPO_PUBLIC_`)
 - `supabase/functions/.env`: 서버 함수 비밀값. 배포할 때 `supabase secrets set`으로 올립니다.
+
+### Supabase
+
+개발용 프로젝트(`ieobom-dev`, 서울)에 연결해서 씁니다. 로컬 DB(Docker)는 쓰지 않습니다. 프로젝트 ref는 `njsecrkivrpdzhxffgjy`입니다.
+
+```bash
+pnpm supabase login
+pnpm supabase link --project-ref njsecrkivrpdzhxffgjy
+```
+
+표를 바꿀 때는 마이그레이션을 만들고 개발 DB에 올립니다.
+
+```bash
+pnpm supabase migration new 이름
+pnpm supabase db push
+```
 
 VS Code를 쓰면 추천 확장(Deno · ESLint · Prettier · EditorConfig)을 설치합니다. `supabase/functions`는 Deno로 검사됩니다.
 

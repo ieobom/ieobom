@@ -9,5 +9,8 @@
   "scripts": {
     "structure": "node scripts/update-structure.mjs",
     "structure:check": "node scripts/update-structure.mjs --check"
+  },
+  "devDependencies": {
+    "supabase": "^2.120.0"
   }
 }
