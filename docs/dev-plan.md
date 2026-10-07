@@ -138,7 +138,7 @@
 ### 단위 1. 개발 기반 — 1주차 · 디자인 영향 없음
 
 - [x] **1-1** `chore: Supabase 설정 파일과 개발용 프로젝트 연결` — `pnpm supabase init`, 개발용 프로젝트에 연결. **확인** 빈 마이그레이션이 개발 DB에 올라감
-- [ ] **1-2** `chore: DB 타입 자동 생성` — `pnpm db:types` → `supabase/functions/_shared/database.types.ts`, `packages/shared`가 다시 내보냄. **확인** 시험 표를 만들면 타입에 나타남
+- [x] **1-2** `chore: DB 타입 자동 생성` — `pnpm db:types` → `supabase/functions/_shared/database.types.ts`, `packages/shared`가 다시 내보냄. **확인** 시험 표를 만들면 타입에 나타남
 - [ ] **1-3** `ci: 코드 검사·타입 검사` — ESLint·Prettier 설정, `pnpm lint`·`pnpm typecheck`를 CI에 추가. **확인** CI 통과
 - [ ] **1-4** `fn: 서버 함수 공통 뼈대` — `_shared/http.ts`(응답·오류 형식), `_shared/auth.ts`(부른 사람 확인), `_shared/env.ts`. 서버 함수는 기능별 몇 개(`ai`·`voice`·`call`·`push`·`account`)로 묶어요. 처음 부를 때 느린 현상을 줄이려는 거예요. **확인** `ping` 응답, Deno 시험 통과
 - [ ] **1-5** `app: Expo 앱 만들기` — `apps/mobile`(Expo Router·TypeScript), 개발용 빌드 설정(앱 이름·번들 ID), 워크스페이스 연결. **확인** iOS·안드로이드 실제 휴대폰에서 빈 화면이 뜸

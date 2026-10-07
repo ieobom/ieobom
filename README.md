@@ -20,19 +20,20 @@ ieobom/
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
 │       └── src/
-│           └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값
+│           └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
 ├── scripts/                              개발용 스크립트
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
 │   │   ├── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
+│   │   │   └── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
 │   │   └── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
 │   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
 ├── CLAUDE.md                             Claude 작업 규칙
-├── package.json                          pnpm 버전 고정 · 스크립트
+├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types)
 ├── pnpm-workspace.yaml                   워크스페이스 목록
 └── README.md                             이 문서
 ```
@@ -75,12 +76,15 @@ pnpm supabase login
 pnpm supabase link --project-ref njsecrkivrpdzhxffgjy
 ```
 
-표를 바꿀 때는 마이그레이션을 만들고 개발 DB에 올립니다.
+표를 바꿀 때는 마이그레이션을 만들고 개발 DB에 올린 뒤 타입을 다시 만듭니다.
 
 ```bash
 pnpm supabase migration new 이름
 pnpm supabase db push
+pnpm db:types
 ```
+
+`supabase/functions/_shared/database.types.ts`는 손으로 고치지 않습니다. 앱은 `@ieobom/shared`에서, 서버 함수는 `../_shared/database.types.ts`에서 가져옵니다.
 
 VS Code를 쓰면 추천 확장(Deno · ESLint · Prettier · EditorConfig)을 설치합니다. `supabase/functions`는 Deno로 검사됩니다.
 

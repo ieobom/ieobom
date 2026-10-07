@@ -34,7 +34,7 @@ const DESC = {
   "packages/": "앱이 같이 쓰는 패키지",
   "packages/shared/": "@ieobom/shared — 공통 값과 DB 타입",
   "packages/shared/src/": "",
-  "packages/shared/src/index.ts": "근황 주제 · 기분 · 요일 같은 정해진 값",
+  "packages/shared/src/index.ts": "근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기",
   "scripts/": "개발용 스크립트",
   "scripts/update-structure.mjs": "이 구조도를 다시 만든다 (pnpm structure)",
   "supabase/": "서버 (Supabase)",
@@ -42,12 +42,13 @@ const DESC = {
   "supabase/migrations/": "표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)",
   "supabase/functions/": "Edge Functions — AI · 말 → 글 · 통화 · 알림",
   "supabase/functions/_shared/": "서버 함수끼리 쓰는 코드와 DB 타입",
+  "supabase/functions/_shared/database.types.ts": "DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)",
   "supabase/functions/.env.example": "서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)",
   ".nvmrc": "Node 버전 (24)",
   ".npmrc": "pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)",
   "CLAUDE.md": "Claude 작업 규칙",
   "README.md": "이 문서",
-  "package.json": "pnpm 버전 고정 · 스크립트",
+  "package.json": "pnpm 버전 고정 · 스크립트 (structure · db:types)",
   "pnpm-workspace.yaml": "워크스페이스 목록",
 };
 

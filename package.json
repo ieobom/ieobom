@@ -8,7 +8,8 @@
   },
   "scripts": {
     "structure": "node scripts/update-structure.mjs",
-    "structure:check": "node scripts/update-structure.mjs --check"
+    "structure:check": "node scripts/update-structure.mjs --check",
+    "db:types": "supabase gen types typescript --linked --schema public > supabase/functions/_shared/database.types.ts"
   },
   "devDependencies": {
     "supabase": "^2.120.0"
