@@ -1,0 +1,6 @@
+# 문서는 손으로 맞춘 표가 많아서 Prettier가 고치지 않는다.
+*.md
+*.html
+pnpm-lock.yaml
+# pnpm db:types로 만드는 파일
+supabase/functions/_shared/database.types.ts

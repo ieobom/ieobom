@@ -9,7 +9,7 @@
 ieobom/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                        올릴 때마다 설치 · 구조도 검사
+│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 검사
 ├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
@@ -19,8 +19,9 @@ ieobom/
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
-│       └── src/
-│           └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
+│       ├── src/
+│       │   └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
+│       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
@@ -32,10 +33,13 @@ ieobom/
 │   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
+├── .prettierrc.json                      모양 맞추기 설정 (pnpm format)
 ├── CLAUDE.md                             Claude 작업 규칙
+├── eslint.config.mjs                     코드 검사 설정 (pnpm lint, 서버 함수는 제외)
 ├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types)
 ├── pnpm-workspace.yaml                   워크스페이스 목록
-└── README.md                             이 문서
+├── README.md                             이 문서
+└── tsconfig.base.json                    패키지들이 같이 쓰는 타입 검사 설정
 ```
 <!-- structure:end -->
 
@@ -85,6 +89,17 @@ pnpm db:types
 ```
 
 `supabase/functions/_shared/database.types.ts`는 손으로 고치지 않습니다. 앱은 `@ieobom/shared`에서, 서버 함수는 `../_shared/database.types.ts`에서 가져옵니다.
+
+### 검사
+
+CI와 같은 검사를 올리기 전에 돌립니다.
+
+```bash
+pnpm format:check   # 모양 (고치려면 pnpm format)
+pnpm lint           # 코드
+pnpm typecheck      # 타입
+pnpm structure:check
+```
 
 VS Code를 쓰면 추천 확장(Deno · ESLint · Prettier · EditorConfig)을 설치합니다. `supabase/functions`는 Deno로 검사됩니다.
 

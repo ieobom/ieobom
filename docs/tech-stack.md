@@ -29,7 +29,7 @@ ieobom/  (pnpm 모노레포 · TypeScript)
 | 저장소 | 모노레포 (`apps/` · `packages/` · `supabase/`) | 확정 | 표 하나를 바꾸면 앱과 서버를 같이 고친다. |
 | 패키지 관리 | pnpm 10 (workspaces, corepack) | 확정 | `packageManager`에 버전을 고정하고 `pnpm-lock.yaml` 하나만 둔다. |
 | 언어 | TypeScript | 확정 | 앱·서버 함수·공용 패키지가 같은 언어. |
-| 코드 검사 | ESLint + Prettier + `tsc --noEmit` | 추천 | 잘못된 코드, 모양, 타입 오류를 나눠 잡는다. |
+| 코드 검사 | ESLint + Prettier + `tsc --noEmit` (TypeScript 6.0, Expo SDK 57 기본값) | 확정 | 잘못된 코드, 모양, 타입 오류를 나눠 잡는다. 서버 함수는 deno lint · deno check. |
 | 코드 관리 | Git + GitHub | 추천 | 아직 `git init` 전. 팀이 나눠 작업하고 되돌릴 수 있게. |
 | 자동 검사 | GitHub Actions | 추천 | 올릴 때마다 타입·검사·테스트를 돌린다. |
 

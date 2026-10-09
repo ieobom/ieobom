@@ -7,7 +7,16 @@ export * from "../../../supabase/functions/_shared/database.types";
 export const NEWS_TOPICS = ["일·학교", "건강", "취미·운동", "먹은 것", "다녀온 곳", "가족·친구"] as const;
 
 /** 피하고 싶은 주제 (relationship_settings.avoid_topics, question_bank.topic) */
-export const AVOID_TOPICS = ["결혼·연애", "취업·직장", "돈·재정", "건강", "종교", "정치", "다이어트", "학업"] as const;
+export const AVOID_TOPICS = [
+  "결혼·연애",
+  "취업·직장",
+  "돈·재정",
+  "건강",
+  "종교",
+  "정치",
+  "다이어트",
+  "학업",
+] as const;
 
 /** 통화 후 메모 기분 (memos.mood) */
 export const MOODS = ["좋았어요", "보통", "힘들었어요"] as const;
