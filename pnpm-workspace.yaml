@@ -1,3 +1,7 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# deno는 설치 스크립트 없이 플랫폼별 패키지로 실행된다
+ignoredBuiltDependencies:
+  - deno

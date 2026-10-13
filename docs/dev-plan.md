@@ -152,7 +152,7 @@
 - [x] **1-2** `chore: DB 타입 자동 생성` — `pnpm db:types` → `supabase/functions/_shared/database.types.ts`, `packages/shared`가 다시 내보냄. **확인** 시험 표를 만들면 타입에 나타남
 - [x] **1-3** `ci: 코드 검사·타입 검사` — ESLint·Prettier 설정, `pnpm lint`·`pnpm typecheck`를 CI에 추가. **확인** CI 통과
 - [x] **1-4** `fn: 서버 함수 공통 뼈대` — `_shared/http.ts`(응답·오류 형식), `_shared/auth.ts`(부른 사람 확인), `_shared/env.ts`. 서버 함수는 기능별 몇 개(`ai`·`voice`·`call`·`push`·`account`)로 묶어요. 처음 부를 때 느린 현상을 줄이려는 거예요. deno lint·deno check를 CI에 더해요. **확인** `ping` 응답, Deno 시험 통과
-- [ ] **1-5** `app: Expo 앱 만들기` — `apps/mobile`(Expo Router·TypeScript), 개발용 빌드 설정(앱 이름·번들 ID), 워크스페이스 연결. **확인** iOS·안드로이드 실제 휴대폰에서 빈 화면이 뜸
+- [x] **1-5** `app: Expo 앱 만들기` — `apps/mobile`(Expo Router·TypeScript), 개발용 빌드 설정(앱 이름·번들 ID), 워크스페이스 연결. **확인** iOS·안드로이드 실제 휴대폰에서 빈 화면이 뜸 (iOS·안드로이드 묶기와 expo-doctor 통과, 휴대폰 확인 남음)
 - [ ] **1-6** `app: 서버 연결과 데이터 불러오기 기본` — supabase-js(세션은 SecureStore, 2KB가 넘으면 암호화해 AsyncStorage), TanStack Query, 인터넷 복구·앱 복귀 때 다시 불러오기. **확인** 앱에서 `ping` 호출
 - [ ] **1-7** `app: 디자인 값과 공통 부품 뼈대` — 39차 시안의 디자인 값 표(색·모서리·글자 크기)를 옮기고, 큰 글씨 배율을 더해요. 시안 부품을 StyleSheet로 옮겨요: 버튼(기본·보조·글자)·칩·켜고 끄기·카드·기록 줄·아래 창·확인 창·토스트. **확인** 휴대폰 글자 크기를 최대로 해도 버튼이 안 잘림
 - [ ] **1-8** `app: 화면 문구 한 곳에 모으기` — `src/copy/ko.ts`와 쓰는 법. **확인** 임시 화면의 글이 모두 이 파일에서 나옴

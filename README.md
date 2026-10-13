@@ -13,7 +13,10 @@ ieobom/
 ├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
-│       └── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
+│       ├── src/
+│       │   └── app/                      화면 (Expo Router, 파일 = 주소)
+│       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
+│       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
 │   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화
 │   └── tech-stack.md                     기술 스택 · 정할 것
@@ -75,6 +78,14 @@ cp supabase/functions/.env.example supabase/functions/.env
 
 - `apps/mobile/.env`: 앱에 들어가는 공개 값만 (`EXPO_PUBLIC_`)
 - `supabase/functions/.env`: 서버 함수 비밀값. 배포할 때 `supabase secrets set`으로 올립니다.
+
+### 앱 실행
+
+```bash
+pnpm app
+```
+
+휴대폰의 Expo Go로 화면의 QR을 찍으면 열립니다. 카카오 · 통화처럼 네이티브 모듈이 들어간 뒤에는 Expo Go로 안 열리고 개발용 빌드(EAS)가 필요합니다. 개발용 빌드는 `APP_VARIANT=development`로 만들어 이름(이어봄 개발)과 번들 ID(`com.ieobom.app.dev`)가 따로 잡힙니다.
 
 ### Supabase
 
