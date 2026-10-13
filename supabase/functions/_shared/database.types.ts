@@ -517,6 +517,132 @@ export type Database = {
           },
         ]
       }
+      memo_drafts: {
+        Row: {
+          call_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          memo_id: string | null
+          relationship_id: string
+          status: string
+          text: string | null
+          user_id: string
+        }
+        Insert: {
+          call_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          memo_id?: string | null
+          relationship_id: string
+          status?: string
+          text?: string | null
+          user_id: string
+        }
+        Update: {
+          call_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          memo_id?: string | null
+          relationship_id?: string
+          status?: string
+          text?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memo_drafts_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memo_drafts_memo_id_fkey"
+            columns: ["memo_id"]
+            isOneToOne: false
+            referencedRelation: "memos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memo_drafts_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memo_drafts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memos: {
+        Row: {
+          call_id: string | null
+          created_at: string
+          id: string
+          mood: string | null
+          relationship_id: string
+          suggest_status: string
+          text: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          call_id?: string | null
+          created_at?: string
+          id?: string
+          mood?: string | null
+          relationship_id: string
+          suggest_status?: string
+          text?: string
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          call_id?: string | null
+          created_at?: string
+          id?: string
+          mood?: string | null
+          relationship_id?: string
+          suggest_status?: string
+          text?: string
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memos_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memos_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "memos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_bank: {
         Row: {
           created_at: string
@@ -640,6 +766,80 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      talk_suggestions: {
+        Row: {
+          asked_on: string | null
+          created_at: string
+          exchange_question_id: string | null
+          id: string
+          made_by: string
+          memo_id: string | null
+          news_id: string | null
+          owner_id: string
+          relationship_id: string
+          source: string
+          status: string
+          text: string
+        }
+        Insert: {
+          asked_on?: string | null
+          created_at?: string
+          exchange_question_id?: string | null
+          id?: string
+          made_by?: string
+          memo_id?: string | null
+          news_id?: string | null
+          owner_id: string
+          relationship_id: string
+          source: string
+          status?: string
+          text: string
+        }
+        Update: {
+          asked_on?: string | null
+          created_at?: string
+          exchange_question_id?: string | null
+          id?: string
+          made_by?: string
+          memo_id?: string | null
+          news_id?: string | null
+          owner_id?: string
+          relationship_id?: string
+          source?: string
+          status?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talk_suggestions_exchange_question_id_fkey"
+            columns: ["exchange_question_id"]
+            isOneToOne: false
+            referencedRelation: "exchange_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talk_suggestions_memo_id_fkey"
+            columns: ["memo_id"]
+            isOneToOne: false
+            referencedRelation: "memos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talk_suggestions_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talk_suggestions_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
             referencedColumns: ["id"]
           },
         ]
