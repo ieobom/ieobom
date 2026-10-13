@@ -1291,6 +1291,31 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { code: string }; Returns: Json }
       align_side: { Args: { uid: string; wanted: string }; Returns: undefined }
+      answer_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       call_days: { Args: { days: string }; Returns: number[] }
       call_time_overlap: {
         Args: { at?: string; relationship: string }
@@ -1299,6 +1324,31 @@ export type Database = {
           next_ends_at: string
           next_starts_at: string
         }[]
+      }
+      cancel_call: {
+        Args: { call: string; missed?: boolean }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       cancel_invite: { Args: { invite: string }; Returns: undefined }
       create_invite: {
@@ -1318,6 +1368,56 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "invites"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      decline_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      end_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
           isOneToOne: true
           isSetofReturn: false
         }
@@ -1362,6 +1462,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      see_missed_call: { Args: { call: string }; Returns: undefined }
       set_memo_draft: {
         Args: { doc_version?: string; turn_on: boolean }
         Returns: undefined
@@ -1386,6 +1487,31 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "users"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      start_call: {
+        Args: { relationship: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
           isOneToOne: true
           isSetofReturn: false
         }
