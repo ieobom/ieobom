@@ -35,5 +35,5 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm supabase db start
+      - run: pnpm supabase db start # 마이그레이션 + supabase/seed.sql
       - run: pnpm test:db --local

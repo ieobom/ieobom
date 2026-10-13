@@ -4,6 +4,8 @@
 --   select pg_temp.login('엄마')         이 묶음의 남은 문장을 그 사용자로(authenticated) 실행
 --   select pg_temp.logout()              로그인하지 않은 사람(anon)으로
 --   reset role;                          원래(관리자)로 돌아오기
+--
+-- 남의 줄을 못 바꾸는지는 is_empty($$ update … returning 1 $$, …)로 본다(바뀐 줄이 없어야 함).
 
 create function pg_temp.user_id(name text) returns uuid
 language sql immutable as $$ select md5('ieobom-test:' || name)::uuid $$;
