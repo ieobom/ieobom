@@ -1514,6 +1514,7 @@ export type Database = {
       }
       see_missed_call: { Args: { call: string }; Returns: undefined }
       see_question: { Args: { question: string }; Returns: undefined }
+      send_due_questions: { Args: { day?: string }; Returns: number }
       seoul_today: { Args: never; Returns: string }
       set_memo_draft: {
         Args: { doc_version?: string; turn_on: boolean }
