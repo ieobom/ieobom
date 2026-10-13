@@ -19,6 +19,11 @@ export default tseslint.config(
     ...reactHooks.configs.flat.recommended,
   },
   {
+    // 글꼴 · 그림 파일은 require로 불러오는 것이 React Native 방식이다
+    files: ["apps/mobile/**/*.{ts,tsx}"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
+  {
     files: ["apps/mobile/app.config.ts"],
     languageOptions: { globals: globals.node },
   },

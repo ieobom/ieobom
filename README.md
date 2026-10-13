@@ -16,7 +16,8 @@ ieobom/
 │       ├── src/
 │       │   ├── app/                      화면 (Expo Router, 파일 = 주소)
 │       │   ├── features/                 기능별 데이터 불러오기 · 부품
-│       │   └── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정
+│       │   ├── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정
+│       │   └── ui/                       디자인 값(39차 시안의 C · R) · 글꼴 · 공통 부품
 │       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 │       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
