@@ -1312,6 +1312,34 @@ export type Database = {
         }
         Returns: undefined
       }
+      set_memo_draft: {
+        Args: { doc_version?: string; turn_on: boolean }
+        Returns: undefined
+      }
+      signup_complete: {
+        Args: {
+          agreed: string[]
+          doc_version?: string
+          name: string
+          side: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          large_text: boolean
+          memo_draft_on: boolean
+          name: string
+          notify_on: boolean
+          notify_time: string
+          side: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "users"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       try_uuid: { Args: { value: string }; Returns: string }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
     }
