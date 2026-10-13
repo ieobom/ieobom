@@ -29,7 +29,8 @@ select throws_ok($$ insert into public.memo_drafts (user_id, relationship_id, ca
 select throws_ok($$ insert into public.talk_suggestions (owner_id, relationship_id, source, text) values
   (pg_temp.user_id('자녀'), '00000000-0000-0000-0000-00000000a001', 'memo', '나온 곳 없음') $$,
   '23514', null, '나온 곳과 가리키는 줄이 맞아야 한다');
-select is((select expires_at - created_at from public.memo_drafts where status = 'ready'), interval '3 days', '초안은 3일 보관');
+select is((select expires_at - created_at from public.memo_drafts where status = 'ready' and relationship_id = '00000000-0000-0000-0000-00000000a001'),
+  interval '3 days', '초안은 3일 보관');
 
 select pg_temp.login('엄마');
 select is((select count(*)::int from public.memos), 1, '메모는 내 것만 (상대 메모 0줄)');
@@ -44,9 +45,9 @@ select is((select text from public.memo_drafts), '엄마가 병원에 다녀오�
 reset role;
 
 delete from public.memos where id = '00000000-0000-0000-0000-0000000d0001';
-select is((select count(*)::int from public.talk_suggestions), 0, '메모를 지우면 그 메모로 만든 이야기도 지운다');
+select is((select count(*)::int from public.talk_suggestions where relationship_id = '00000000-0000-0000-0000-00000000a001'), 0, '메모를 지우면 그 메모로 만든 이야기도 지운다');
 delete from public.calls where id = '00000000-0000-0000-0000-0000000c0001';
-select is((select count(*)::int from public.memo_drafts), 0, '통화 기록을 지우면 초안도 지운다');
+select is((select count(*)::int from public.memo_drafts where relationship_id = '00000000-0000-0000-0000-00000000a001'), 0, '통화 기록을 지우면 초안도 지운다');
 
 select * from finish();
 rollback;

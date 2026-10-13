@@ -58,7 +58,7 @@ select throws_ok($$ insert into public.calls (relationship_id, caller_id, callee
   ('00000000-0000-0000-0000-00000000a001', pg_temp.user_id('엄마'), pg_temp.user_id('자녀')) $$, '23505', null, '한 연결에 진행 중 통화는 하나');
 
 delete from auth.users where id = pg_temp.user_id('자녀');
-select is((select count(*)::int from public.call_transcripts), 0, '탈퇴하면 그 사람 통화 글도 지운다');
+select is((select count(*)::int from public.call_transcripts where call_id = '00000000-0000-0000-0000-0000000c0001'), 0, '탈퇴하면 그 사람 통화 글도 지운다');
 
 select * from finish();
 rollback;

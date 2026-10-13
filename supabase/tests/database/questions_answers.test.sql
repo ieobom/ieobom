@@ -38,7 +38,7 @@ select pg_temp.login('엄마');
 select is((select count(*)::int from public.exchange_questions), 1, '두 사람은 질문을 본다');
 select is((select count(*)::int from public.answers), 0, '열리기 전에는 상대 답이 0줄');
 select is((select count(*)::int from public.custom_questions), 0, '상대가 만든 질문은 내용이 안 보인다');
-select is((select count(*)::int from public.question_bank), 1, '질문 목록은 검토한 예시만 보인다');
+select is((select count(*)::int from public.question_bank where id::text like '00000000-0000-0000-0000-0000000b000%'), 1, '질문 목록은 검토한 예시만 보인다');
 select throws_ok($$ insert into public.answers (exchange_question_id, relationship_id, user_id, text) values
   ('00000000-0000-0000-0000-0000000e0001', '00000000-0000-0000-0000-00000000a001', pg_temp.user_id('엄마'), '나도') $$,
   '42501', null, '답은 함수로만 보낸다');
@@ -61,7 +61,7 @@ select is((select count(*)::int from public.answers), 0, '보이게 된 답도 �
 
 reset role;
 delete from auth.users where id = pg_temp.user_id('자녀');
-select is((select count(*)::int from public.answers), 0, '탈퇴하면 그 사람 답은 바로 지운다');
+select is((select count(*)::int from public.answers where exchange_question_id = '00000000-0000-0000-0000-0000000e0001'), 0, '탈퇴하면 그 사람 답은 바로 지운다');
 
 select * from finish();
 rollback;

@@ -63,6 +63,7 @@ const DESC = {
   "scripts/test-db.mjs": "DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)",
   "supabase/": "서버 (Supabase)",
   "supabase/config.toml": "Supabase CLI 설정",
+  "supabase/seed.sql": "시험용 가짜 데이터 (로컬 DB · CI만, 가족 3쌍)",
   "supabase/migrations/": "표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)",
   "supabase/tests/": "DB 검사 (pgTAP)",
   "supabase/tests/helpers.sql": "시험용 사용자 만들기 · 로그인 바꾸기",

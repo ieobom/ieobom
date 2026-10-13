@@ -3,6 +3,7 @@
 //
 //   pnpm test:db                 연결된 개발 DB에서 (아직 올리지 않은 마이그레이션도 같은 묶음에 넣어 시험)
 //   pnpm test:db --local         로컬 DB(Docker, CI)에서 psql로 (supabase db start가 마이그레이션을 이미 올림)
+//   pnpm test:db --with-seed     가짜 데이터(supabase/seed.sql)를 넣은 상태로 (CI의 로컬 DB와 같은 조건)
 //   pnpm test:db 파일 …          일부만
 //
 // 검사 파일(supabase/tests/database/*.test.sql)은 보통 pgTAP 모양으로 쓴다:
@@ -22,6 +23,7 @@ const MIGRATIONS = join(ROOT, "supabase", "migrations");
 
 const args = process.argv.slice(2);
 const local = args.includes("--local");
+const withSeed = args.includes("--with-seed");
 const target = local ? "--local" : "--linked";
 const picked = args.filter((a) => !a.startsWith("--"));
 
@@ -76,6 +78,7 @@ function run(file, pending) {
     "create temp table tap_out(id serial, line text);",
     "grant insert on pg_temp.tap_out to public; grant usage on sequence pg_temp.tap_out_id_seq to public;",
     ...pending.map((m) => `-- 마이그레이션 ${m}\n${readFileSync(join(MIGRATIONS, m), "utf8")}`),
+    withSeed ? readFileSync(join(ROOT, "supabase", "seed.sql"), "utf8") : "",
     readFileSync(join(ROOT, "supabase", "tests", "helpers.sql"), "utf8"),
     wrap(readFileSync(file, "utf8")),
     // 다른 사용자로 바꿨다면 되돌린 뒤 결과를 모은다

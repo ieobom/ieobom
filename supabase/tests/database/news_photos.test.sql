@@ -51,7 +51,8 @@ select throws_ok($$ insert into storage.objects (bucket_id, name) values
 reset role;
 
 delete from public.news where id = '00000000-0000-0000-0000-0000000f0001';
-select is((select count(*)::int from public.talk_suggestions) + (select count(*)::int from public.news_photos), 0,
+select is((select count(*)::int from public.talk_suggestions where relationship_id = '00000000-0000-0000-0000-00000000a001')
+  + (select count(*)::int from public.news_photos where relationship_id = '00000000-0000-0000-0000-00000000a001'), 0,
   '근황을 지우면 사진 줄과 그 근황으로 만든 이야기도 지운다');
 
 select * from finish();

@@ -13,12 +13,12 @@ insert into public.notices (id, title, body, show_from, show_until) values
   ('00000000-0000-0000-0000-000000001002', '지난 공지', '끝남', now() - interval '3 days', now() - interval '1 day');
 insert into public.inquiries (id, user_id, body) values
   ('00000000-0000-0000-0000-000000002001', pg_temp.user_id('엄마'), '글자가 작아요');
-insert into public.survey_questions (round, sort, text) values (0, 1, '이어봄을 쓰기 전, 가족과 얼마나 자주 이야기했나요?');
+insert into public.survey_questions (id, round, sort, text) values ('00000000-0000-0000-0000-000000003001', 6, 99, '시험용 문항');
 insert into public.push_log (user_id, kind) values (pg_temp.user_id('자녀'), 'daily');
 
 -- ── 로그인 전 ──
 select pg_temp.logout();
-select is((select count(*)::int from public.notices), 1, '보일 때인 공지만 읽는다');
+select is((select count(*)::int from public.notices where id::text like '00000000-0000-0000-0000-00000000100%'), 1, '보일 때인 공지만 읽는다');
 select lives_ok($$ insert into public.client_errors (kind, screen, app_version, platform) values ('render', 'home', '0.1.0', 'ios') $$,
   '앱 오류는 로그인 전에도 적는다');
 select throws_ok($$ select * from public.client_errors $$, '42501', null, '앱 오류는 읽지 못한다');
@@ -34,7 +34,7 @@ select is((select count(*)::int from public.inquiries), 1, '내 문의만 보인
 select throws_ok($$ insert into public.inquiries (user_id, body, answer) values (pg_temp.user_id('자녀'), '답까지', '스스로 답') $$,
   '42501', null, '답은 운영팀만 쓴다');
 select throws_ok($$ update public.inquiries set answer = '바꿈' $$, '42501', null, '답을 고치지 못한다');
-select is((select count(*)::int from public.survey_questions), 1, '설문 문항을 읽는다');
+select is((select count(*)::int from public.survey_questions where id = '00000000-0000-0000-0000-000000003001'), 1, '설문 문항을 읽는다');
 select lives_ok($$ insert into public.survey_responses (user_id, relationship_id, round, scores) values
   (pg_temp.user_id('자녀'), '00000000-0000-0000-0000-00000000a001', 0, '{"q1": 3}') $$, '0주차 설문을 보낸다');
 select throws_ok($$ insert into public.survey_responses (user_id, relationship_id, round) values

@@ -47,7 +47,8 @@ ieobom/
 │   ├── tests/                            DB 검사 (pgTAP)
 │   │   ├── database/                     표마다 보는 사람 규칙 · DB 함수 검사
 │   │   └── helpers.sql                   시험용 사용자 만들기 · 로그인 바꾸기
-│   └── config.toml                       Supabase CLI 설정
+│   ├── config.toml                       Supabase CLI 설정
+│   └── seed.sql                          시험용 가짜 데이터 (로컬 DB · CI만, 가족 3쌍)
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
 ├── .prettierrc.json                      모양 맞추기 설정 (pnpm format)
