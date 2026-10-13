@@ -1313,6 +1313,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      end_relationship: { Args: { relationship: string }; Returns: undefined }
       feature_enabled: { Args: { feature: string }; Returns: boolean }
       invite_lookup: {
         Args: { code: string; uid: string }
