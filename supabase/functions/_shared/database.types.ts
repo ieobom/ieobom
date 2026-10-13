@@ -1489,6 +1489,7 @@ export type Database = {
         }
         Returns: number
       }
+      home: { Args: { at?: string }; Returns: Json }
       invite_lookup: {
         Args: { code: string; uid: string }
         Returns: Record<string, unknown>
