@@ -1284,6 +1284,27 @@ export type Database = {
         }
         Relationships: []
       }
+      weather_lines: {
+        Row: {
+          season: string
+          to_child: string
+          to_parent: string
+          topic: string
+        }
+        Insert: {
+          season: string
+          to_child: string
+          to_parent: string
+          topic?: string
+        }
+        Update: {
+          season?: string
+          to_child?: string
+          to_parent?: string
+          topic?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1497,6 +1518,10 @@ export type Database = {
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
+      mark_asked: {
+        Args: { relationship: string; suggestion?: string }
+        Returns: string
+      }
       mark_early_asked: { Args: { question: string }; Returns: undefined }
       my_families: {
         Args: never
@@ -1588,6 +1613,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      season_of: { Args: { day: string }; Returns: string }
       see_missed_call: { Args: { call: string }; Returns: undefined }
       see_news: { Args: { news_id: string }; Returns: undefined }
       see_question: { Args: { question: string }; Returns: undefined }
@@ -1668,7 +1694,9 @@ export type Database = {
         Args: { method?: string; question: string; text: string }
         Returns: Json
       }
+      talk_list: { Args: { relationship: string }; Returns: Json }
       try_uuid: { Args: { value: string }; Returns: string }
+      unmark_asked: { Args: { suggestion: string }; Returns: undefined }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
       update_memo: {
         Args: { memo: string; mood: string; text: string }
