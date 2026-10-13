@@ -9,27 +9,43 @@
 ieobom/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 검사
+│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 · 서버 함수 · DB 검사
 ├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
-│       └── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
+│       ├── src/
+│       │   ├── app/                      화면 (Expo Router, 파일 = 주소)
+│       │   ├── copy/                     화면 문구 (ko.ts 하나에 모음)
+│       │   ├── features/                 기능별 데이터 불러오기 · 부품
+│       │   ├── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정
+│       │   └── ui/                       디자인 값(39차 시안의 C · R) · 글꼴 · 공통 부품
+│       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
+│       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
 │   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
 │       ├── src/
-│       │   └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
+│       │   └── index.ts                  근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기
 │       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
+│   ├── test-db.mjs                       DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
 │   │   ├── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
-│   │   │   └── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
-│   │   └── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
+│   │   │   ├── auth.ts                   부른 사람 확인 (로그인 토큰 검증)
+│   │   │   ├── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
+│   │   │   ├── env.ts                    환경 변수 · Supabase 열쇠 읽기
+│   │   │   └── http.ts                   응답 · 오류 형식
+│   │   ├── ping/                         살아 있는지 · 로그인 토큰이 통하는지 확인
+│   │   ├── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
+│   │   └── deno.json                     서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
+│   ├── tests/                            DB 검사 (pgTAP)
+│   │   ├── database/                     표마다 보는 사람 규칙 · DB 함수 검사
+│   │   └── helpers.sql                   시험용 사용자 만들기 · 로그인 바꾸기
 │   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
@@ -71,6 +87,14 @@ cp supabase/functions/.env.example supabase/functions/.env
 - `apps/mobile/.env`: 앱에 들어가는 공개 값만 (`EXPO_PUBLIC_`)
 - `supabase/functions/.env`: 서버 함수 비밀값. 배포할 때 `supabase secrets set`으로 올립니다.
 
+### 앱 실행
+
+```bash
+pnpm app
+```
+
+휴대폰의 Expo Go로 화면의 QR을 찍으면 열립니다. 휴대폰 없이 확인할 때는 `pnpm app:web`으로 브라우저에서 엽니다(개발 확인용이고 출시하지 않습니다). 카카오 · 통화처럼 네이티브 모듈이 들어간 뒤에는 Expo Go로 안 열리고 개발용 빌드(EAS)가 필요합니다. 개발용 빌드는 `APP_VARIANT=development`로 만들어 이름(이어봄 개발)과 번들 ID(`com.ieobom.app.dev`)가 따로 잡힙니다.
+
 ### Supabase
 
 개발용 프로젝트(`ieobom-dev`, 서울)에 연결해서 씁니다. 로컬 DB(Docker)는 쓰지 않습니다. 프로젝트 ref는 `njsecrkivrpdzhxffgjy`입니다.
@@ -83,12 +107,21 @@ pnpm supabase link --project-ref njsecrkivrpdzhxffgjy
 표를 바꿀 때는 마이그레이션을 만들고 개발 DB에 올린 뒤 타입을 다시 만듭니다.
 
 ```bash
-pnpm supabase migration new 이름
+pnpm supabase migration new 이름 < /dev/null
+pnpm test:db                      # 올리기 전: 새 마이그레이션도 같은 묶음에 넣어 시험하고 되돌림
 pnpm supabase db push
 pnpm db:types
 ```
 
+표를 만드는 마이그레이션에는 보는 사람 규칙(RLS)과 `supabase/tests/database/표이름.test.sql` 검사를 같이 둡니다. CI는 빈 DB(Docker)에 마이그레이션을 처음부터 올려 같은 검사를 돌립니다.
+
 `supabase/functions/_shared/database.types.ts`는 손으로 고치지 않습니다. 앱은 `@ieobom/shared`에서, 서버 함수는 `../_shared/database.types.ts`에서 가져옵니다.
+
+서버 함수는 Docker 없이 서버에서 묶어 올립니다. 새 함수를 만들면 `supabase/config.toml`에 `[functions.이름]`(`verify_jwt = false`, `import_map = "./functions/deno.json"`)을 더합니다. 로그인 확인은 함수 안에서 `_shared/auth.ts`로 합니다.
+
+```bash
+pnpm supabase functions deploy 이름 --use-api
+```
 
 ### 검사
 
@@ -98,6 +131,8 @@ CI와 같은 검사를 올리기 전에 돌립니다.
 pnpm format:check   # 모양 (고치려면 pnpm format)
 pnpm lint           # 코드
 pnpm typecheck      # 타입
+pnpm fn:lint && pnpm fn:check && pnpm fn:test   # 서버 함수 (Deno는 개발 의존성으로 설치됨)
+pnpm test:db        # DB (개발 DB에서 돌리고 끝나면 모두 되돌림)
 pnpm structure:check
 ```
 
