@@ -23,3 +23,7 @@ export const MOODS = ["좋았어요", "보통", "힘들었어요"] as const;
 
 /** 통화 편한 시간 요일 (call_times.days) */
 export const CALL_DAYS = ["평일", "토요일", "일요일", "매일"] as const;
+
+/** 기능 켜고 끄기 이름 (app_config.key, 계획 1-9). 앱 · 서버 함수가 같이 쓴다 */
+export const FEATURES = ["ai", "call_recording", "news_photos"] as const;
+export type Feature = (typeof FEATURES)[number];

@@ -27,7 +27,7 @@ ieobom/
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
 │       ├── src/
-│       │   └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
+│       │   └── index.ts                  근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기
 │       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
 │   ├── test-db.mjs                       DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)

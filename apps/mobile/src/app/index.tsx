@@ -1,6 +1,7 @@
 import { Link } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { ko } from "@/copy/ko";
+import { useFeatureFlags } from "@/features/config/use-features";
 import { usePing } from "@/features/dev/use-ping";
 import { C, T, WORDMARK } from "@/ui";
 
@@ -8,6 +9,7 @@ import { C, T, WORDMARK } from "@/ui";
 export default function Index() {
   const ping = usePing();
   const status = ping.isPending ? ko.dev.serverChecking : ping.isError ? ko.dev.serverFail : ko.dev.serverOk;
+  const flags = useFeatureFlags();
   return (
     <View style={styles.root}>
       <T size={28} color={C.primary} style={{ fontFamily: WORDMARK }}>
@@ -16,6 +18,13 @@ export default function Index() {
       <T size={15} color={C.textSub} testID="server-status">
         {status}
       </T>
+      {__DEV__ && flags.data ? (
+        <T size={13} color={C.textTertiary} testID="feature-flags">
+          {Object.entries(flags.data)
+            .map(([key, on]) => `${key} ${on ? "on" : "off"}`)
+            .join(" · ")}
+        </T>
+      ) : null}
       {__DEV__ ? (
         <Link href="/dev/ui" style={styles.link}>
           <T size={14} color={C.primary}>
