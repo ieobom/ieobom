@@ -1530,6 +1530,28 @@ export type Database = {
       preview_invite: { Args: { code: string }; Returns: Json }
       question_days: { Args: { freq: number }; Returns: number[] }
       random_code: { Args: never; Returns: string }
+      record_calendar: {
+        Args: { month: string; relationship: string }
+        Returns: Json
+      }
+      record_items: {
+        Args: { relationship: string; uid: string }
+        Returns: {
+          at: string
+          id: string
+          kind: string
+        }[]
+      }
+      records: {
+        Args: {
+          before_at?: string
+          before_id?: string
+          kind?: string
+          page_size?: number
+          relationship: string
+        }
+        Returns: Json
+      }
       register_device: {
         Args: {
           app_version: string
