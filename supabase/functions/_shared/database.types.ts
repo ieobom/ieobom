@@ -239,6 +239,33 @@ export type Database = {
           },
         ]
       }
+      client_errors: {
+        Row: {
+          app_version: string
+          created_at: string
+          id: number
+          kind: string
+          platform: string
+          screen: string
+        }
+        Insert: {
+          app_version?: string
+          created_at?: string
+          id?: never
+          kind: string
+          platform: string
+          screen?: string
+        }
+        Update: {
+          app_version?: string
+          created_at?: string
+          id?: never
+          kind?: string
+          platform?: string
+          screen?: string
+        }
+        Relationships: []
+      }
       code_attempts: {
         Row: {
           attempted_at: string
@@ -392,6 +419,30 @@ export type Database = {
           },
         ]
       }
+      events: {
+        Row: {
+          anon_id: string
+          created_at: string
+          detail: Json
+          id: number
+          name: string
+        }
+        Insert: {
+          anon_id: string
+          created_at?: string
+          detail?: Json
+          id?: never
+          name: string
+        }
+        Update: {
+          anon_id?: string
+          created_at?: string
+          detail?: Json
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
       exchange_questions: {
         Row: {
           bank_question_id: string | null
@@ -455,6 +506,47 @@ export type Database = {
             columns: ["relationship_id"]
             isOneToOne: false
             referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inquiries: {
+        Row: {
+          answer: string | null
+          answer_seen_at: string | null
+          answered_at: string | null
+          body: string
+          created_at: string
+          help_item: string
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          answer?: string | null
+          answer_seen_at?: string | null
+          answered_at?: string | null
+          body: string
+          created_at?: string
+          help_item?: string
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          answer?: string | null
+          answer_seen_at?: string | null
+          answered_at?: string | null
+          body?: string
+          created_at?: string
+          help_item?: string
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -729,6 +821,117 @@ export type Database = {
           },
         ]
       }
+      notice_reads: {
+        Row: {
+          confirmed_at: string
+          notice_id: string
+          user_id: string
+        }
+        Insert: {
+          confirmed_at?: string
+          notice_id: string
+          user_id: string
+        }
+        Update: {
+          confirmed_at?: string
+          notice_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notice_reads_notice_id_fkey"
+            columns: ["notice_id"]
+            isOneToOne: false
+            referencedRelation: "notices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notice_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notices: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          note: string
+          show_from: string
+          show_until: string
+          title: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string
+          show_from?: string
+          show_until: string
+          title: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          note?: string
+          show_from?: string
+          show_until?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      push_log: {
+        Row: {
+          body: string
+          dedupe_key: string | null
+          id: number
+          kind: string
+          relationship_id: string | null
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          dedupe_key?: string | null
+          id?: never
+          kind: string
+          relationship_id?: string | null
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          dedupe_key?: string | null
+          id?: never
+          kind?: string
+          relationship_id?: string | null
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_log_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       question_bank: {
         Row: {
           created_at: string
@@ -856,6 +1059,72 @@ export type Database = {
           },
         ]
       }
+      survey_questions: {
+        Row: {
+          id: string
+          round: number
+          sort: number
+          text: string
+        }
+        Insert: {
+          id?: string
+          round: number
+          sort: number
+          text: string
+        }
+        Update: {
+          id?: string
+          round?: number
+          sort?: number
+          text?: string
+        }
+        Relationships: []
+      }
+      survey_responses: {
+        Row: {
+          comment: string
+          id: string
+          relationship_id: string
+          round: number
+          scores: Json
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          comment?: string
+          id?: string
+          relationship_id: string
+          round: number
+          scores?: Json
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          id?: string
+          relationship_id?: string
+          round?: number
+          scores?: Json
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "survey_responses_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "survey_responses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       talk_suggestions: {
         Row: {
           asked_on: string | null
@@ -933,6 +1202,48 @@ export type Database = {
             columns: ["relationship_id"]
             isOneToOne: false
             referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage: {
+        Row: {
+          amount: number
+          created_at: string
+          id: number
+          kind: string
+          relationship_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: never
+          kind: string
+          relationship_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: never
+          kind?: string
+          relationship_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

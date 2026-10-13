@@ -173,7 +173,7 @@
 - [x] **2-6** `db: 교환 질문·답·직접 만든 질문 표` — `question_bank`(주제 칸), `exchange_questions`(열린 때), `answers`, `custom_questions`. 답은 '내 것 · 열린 질문 · 먼저 보낸 답'만 보여요. **확인** 열리기 전에는 상대 답이 0줄
 - [x] **2-7** `db: 메모·메모 초안·여쭤볼 이야기 표` — `memos`, `memo_drafts`(나만 봄, 지울 때 = 만든 때 + 3일), `talk_suggestions`(나온 메모·근황을 지우면 함께 지움). **확인** 상대는 메모·초안 모두 0줄
 - [x] **2-8** `db: 근황·사진 표와 사진 저장소 규칙` — `news`(주제는 칩 또는 직접 쓰기 12자, 누가 정했는지), `news_photos`, 비공개 저장소 `news-photos`. 경로가 `연결ID/근황ID/번호.jpg`이고, 경로의 연결 ID로 권한을 확인해요. **확인** 남의 연결 경로는 올리기·받기 모두 거절
-- [ ] **2-9** `db: 운영 표` — `notices`, `notice_reads`, `inquiries`, `survey_questions`, `survey_responses`, `push_log`, `events`, `client_errors`, `usage` + 규칙. **확인** 운영 표는 앱에서 쓰기만 되거나 아예 안 보임
+- [x] **2-9** `db: 운영 표` — `notices`, `notice_reads`, `inquiries`, `survey_questions`, `survey_responses`, `push_log`, `events`, `client_errors`, `usage` + 규칙. **확인** 운영 표는 앱에서 쓰기만 되거나 아예 안 보임
 - [ ] **2-10** `db: 시험용 가짜 데이터` — `supabase/seed.sql`: 가족 3쌍, 질문 20개, 메모·초안·근황 조금. **확인** 개발 DB를 초기화한 뒤 앱에서 보임
 
 ### 단위 3. 로그인·계정 — 2~3주차 (Apple은 5주차) · 디자인 영향 중간
