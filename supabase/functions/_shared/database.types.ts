@@ -1351,6 +1351,10 @@ export type Database = {
         }
       }
       cancel_invite: { Args: { invite: string }; Returns: undefined }
+      choose_early: {
+        Args: { choice: string; question: string }
+        Returns: undefined
+      }
       create_invite: {
         Args: { invite_as: string; my_kind?: string }
         Returns: {
@@ -1438,6 +1442,7 @@ export type Database = {
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
+      mark_early_asked: { Args: { question: string }; Returns: undefined }
       my_families: {
         Args: never
         Returns: {
@@ -1479,6 +1484,7 @@ export type Database = {
         Returns: number
       }
       see_missed_call: { Args: { call: string }; Returns: undefined }
+      see_question: { Args: { question: string }; Returns: undefined }
       seoul_today: { Args: never; Returns: string }
       set_memo_draft: {
         Args: { doc_version?: string; turn_on: boolean }
@@ -1550,6 +1556,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      submit_answer: {
+        Args: { method?: string; question: string; text: string }
+        Returns: Json
       }
       try_uuid: { Args: { value: string }; Returns: string }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
