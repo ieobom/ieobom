@@ -1424,6 +1424,8 @@ export type Database = {
         }
       }
       delete_custom_question: { Args: { question: string }; Returns: undefined }
+      delete_memo: { Args: { memo: string }; Returns: undefined }
+      discard_draft: { Args: { draft: string }; Returns: undefined }
       end_call: {
         Args: { call: string }
         Returns: {
@@ -1512,6 +1514,28 @@ export type Database = {
         Args: { day: string; relationship: string }
         Returns: number
       }
+      restore_draft: { Args: { draft: string }; Returns: undefined }
+      save_call_memo: {
+        Args: { call: string; mood?: string; text?: string }
+        Returns: {
+          call_id: string | null
+          created_at: string
+          id: string
+          mood: string | null
+          relationship_id: string
+          suggest_status: string
+          text: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "memos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       see_missed_call: { Args: { call: string }; Returns: undefined }
       see_question: { Args: { question: string }; Returns: undefined }
       send_due_questions: { Args: { day?: string }; Returns: number }
@@ -1593,6 +1617,27 @@ export type Database = {
       }
       try_uuid: { Args: { value: string }; Returns: string }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
+      update_memo: {
+        Args: { memo: string; mood: string; text: string }
+        Returns: {
+          call_id: string | null
+          created_at: string
+          id: string
+          mood: string | null
+          relationship_id: string
+          suggest_status: string
+          text: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "memos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never
