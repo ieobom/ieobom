@@ -55,7 +55,8 @@ const DESC = {
   "packages/shared/": "@ieobom/shared — 공통 값과 DB 타입",
   "packages/shared/src/": "",
   "packages/shared/tsconfig.json": "타입 검사 설정 (tsconfig.base.json을 이어 씀)",
-  "packages/shared/src/index.ts": "근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기",
+  "packages/shared/src/index.ts":
+    "근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기",
   "scripts/": "개발용 스크립트",
   "scripts/update-structure.mjs": "이 구조도를 다시 만든다 (pnpm structure)",
   "scripts/test-db.mjs": "DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)",
