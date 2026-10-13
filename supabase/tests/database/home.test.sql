@@ -98,8 +98,8 @@ select is((pg_temp.kinds(public.home((select at from t)), '00000000-0000-0000-00
 
 -- ── 확인했어요 · 다시 걸기 · 저장으로 카드가 빠진다 ──
 reset role;
-update public.news set seen_at = now();
-update public.memo_drafts set status = 'saved';
+update public.news set seen_at = now() where relationship_id = '00000000-0000-0000-0000-00000000a001';
+update public.memo_drafts set status = 'saved' where id = '00000000-0000-0000-0000-0000000d0001';
 insert into public.calls (relationship_id, caller_id, callee_id, status, started_at) values
   ('00000000-0000-0000-0000-00000000a001', pg_temp.user_id('자녀'), pg_temp.user_id('엄마'), 'completed', '2026-10-14 20:00+09');
 select pg_temp.login('자녀');
@@ -109,7 +109,7 @@ select is(pg_temp.kinds(public.home((select at from t)), '00000000-0000-0000-000
 -- ── 다음 날이면 못 받은 전화는 빠지고, 3일 지난 초안도 빠진다 ──
 reset role;
 delete from public.calls where started_at = '2026-10-14 20:00+09';
-update public.memo_drafts set status = 'ready';
+update public.memo_drafts set status = 'ready' where id = '00000000-0000-0000-0000-0000000d0001';
 select pg_temp.login('자녀');
 select ok(not ('missed_call' = any (pg_temp.kinds(public.home('2026-10-15 07:00+09'), '00000000-0000-0000-0000-00000000a001'))), '다음 날 못 받은 전화는 빠진다');
 select ok(not ('memo_draft' = any (pg_temp.kinds(public.home('2026-10-16 07:00+09'), '00000000-0000-0000-0000-00000000a001'))), '3일 지난 초안은 빠진다');

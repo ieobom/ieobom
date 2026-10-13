@@ -34,20 +34,28 @@ select is((select count(*)::int from public.exchange_questions where relationshi
   '주 2번이면 한 주에 질문 2개(월 · 목)');
 select is((select array_agg(sent_on order by seq_no) from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001'),
   array['2026-10-12', '2026-10-15']::date[], '월요일과 목요일');
-select is((select text from public.exchange_questions where sent_on = '2026-10-12'), '좋아했던 반찬은?', '피하고 싶은 주제(건강)는 빼고 보낸다');
-select is((select text from public.exchange_questions where sent_on = '2026-10-15'), '엄마가 만든 질문', '차례가 된 직접 만든 질문을 먼저 보낸다');
+select is((select text from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001' and sent_on = '2026-10-12'),
+  '좋아했던 반찬은?', '피하고 싶은 주제(건강)는 빼고 보낸다');
+select is((select text from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001' and sent_on = '2026-10-15'),
+  '엄마가 만든 질문', '차례가 된 직접 만든 질문을 먼저 보낸다');
 select is((select status from public.custom_questions where id = '00000000-0000-0000-0000-0000000c0001'), 'sent', '보낸 직접 만든 질문은 보냄');
 select is((select array_agg(seq_no order by seq_no) from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001'),
   array[1, 2], '#번호를 이어 매긴다');
-select is((select status from public.exchange_questions where sent_on = '2026-10-12'), 'closed', '새 질문이 오면 이전 질문은 끝남');
+select is((select status from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001' and sent_on = '2026-10-12'),
+  'closed', '새 질문이 오면 이전 질문은 끝남');
 select is((select count(*)::int from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a002'), 0, '끊긴 연결에는 보내지 않는다');
 
-select is(public.send_due_questions('2026-10-15'), 0, '같은 날 두 번 돌려도 다시 보내지 않는다');
+select public.send_due_questions('2026-10-15');
+select is((select count(*)::int from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001'), 2,
+  '같은 날 두 번 돌려도 다시 보내지 않는다');
 
 -- 다음 주 월요일: 남은 질문(노래), 그다음 질문 날에는 더 보낼 것이 없다
 select public.send_due_questions('2026-10-19');
-select is((select text from public.exchange_questions where sent_on = '2026-10-19'), '요즘 듣는 노래는?', '안 보낸 질문을 차례로');
-select is(public.send_due_questions('2026-10-22'), 0, '보낼 질문이 없으면 보내지 않는다(검토 전 질문은 안 보냄)');
+select is((select text from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001' and sent_on = '2026-10-19'),
+  '요즘 듣는 노래는?', '안 보낸 질문을 차례로');
+select public.send_due_questions('2026-10-22');
+select is((select count(*)::int from public.exchange_questions where relationship_id = '00000000-0000-0000-0000-00000000a001'), 3,
+  '보낼 질문이 없으면 보내지 않는다(검토 전 질문은 안 보냄)');
 
 select * from finish();
 rollback;
