@@ -560,6 +560,7 @@ export type Database = {
           invite_as: string
           inviter_id: string
           joined_by: string | null
+          parent_kind: string
           relationship_id: string | null
           status: string
         }
@@ -571,6 +572,7 @@ export type Database = {
           invite_as: string
           inviter_id: string
           joined_by?: string | null
+          parent_kind: string
           relationship_id?: string | null
           status?: string
         }
@@ -582,6 +584,7 @@ export type Database = {
           invite_as?: string
           inviter_id?: string
           joined_by?: string | null
+          parent_kind?: string
           relationship_id?: string | null
           status?: string
         }
@@ -1286,6 +1289,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      align_side: { Args: { uid: string; wanted: string }; Returns: undefined }
+      cancel_invite: { Args: { invite: string }; Returns: undefined }
+      create_invite: {
+        Args: { invite_as: string; my_kind?: string }
+        Returns: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          invite_as: string
+          inviter_id: string
+          joined_by: string | null
+          parent_kind: string
+          relationship_id: string | null
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invites"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       feature_enabled: { Args: { feature: string }; Returns: boolean }
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
@@ -1302,6 +1328,7 @@ export type Database = {
           status: string
         }[]
       }
+      random_code: { Args: never; Returns: string }
       register_device: {
         Args: {
           app_version: string
