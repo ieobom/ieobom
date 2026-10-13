@@ -12,6 +12,8 @@
 - 상태 · 종류 값은 영어 코드로 저장하고(`check`로 묶음), 화면 글자는 앱의 `src/copy/ko.ts`가 정한다.
 - 날짜 계산(질문 오는 날, 알림 시각, 설문 차수)은 한국 시간(`Asia/Seoul`)으로 한다.
 - 고유 번호는 `uuid`(`gen_random_uuid()`), 때는 `timestamptz`.
+- DB 함수의 오류는 `message`에 영어 code를 담는다(예: `unauthorized`, `not_signed_up`). 앱은 code로 `ko.error` 문구를 고른다.
+- 앱이 부르는 DB 함수는 `security definer`로 두고 함수 안에서 `auth.uid()`를 확인한다. `anon`에게는 실행 권한을 주지 않는다. `pnpm supabase db advisors --linked`의 '0029 Signed-In Users Can Execute SECURITY DEFINER Function' 경고는 이 함수들이라 의도한 것이다.
 
 ## 2. 19 ERD에서 바뀐 점
 

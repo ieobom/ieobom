@@ -38,12 +38,135 @@ export type Database = {
         }
         Relationships: []
       }
+      consents: {
+        Row: {
+          agreed_at: string
+          doc: string
+          id: string
+          user_id: string
+          version: string
+          withdrawn_at: string | null
+        }
+        Insert: {
+          agreed_at?: string
+          doc: string
+          id?: string
+          user_id: string
+          version: string
+          withdrawn_at?: string | null
+        }
+        Update: {
+          agreed_at?: string
+          doc?: string
+          id?: string
+          user_id?: string
+          version?: string
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      devices: {
+        Row: {
+          app_version: string
+          call_token: string | null
+          id: string
+          install_id: string
+          last_active_at: string
+          platform: string
+          push_token: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          app_version?: string
+          call_token?: string | null
+          id?: string
+          install_id: string
+          last_active_at?: string
+          platform: string
+          push_token?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          app_version?: string
+          call_token?: string | null
+          id?: string
+          install_id?: string
+          last_active_at?: string
+          platform?: string
+          push_token?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devices_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          id: string
+          large_text: boolean
+          memo_draft_on: boolean
+          name: string
+          notify_on: boolean
+          notify_time: string
+          side: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          large_text?: boolean
+          memo_draft_on?: boolean
+          name: string
+          notify_on?: boolean
+          notify_time?: string
+          side: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          large_text?: boolean
+          memo_draft_on?: boolean
+          name?: string
+          notify_on?: boolean
+          notify_time?: string
+          side?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       feature_enabled: { Args: { feature: string }; Returns: boolean }
+      register_device: {
+        Args: {
+          app_version: string
+          call_token?: string
+          install_id: string
+          platform: string
+          push_token?: string
+        }
+        Returns: undefined
+      }
+      unregister_device: { Args: { install_id: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
