@@ -14,13 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_config: {
+        Row: {
+          enabled: boolean
+          key: string
+          note: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          enabled?: boolean
+          key: string
+          note?: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          enabled?: boolean
+          key?: string
+          note?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      feature_enabled: { Args: { feature: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

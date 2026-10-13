@@ -9,7 +9,7 @@
 ieobom/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 · 서버 함수 검사
+│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 · 서버 함수 · DB 검사
 ├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
@@ -30,6 +30,7 @@ ieobom/
 │       │   └── index.ts                  근황 주제 · 기분 · 요일 같은 정해진 값 + DB 타입 다시 내보내기
 │       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
+│   ├── test-db.mjs                       DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
@@ -42,6 +43,9 @@ ieobom/
 │   │   ├── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
 │   │   └── deno.json                     서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
+│   ├── tests/                            DB 검사 (pgTAP)
+│   │   ├── database/                     표마다 보는 사람 규칙 · DB 함수 검사
+│   │   └── helpers.sql                   시험용 사용자 만들기 · 로그인 바꾸기
 │   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
 ├── .nvmrc                                Node 버전 (24)
@@ -103,10 +107,13 @@ pnpm supabase link --project-ref njsecrkivrpdzhxffgjy
 표를 바꿀 때는 마이그레이션을 만들고 개발 DB에 올린 뒤 타입을 다시 만듭니다.
 
 ```bash
-pnpm supabase migration new 이름
+pnpm supabase migration new 이름 < /dev/null
+pnpm test:db                      # 올리기 전: 새 마이그레이션도 같은 묶음에 넣어 시험하고 되돌림
 pnpm supabase db push
 pnpm db:types
 ```
+
+표를 만드는 마이그레이션에는 보는 사람 규칙(RLS)과 `supabase/tests/database/표이름.test.sql` 검사를 같이 둡니다. CI는 빈 DB(Docker)에 마이그레이션을 처음부터 올려 같은 검사를 돌립니다.
 
 `supabase/functions/_shared/database.types.ts`는 손으로 고치지 않습니다. 앱은 `@ieobom/shared`에서, 서버 함수는 `../_shared/database.types.ts`에서 가져옵니다.
 
@@ -125,6 +132,7 @@ pnpm format:check   # 모양 (고치려면 pnpm format)
 pnpm lint           # 코드
 pnpm typecheck      # 타입
 pnpm fn:lint && pnpm fn:check && pnpm fn:test   # 서버 함수 (Deno는 개발 의존성으로 설치됨)
+pnpm test:db        # DB (개발 DB에서 돌리고 끝나면 모두 되돌림)
 pnpm structure:check
 ```
 
