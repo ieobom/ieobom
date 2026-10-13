@@ -117,6 +117,61 @@ export type Database = {
           },
         ]
       }
+      relationships: {
+        Row: {
+          child_id: string | null
+          connected_at: string
+          ended_at: string | null
+          ended_by: string | null
+          id: string
+          parent_id: string | null
+          parent_kind: string
+          status: string
+        }
+        Insert: {
+          child_id?: string | null
+          connected_at?: string
+          ended_at?: string | null
+          ended_by?: string | null
+          id?: string
+          parent_id?: string | null
+          parent_kind: string
+          status?: string
+        }
+        Update: {
+          child_id?: string | null
+          connected_at?: string
+          ended_at?: string | null
+          ended_by?: string | null
+          id?: string
+          parent_id?: string | null
+          parent_kind?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_ended_by_fkey"
+            columns: ["ended_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
@@ -156,6 +211,20 @@ export type Database = {
     }
     Functions: {
       feature_enabled: { Args: { feature: string }; Returns: boolean }
+      is_connected: { Args: { relationship: string }; Returns: boolean }
+      is_member: { Args: { relationship: string }; Returns: boolean }
+      my_families: {
+        Args: never
+        Returns: {
+          connected_at: string
+          my_side: string
+          parent_kind: string
+          partner_id: string
+          partner_name: string
+          relationship_id: string
+          status: string
+        }[]
+      }
       register_device: {
         Args: {
           app_version: string
