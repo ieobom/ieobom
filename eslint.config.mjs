@@ -24,6 +24,28 @@ export default tseslint.config(
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
   {
+    // 화면 문구는 src/copy/ko.ts에만 둔다(계획 1-8). 개발 확인용 화면은 예외
+    files: ["apps/mobile/src/{app,ui,features}/**/*.{ts,tsx}"],
+    ignores: ["apps/mobile/src/app/dev/**", "apps/mobile/src/features/dev/**"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "Literal[value=/[가-힣]/]",
+          message: "화면 문구는 src/copy/ko.ts에 두고 ko.…로 가져와 쓴다",
+        },
+        {
+          selector: "TemplateElement[value.raw=/[가-힣]/]",
+          message: "화면 문구는 src/copy/ko.ts에 두고 ko.…로 가져와 쓴다",
+        },
+        {
+          selector: "JSXText[value=/[가-힣]/]",
+          message: "화면 문구는 src/copy/ko.ts에 두고 ko.…로 가져와 쓴다",
+        },
+      ],
+    },
+  },
+  {
     files: ["apps/mobile/app.config.ts"],
     languageOptions: { globals: globals.node },
   },

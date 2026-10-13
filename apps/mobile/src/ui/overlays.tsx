@@ -3,16 +3,17 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ko } from "@/copy/ko";
 import { T } from "./text";
 import { C, R } from "./theme";
 
-/** 확인 창. confirmLabel이 '나가기'면 머무는 쪽(취소)을 채운 단추로 보여 준다(시안과 같음) */
+/** 확인 창. confirmLabel이 나가기(ko.common.leave)면 머무는 쪽(취소)을 채운 단추로 보여 준다(시안과 같음) */
 export function Dialog({
   visible,
   title,
   body,
-  confirmLabel = "확인",
-  cancelLabel = "취소",
+  confirmLabel = ko.common.confirm,
+  cancelLabel = ko.common.cancel,
   danger = false,
   onConfirm,
   onCancel,
@@ -26,7 +27,7 @@ export function Dialog({
   onConfirm: () => void;
   onCancel: () => void;
 }) {
-  const keep = confirmLabel === "나가기";
+  const keep = confirmLabel === ko.common.leave;
   const plain = { bg: C.plainBg, fg: C.textSub, weight: 600 as const };
   const filled = { bg: danger ? C.danger : C.primary, fg: C.white, weight: 700 as const };
   const cancel = keep ? filled : plain;
@@ -88,7 +89,7 @@ export function Sheet({
       <Pressable
         style={[StyleSheet.absoluteFill, styles.dim32]}
         onPress={onClose}
-        accessibilityLabel="닫기"
+        accessibilityLabel={ko.common.close}
       />
       <View
         style={[styles.sheet, { paddingBottom: Math.max(44, insets.bottom + 20) }]}
@@ -138,7 +139,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 style={styles.undo}
               >
                 <T size={14} weight={700} color={C.toastAction}>
-                  되돌리기
+                  {ko.common.undo}
                 </T>
               </Pressable>
             ) : null}

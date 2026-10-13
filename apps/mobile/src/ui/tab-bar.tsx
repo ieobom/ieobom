@@ -1,6 +1,7 @@
 // 아래 탭 (홈 · 기록 · 마이). 화면 연결은 10-5에서 한다.
 
 import { Pressable, StyleSheet, View } from "react-native";
+import { ko } from "@/copy/ko";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IcoHome, IcoNote, IcoUser } from "./icons";
 import { T } from "./text";
@@ -9,9 +10,9 @@ import { C } from "./theme";
 export type TabKey = "home" | "archive" | "settings";
 
 const TABS: { key: TabKey; label: string; Icon: typeof IcoHome }[] = [
-  { key: "home", label: "홈", Icon: IcoHome },
-  { key: "archive", label: "기록", Icon: IcoNote },
-  { key: "settings", label: "마이", Icon: IcoUser },
+  { key: "home", label: ko.tabs.home, Icon: IcoHome },
+  { key: "archive", label: ko.tabs.archive, Icon: IcoNote },
+  { key: "settings", label: ko.tabs.settings, Icon: IcoUser },
 ];
 
 export function TabBar({ active, onTab }: { active: TabKey; onTab: (key: TabKey) => void }) {

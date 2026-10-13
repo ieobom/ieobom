@@ -1,16 +1,17 @@
 import { Link } from "expo-router";
 import { StyleSheet, View } from "react-native";
+import { ko } from "@/copy/ko";
 import { usePing } from "@/features/dev/use-ping";
 import { C, T, WORDMARK } from "@/ui";
 
 // 임시 화면: 서버 연결만 확인한다. 홈은 10-6에서 만든다.
 export default function Index() {
   const ping = usePing();
-  const status = ping.isPending ? "서버 확인 중" : ping.isError ? "서버 연결 안 됨" : "서버 연결됨";
+  const status = ping.isPending ? ko.dev.serverChecking : ping.isError ? ko.dev.serverFail : ko.dev.serverOk;
   return (
     <View style={styles.root}>
       <T size={28} color={C.primary} style={{ fontFamily: WORDMARK }}>
-        이어봄
+        {ko.appName}
       </T>
       <T size={15} color={C.textSub} testID="server-status">
         {status}
@@ -18,7 +19,7 @@ export default function Index() {
       {__DEV__ ? (
         <Link href="/dev/ui" style={styles.link}>
           <T size={14} color={C.primary}>
-            공통 부품 보기
+            {ko.dev.gallery}
           </T>
         </Link>
       ) : null}

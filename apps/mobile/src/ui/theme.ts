@@ -1,6 +1,8 @@
 // 디자인 값. 39차 시안(UI시안/이어봄_39차시안.html)의 C · R · SHADOW · CARD · KIND를 그대로 옮겼다.
 // 시안의 값이 바뀌면 여기만 고친다.
 
+import { ko } from "@/copy/ko";
+
 export const C = {
   text: "#201E1D",
   textSub: "#645C50",
@@ -47,9 +49,9 @@ export const CARD = { backgroundColor: C.card, borderRadius: R.card, boxShadow: 
 export type Kind = "memo" | "question" | "news";
 
 export const KIND: Record<Kind, { label: string; color: string; bg: string }> = {
-  memo: { label: "메모", color: C.primary, bg: C.primaryLight },
-  question: { label: "질문", color: C.accent2Deep, bg: C.accent2Light },
-  news: { label: "근황", color: C.newsDeep, bg: C.newsLight },
+  memo: { label: ko.kind.memo, color: C.primary, bg: C.primaryLight },
+  question: { label: ko.kind.question, color: C.accent2Deep, bg: C.accent2Light },
+  news: { label: ko.kind.news, color: C.newsDeep, bg: C.newsLight },
 };
 
 /** '글자 크게 보기'(명세서 PUSH-03, 부모님은 처음부터 크게)의 배율. 시안은 화면 전체를 1.12배로 키운다. */

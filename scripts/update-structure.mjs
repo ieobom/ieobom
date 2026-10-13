@@ -41,6 +41,7 @@ const DESC = {
   "apps/mobile/app.config.ts": "앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)",
   "apps/mobile/src/": "",
   "apps/mobile/src/app/": "화면 (Expo Router, 파일 = 주소)",
+  "apps/mobile/src/copy/": "화면 문구 (ko.ts 하나에 모음)",
   "apps/mobile/src/features/": "기능별 데이터 불러오기 · 부품",
   "apps/mobile/src/features/dev/": "개발 확인용 (서버 연결)",
   "apps/mobile/src/app/dev/": "개발 확인용 화면 (공통 부품 모음 · 출시 빌드에서는 안 열림)",
