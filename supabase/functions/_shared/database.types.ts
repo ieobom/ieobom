@@ -1355,6 +1355,24 @@ export type Database = {
         Args: { choice: string; question: string }
         Returns: undefined
       }
+      create_custom_question: {
+        Args: { relationship: string; text: string }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          relationship_id: string
+          send_on: string
+          status: string
+          text: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "custom_questions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_invite: {
         Args: { invite_as: string; my_kind?: string }
         Returns: {
@@ -1375,6 +1393,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      custom_question_slot: {
+        Args: { after: string; relationship: string }
+        Returns: string
       }
       decline_call: {
         Args: { call: string }
@@ -1401,6 +1423,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      delete_custom_question: { Args: { question: string }; Returns: undefined }
       end_call: {
         Args: { call: string }
         Returns: {
@@ -1464,6 +1487,12 @@ export type Database = {
         Returns: {
           ends_at: string
           starts_at: string
+        }[]
+      }
+      partner_custom_question: {
+        Args: { relationship: string }
+        Returns: {
+          send_on: string
         }[]
       }
       preview_invite: { Args: { code: string }; Returns: Json }
