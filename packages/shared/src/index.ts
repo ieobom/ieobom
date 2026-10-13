@@ -21,8 +21,8 @@ export const AVOID_TOPICS = [
 /** 통화 후 메모 기분 (memos.mood) */
 export const MOODS = ["좋았어요", "보통", "힘들었어요"] as const;
 
-/** 통화 편한 시간 요일 (call_times.days) */
-export const CALL_DAYS = ["평일", "토요일", "일요일", "매일"] as const;
+/** 통화 편한 시간 요일 (call_times.days): 평일 · 토요일 · 일요일 · 매일. 화면 글자는 앱의 ko.ts */
+export const CALL_DAYS = ["weekdays", "sat", "sun", "everyday"] as const;
 
 /** 기능 켜고 끄기 이름 (app_config.key, 계획 1-9). 앱 · 서버 함수가 같이 쓴다 */
 export const FEATURES = ["ai", "call_recording", "news_photos"] as const;

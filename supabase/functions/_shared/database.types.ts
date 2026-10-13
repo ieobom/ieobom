@@ -38,6 +38,150 @@ export type Database = {
         }
         Relationships: []
       }
+      call_times: {
+        Row: {
+          created_at: string
+          days: string
+          end_hour: number
+          id: string
+          start_hour: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days: string
+          end_hour: number
+          id?: string
+          start_hour: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days?: string
+          end_hour?: number
+          id?: string
+          start_hour?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_times_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      call_transcripts: {
+        Row: {
+          call_id: string
+          created_at: string
+          segments: Json
+          user_id: string
+        }
+        Insert: {
+          call_id: string
+          created_at?: string
+          segments?: Json
+          user_id: string
+        }
+        Update: {
+          call_id?: string
+          created_at?: string
+          segments?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_transcripts_call_id_fkey"
+            columns: ["call_id"]
+            isOneToOne: false
+            referencedRelation: "calls"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_transcripts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calls: {
+        Row: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        Insert: {
+          answered_at?: string | null
+          callee_draft_on?: boolean | null
+          callee_id?: string | null
+          caller_draft_on?: boolean | null
+          caller_id?: string | null
+          ended_at?: string | null
+          id?: string
+          in_free_time?: boolean
+          missed_seen_at?: string | null
+          recording?: string
+          relationship_id: string
+          room_name?: string | null
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          answered_at?: string | null
+          callee_draft_on?: boolean | null
+          callee_id?: string | null
+          caller_draft_on?: boolean | null
+          caller_id?: string | null
+          ended_at?: string | null
+          id?: string
+          in_free_time?: boolean
+          missed_seen_at?: string | null
+          recording?: string
+          relationship_id?: string
+          room_name?: string | null
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calls_callee_id_fkey"
+            columns: ["callee_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_caller_id_fkey"
+            columns: ["caller_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calls_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       code_attempts: {
         Row: {
           attempted_at: string
@@ -344,6 +488,7 @@ export type Database = {
     Functions: {
       feature_enabled: { Args: { feature: string }; Returns: boolean }
       is_connected: { Args: { relationship: string }; Returns: boolean }
+      is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
       my_families: {
         Args: never
