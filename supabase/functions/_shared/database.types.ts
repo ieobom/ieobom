@@ -1291,6 +1291,15 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { code: string }; Returns: Json }
       align_side: { Args: { uid: string; wanted: string }; Returns: undefined }
+      call_days: { Args: { days: string }; Returns: number[] }
+      call_time_overlap: {
+        Args: { at?: string; relationship: string }
+        Returns: {
+          free_now: boolean
+          next_ends_at: string
+          next_starts_at: string
+        }[]
+      }
       cancel_invite: { Args: { invite: string }; Returns: undefined }
       create_invite: {
         Args: { invite_as: string; my_kind?: string }
@@ -1332,6 +1341,13 @@ export type Database = {
           partner_name: string
           relationship_id: string
           status: string
+        }[]
+      }
+      overlap_windows: {
+        Args: { a: string; at?: string; b: string }
+        Returns: {
+          ends_at: string
+          starts_at: string
         }[]
       }
       preview_invite: { Args: { code: string }; Returns: Json }
