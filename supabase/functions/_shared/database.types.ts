@@ -1289,6 +1289,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invite: { Args: { code: string }; Returns: Json }
       align_side: { Args: { uid: string; wanted: string }; Returns: undefined }
       cancel_invite: { Args: { invite: string }; Returns: undefined }
       create_invite: {
@@ -1313,6 +1314,10 @@ export type Database = {
         }
       }
       feature_enabled: { Args: { feature: string }; Returns: boolean }
+      invite_lookup: {
+        Args: { code: string; uid: string }
+        Returns: Record<string, unknown>
+      }
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
@@ -1328,6 +1333,7 @@ export type Database = {
           status: string
         }[]
       }
+      preview_invite: { Args: { code: string }; Returns: Json }
       random_code: { Args: never; Returns: string }
       register_device: {
         Args: {
