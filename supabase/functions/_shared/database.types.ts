@@ -1553,6 +1553,7 @@ export type Database = {
         }[]
       }
       preview_invite: { Args: { code: string }; Returns: Json }
+      purge_expired: { Args: { at?: string }; Returns: Json }
       question_days: { Args: { freq: number }; Returns: number[] }
       random_code: { Args: never; Returns: string }
       record_calendar: {
