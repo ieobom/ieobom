@@ -2,7 +2,7 @@
 // 모두 되돌린다. 그래서 개발 DB에 돌려도 데이터가 남지 않는다.
 //
 //   pnpm test:db                 연결된 개발 DB에서 (아직 올리지 않은 마이그레이션도 같은 묶음에 넣어 시험)
-//   pnpm test:db --local         로컬 DB(Docker, CI)에서 (supabase db start가 마이그레이션을 이미 올림)
+//   pnpm test:db --local         로컬 DB(Docker, CI)에서 psql로 (supabase db start가 마이그레이션을 이미 올림)
 //   pnpm test:db 파일 …          일부만
 //
 // 검사 파일(supabase/tests/database/*.test.sql)은 보통 pgTAP 모양으로 쓴다:
@@ -25,18 +25,18 @@ const local = args.includes("--local");
 const target = local ? "--local" : "--linked";
 const picked = args.filter((a) => !a.startsWith("--"));
 
+// 로컬 DB 기본 주소 (supabase db start). 다르면 SUPABASE_DB_URL로 준다
+const LOCAL_DB_URL = process.env.SUPABASE_DB_URL ?? "postgresql://postgres:postgres@127.0.0.1:54322/postgres";
+
 function query(sql) {
   const file = join(mkdtempSync(join(tmpdir(), "ieobom-db-")), "q.sql");
   writeFileSync(file, sql);
+  // 개발 DB는 관리 API로 여러 문장을 한 번에 보낸다. 로컬은 CLI가 한 문장씩만 받아서 psql을 쓴다
+  const [cmd, cmdArgs] = local
+    ? ["psql", [LOCAL_DB_URL, "-X", "-q", "-v", "ON_ERROR_STOP=1", "-f", file]]
+    : [SUPABASE, ["db", "query", target, "-f", file]];
   try {
-    return {
-      ok: true,
-      out: execFileSync(SUPABASE, ["db", "query", target, "-f", file], {
-        cwd: ROOT,
-        encoding: "utf8",
-        stdio: "pipe",
-      }),
-    };
+    return { ok: true, out: execFileSync(cmd, cmdArgs, { cwd: ROOT, encoding: "utf8", stdio: "pipe" }) };
   } catch (e) {
     return { ok: false, out: `${e.stdout ?? ""}${e.stderr ?? ""}` };
   }
