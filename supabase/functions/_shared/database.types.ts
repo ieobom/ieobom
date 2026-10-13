@@ -1424,6 +1424,13 @@ export type Database = {
       }
       end_relationship: { Args: { relationship: string }; Returns: undefined }
       feature_enabled: { Args: { feature: string }; Returns: boolean }
+      freq_on: {
+        Args: {
+          day: string
+          s: Database["public"]["Tables"]["relationship_settings"]["Row"]
+        }
+        Returns: number
+      }
       invite_lookup: {
         Args: { code: string; uid: string }
         Returns: Record<string, unknown>
@@ -1443,6 +1450,10 @@ export type Database = {
           status: string
         }[]
       }
+      next_question_day: {
+        Args: { day: string; relationship: string }
+        Returns: string
+      }
       overlap_windows: {
         Args: { a: string; at?: string; b: string }
         Returns: {
@@ -1451,6 +1462,7 @@ export type Database = {
         }[]
       }
       preview_invite: { Args: { code: string }; Returns: Json }
+      question_days: { Args: { freq: number }; Returns: number[] }
       random_code: { Args: never; Returns: string }
       register_device: {
         Args: {
@@ -1462,10 +1474,33 @@ export type Database = {
         }
         Returns: undefined
       }
+      relationship_freq: {
+        Args: { day: string; relationship: string }
+        Returns: number
+      }
       see_missed_call: { Args: { call: string }; Returns: undefined }
+      seoul_today: { Args: never; Returns: string }
       set_memo_draft: {
         Args: { doc_version?: string; turn_on: boolean }
         Returns: undefined
+      }
+      set_question_freq: {
+        Args: { freq: number; relationship: string }
+        Returns: {
+          avoid_topics: string[]
+          curious_topics: string[]
+          next_freq: number | null
+          next_freq_from: string | null
+          question_freq: number
+          relationship_id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "relationship_settings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       signup_complete: {
         Args: {
