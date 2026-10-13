@@ -17,7 +17,8 @@
     "fn:lint": "deno lint --config supabase/functions/deno.json supabase/functions",
     "fn:check": "deno check --config supabase/functions/deno.json supabase/functions",
     "fn:test": "deno test --config supabase/functions/deno.json supabase/functions",
-    "app": "pnpm --filter @ieobom/mobile start"
+    "app": "pnpm --filter @ieobom/mobile start",
+    "app:web": "pnpm --filter @ieobom/mobile exec expo start --web"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

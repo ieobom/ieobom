@@ -28,3 +28,12 @@ Deno.test("handle은 HttpError를 그 상태로, 다른 오류는 500으로", as
     console.error = original;
   }
 });
+
+Deno.test("handle은 CORS 사전 요청에 204로 답하고, 응답에 CORS 헤더를 붙인다", async () => {
+  const handler = handle(() => Promise.resolve(ok(1)));
+  const pre = await handler(new Request("http://x", { method: "OPTIONS" }));
+  assertEquals(pre.status, 204);
+  assertEquals(pre.headers.get("access-control-allow-origin"), "*");
+  const res = await handler(new Request("http://x"));
+  assertEquals(res.headers.get("access-control-allow-origin"), "*");
+});

@@ -1,6 +1,14 @@
 // 서버 함수의 응답 · 오류 형식. 성공은 { data }, 실패는 { error: { code, message } }.
 // 앱은 code로 화면 문구를 고르고, message는 기록용이다.
 
+// 휴대폰 앱에는 필요 없지만, 개발 확인용 웹(localhost)에서 부르려면 CORS가 필요하다.
+// 로그인은 쿠키가 아니라 토큰으로 확인하므로 모든 출처를 열어도 된다.
+export const corsHeaders = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-headers": "authorization, x-client-info, apikey, content-type",
+  "access-control-allow-methods": "GET, POST, OPTIONS",
+};
+
 export class HttpError extends Error {
   constructor(
     readonly status: number,
@@ -14,7 +22,7 @@ export class HttpError extends Error {
 export function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8" },
+    headers: { ...corsHeaders, "content-type": "application/json; charset=utf-8" },
   });
 }
 
@@ -26,9 +34,10 @@ export function fail(status: number, code: string, message = code): Response {
   return json({ error: { code, message } }, status);
 }
 
-/** 처리 함수를 감싸서 던진 HttpError는 그 형식으로, 나머지는 500으로 돌려준다. */
+/** 처리 함수를 감싸서 던진 HttpError는 그 형식으로, 나머지는 500으로 돌려준다. CORS 사전 요청도 여기서 답한다. */
 export function handle(fn: (req: Request) => Promise<Response>): (req: Request) => Promise<Response> {
   return async (req) => {
+    if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders });
     try {
       return await fn(req);
     } catch (e) {

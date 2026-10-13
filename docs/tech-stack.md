@@ -96,6 +96,7 @@ Flutter는 쓰지 않는다(확정). 프론트 12차 비교조사는 숙련도�
 | 카카오 | @react-native-kakao/core · user · share | 추천 | 로그인과 초대 공유를 한 라이브러리로. 커뮤니티 제작이라 첫 주에 검증. |
 | 일반 알림 | expo-notifications | 확정 | 권한·기기 토큰·수신·눌렀을 때 화면 이동. |
 | 전화 수신 | LiveKit + react-native-callkeep | 추천 | 잠금 화면에서 휴대폰 기본 통화 화면(iOS CallKit)으로 받는다. 이름은 '이어봄 · 엄마'. 전화는 받는 사람이 가장 최근에 쓴 기기 하나로 울린다. |
+| 개발 확인용 웹 | react-native-web | 확정 | Xcode · 휴대폰 없이 화면과 서버 연결을 브라우저에서 확인한다(`pnpm app:web`). 출시하지 않는다. 서버 함수는 이 때문에 CORS를 연다. |
 | 테스트 | jest-expo + React Native Testing Library + Maestro | 추천 | 함수·화면·사용자 흐름. 통화·권한은 실제 기기에서 따로. |
 | 빌드·배포 | EAS Build | 추천 | 앱 빌드·서명. 네이티브 설정이 바뀌면 새 빌드가 필요(EAS Update로 안 됨). |
 

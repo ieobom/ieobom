@@ -14,7 +14,9 @@ ieobom/
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
 │       ├── src/
-│       │   └── app/                      화면 (Expo Router, 파일 = 주소)
+│       │   ├── app/                      화면 (Expo Router, 파일 = 주소)
+│       │   ├── features/                 기능별 데이터 불러오기 · 부품
+│       │   └── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정
 │       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 │       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
@@ -85,7 +87,7 @@ cp supabase/functions/.env.example supabase/functions/.env
 pnpm app
 ```
 
-휴대폰의 Expo Go로 화면의 QR을 찍으면 열립니다. 카카오 · 통화처럼 네이티브 모듈이 들어간 뒤에는 Expo Go로 안 열리고 개발용 빌드(EAS)가 필요합니다. 개발용 빌드는 `APP_VARIANT=development`로 만들어 이름(이어봄 개발)과 번들 ID(`com.ieobom.app.dev`)가 따로 잡힙니다.
+휴대폰의 Expo Go로 화면의 QR을 찍으면 열립니다. 휴대폰 없이 확인할 때는 `pnpm app:web`으로 브라우저에서 엽니다(개발 확인용이고 출시하지 않습니다). 카카오 · 통화처럼 네이티브 모듈이 들어간 뒤에는 Expo Go로 안 열리고 개발용 빌드(EAS)가 필요합니다. 개발용 빌드는 `APP_VARIANT=development`로 만들어 이름(이어봄 개발)과 번들 ID(`com.ieobom.app.dev`)가 따로 잡힙니다.
 
 ### Supabase
 
