@@ -22,6 +22,7 @@ ieobom/
 │       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 │       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
+│   ├── data-model.md                     데이터 구조 — 19 ERD에서 바뀐 점 · 표마다 누가 읽고 쓰나
 │   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
@@ -67,7 +68,7 @@ ieobom/
 
 - 개발 계획: `docs/dev-plan.md` (작업 단위와 커밋 · 일정과 관문 · 최적화)
 - 기술 스택: `docs/tech-stack.md` (서버 · 앱 · 바깥 서비스 · 정할 것)
-- 데이터 구조: `../설계/19_이어봄_ERD.html` (38차 시안 기준)
+- 데이터 구조: `docs/data-model.md` (19 ERD에서 바뀐 점 · 누가 읽고 쓰나), 칸의 뜻은 `../설계/19_이어봄_ERD.html`
 - 서버 함수 · 정해진 시간 작업: `../설계/16_이어봄_서비스_아키텍처.html` (27차 기준이라 앱 안 통화 · 근황은 19를 따름)
 - 화면 동작: `../UI시안/이어봄_39차시안.html` (2026-10-09)
 
