@@ -1394,6 +1394,34 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_news: {
+        Args: {
+          method?: string
+          news_id: string
+          photo_count?: number
+          relationship: string
+          text?: string
+          topic?: string
+          topic_by?: string
+        }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          method: string
+          relationship_id: string
+          seen_at: string | null
+          text: string
+          topic: string | null
+          topic_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "news"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       custom_question_slot: {
         Args: { after: string; relationship: string }
         Returns: string
@@ -1425,6 +1453,7 @@ export type Database = {
       }
       delete_custom_question: { Args: { question: string }; Returns: undefined }
       delete_memo: { Args: { memo: string }; Returns: undefined }
+      delete_news: { Args: { news_id: string }; Returns: undefined }
       discard_draft: { Args: { draft: string }; Returns: undefined }
       end_call: {
         Args: { call: string }
@@ -1537,6 +1566,7 @@ export type Database = {
         }
       }
       see_missed_call: { Args: { call: string }; Returns: undefined }
+      see_news: { Args: { news_id: string }; Returns: undefined }
       see_question: { Args: { question: string }; Returns: undefined }
       send_due_questions: { Args: { day?: string }; Returns: number }
       seoul_today: { Args: never; Returns: string }
