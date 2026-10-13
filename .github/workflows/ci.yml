@@ -20,3 +20,6 @@ jobs:
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
+      - run: pnpm fn:lint
+      - run: pnpm fn:check
+      - run: pnpm fn:test

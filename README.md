@@ -9,7 +9,7 @@
 ieobom/
 ├── .github/
 │   └── workflows/
-│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 검사
+│       └── ci.yml                        올릴 때마다 설치 · 구조도 · 모양 · 코드 · 타입 · 서버 함수 검사
 ├── .vscode/                              팀 공통 편집기 설정 (서버 함수는 Deno)
 ├── apps/                                 앱
 │   └── mobile/                           Expo 앱 (자녀 · 부모님이 같은 앱)
@@ -27,8 +27,13 @@ ieobom/
 ├── supabase/                             서버 (Supabase)
 │   ├── functions/                        Edge Functions — AI · 말 → 글 · 통화 · 알림
 │   │   ├── _shared/                      서버 함수끼리 쓰는 코드와 DB 타입
-│   │   │   └── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
-│   │   └── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
+│   │   │   ├── auth.ts                   부른 사람 확인 (로그인 토큰 검증)
+│   │   │   ├── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
+│   │   │   ├── env.ts                    환경 변수 · Supabase 열쇠 읽기
+│   │   │   └── http.ts                   응답 · 오류 형식
+│   │   ├── ping/                         살아 있는지 · 로그인 토큰이 통하는지 확인
+│   │   ├── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
+│   │   └── deno.json                     서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
 │   └── config.toml                       Supabase CLI 설정
 ├── .npmrc                                pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)
@@ -90,6 +95,12 @@ pnpm db:types
 
 `supabase/functions/_shared/database.types.ts`는 손으로 고치지 않습니다. 앱은 `@ieobom/shared`에서, 서버 함수는 `../_shared/database.types.ts`에서 가져옵니다.
 
+서버 함수는 Docker 없이 서버에서 묶어 올립니다. 새 함수를 만들면 `supabase/config.toml`에 `[functions.이름]`(`verify_jwt = false`, `import_map = "./functions/deno.json"`)을 더합니다. 로그인 확인은 함수 안에서 `_shared/auth.ts`로 합니다.
+
+```bash
+pnpm supabase functions deploy 이름 --use-api
+```
+
 ### 검사
 
 CI와 같은 검사를 올리기 전에 돌립니다.
@@ -98,6 +109,7 @@ CI와 같은 검사를 올리기 전에 돌립니다.
 pnpm format:check   # 모양 (고치려면 pnpm format)
 pnpm lint           # 코드
 pnpm typecheck      # 타입
+pnpm fn:lint && pnpm fn:check && pnpm fn:test   # 서버 함수 (Deno는 개발 의존성으로 설치됨)
 pnpm structure:check
 ```
 

@@ -4,3 +4,5 @@
 pnpm-lock.yaml
 # pnpm db:types로 만드는 파일
 supabase/functions/_shared/database.types.ts
+# Deno가 만드는 잠금 파일
+supabase/functions/deno.lock

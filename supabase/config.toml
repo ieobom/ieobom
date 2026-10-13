@@ -386,6 +386,12 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# 서버 함수. 새 방식 열쇠는 게이트웨이의 JWT 검사와 맞지 않아서 끄고, 함수 안에서 확인한다(_shared/auth.ts).
+# 의존성은 모든 함수가 functions/deno.json 하나를 같이 쓴다.
+[functions.ping]
+verify_jwt = false
+import_map = "./functions/deno.json"
+
 [analytics]
 enabled = true
 port = 54327
