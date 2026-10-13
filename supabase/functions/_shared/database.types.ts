@@ -643,6 +643,92 @@ export type Database = {
           },
         ]
       }
+      news: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          method: string
+          relationship_id: string
+          seen_at: string | null
+          text: string
+          topic: string | null
+          topic_by: string | null
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          method?: string
+          relationship_id: string
+          seen_at?: string | null
+          text?: string
+          topic?: string | null
+          topic_by?: string | null
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          method?: string
+          relationship_id?: string
+          seen_at?: string | null
+          text?: string
+          topic?: string | null
+          topic_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "news_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news_photos: {
+        Row: {
+          file_path: string
+          id: string
+          news_id: string
+          relationship_id: string
+          sort: number
+          thumb_path: string
+        }
+        Insert: {
+          file_path: string
+          id?: string
+          news_id: string
+          relationship_id: string
+          sort: number
+          thumb_path: string
+        }
+        Update: {
+          file_path?: string
+          id?: string
+          news_id?: string
+          relationship_id?: string
+          sort?: number
+          thumb_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "news_photos_news_id_relationship_id_fkey"
+            columns: ["news_id", "relationship_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id", "relationship_id"]
+          },
+        ]
+      }
       question_bank: {
         Row: {
           created_at: string
@@ -829,6 +915,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "talk_suggestions_news_id_fkey"
+            columns: ["news_id"]
+            isOneToOne: false
+            referencedRelation: "news"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "talk_suggestions_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
@@ -908,6 +1001,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      try_uuid: { Args: { value: string }; Returns: string }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
     }
     Enums: {
