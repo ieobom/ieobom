@@ -38,6 +38,35 @@ export type Database = {
         }
         Relationships: []
       }
+      code_attempts: {
+        Row: {
+          attempted_at: string
+          id: number
+          ok: boolean
+          user_id: string
+        }
+        Insert: {
+          attempted_at?: string
+          id?: never
+          ok: boolean
+          user_id: string
+        }
+        Update: {
+          attempted_at?: string
+          id?: never
+          ok?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "code_attempts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consents: {
         Row: {
           agreed_at: string
@@ -110,6 +139,109 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "devices_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invites: {
+        Row: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          invite_as: string
+          inviter_id: string
+          joined_by: string | null
+          relationship_id: string | null
+          status: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invite_as: string
+          inviter_id: string
+          joined_by?: string | null
+          relationship_id?: string | null
+          status?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          invite_as?: string
+          inviter_id?: string
+          joined_by?: string | null
+          relationship_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invites_inviter_id_fkey"
+            columns: ["inviter_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invites_joined_by_fkey"
+            columns: ["joined_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invites_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationship_settings: {
+        Row: {
+          avoid_topics: string[]
+          curious_topics: string[]
+          next_freq: number | null
+          next_freq_from: string | null
+          question_freq: number
+          relationship_id: string
+          user_id: string
+        }
+        Insert: {
+          avoid_topics?: string[]
+          curious_topics?: string[]
+          next_freq?: number | null
+          next_freq_from?: string | null
+          question_freq?: number
+          relationship_id: string
+          user_id: string
+        }
+        Update: {
+          avoid_topics?: string[]
+          curious_topics?: string[]
+          next_freq?: number | null
+          next_freq_from?: string | null
+          question_freq?: number
+          relationship_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationship_settings_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationship_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

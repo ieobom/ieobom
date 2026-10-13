@@ -1,4 +1,4 @@
-// 앱에서 같이 쓰는 값. 기준: 이어봄_38차시안.html · 19_이어봄_ERD.html
+// 앱 · 서버 함수가 같이 쓰는 값. 기준: 39차 시안(UI시안/이어봄_39차시안.html) · docs/data-model.md
 // DB 타입은 `pnpm db:types`로 supabase/functions/_shared/database.types.ts 에 만들고 여기서 다시 내보낸다.
 
 export * from "../../../supabase/functions/_shared/database.types";
