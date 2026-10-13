@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      answers: {
+        Row: {
+          answered_at: string
+          early_asked_at: string | null
+          early_choice: string | null
+          early_chosen_at: string | null
+          exchange_question_id: string
+          id: string
+          method: string
+          relationship_id: string
+          text: string
+          user_id: string
+          visible_to_partner: boolean
+        }
+        Insert: {
+          answered_at?: string
+          early_asked_at?: string | null
+          early_choice?: string | null
+          early_chosen_at?: string | null
+          exchange_question_id: string
+          id?: string
+          method?: string
+          relationship_id: string
+          text: string
+          user_id: string
+          visible_to_partner?: boolean
+        }
+        Update: {
+          answered_at?: string
+          early_asked_at?: string | null
+          early_choice?: string | null
+          early_chosen_at?: string | null
+          exchange_question_id?: string
+          id?: string
+          method?: string
+          relationship_id?: string
+          text?: string
+          user_id?: string
+          visible_to_partner?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_exchange_question_id_relationship_id_fkey"
+            columns: ["exchange_question_id", "relationship_id"]
+            isOneToOne: false
+            referencedRelation: "exchange_questions"
+            referencedColumns: ["id", "relationship_id"]
+          },
+          {
+            foreignKeyName: "answers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_config: {
         Row: {
           enabled: boolean
@@ -246,6 +303,51 @@ export type Database = {
           },
         ]
       }
+      custom_questions: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          relationship_id: string
+          send_on: string
+          status: string
+          text: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          relationship_id: string
+          send_on: string
+          status?: string
+          text: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          relationship_id?: string
+          send_on?: string
+          status?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_questions_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custom_questions_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       devices: {
         Row: {
           app_version: string
@@ -286,6 +388,73 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exchange_questions: {
+        Row: {
+          bank_question_id: string | null
+          child_seen_at: string | null
+          closed_at: string | null
+          custom_question_id: string | null
+          id: string
+          opened_at: string | null
+          parent_seen_at: string | null
+          relationship_id: string
+          sent_on: string
+          seq_no: number
+          status: string
+          text: string
+        }
+        Insert: {
+          bank_question_id?: string | null
+          child_seen_at?: string | null
+          closed_at?: string | null
+          custom_question_id?: string | null
+          id?: string
+          opened_at?: string | null
+          parent_seen_at?: string | null
+          relationship_id: string
+          sent_on: string
+          seq_no: number
+          status?: string
+          text: string
+        }
+        Update: {
+          bank_question_id?: string | null
+          child_seen_at?: string | null
+          closed_at?: string | null
+          custom_question_id?: string | null
+          id?: string
+          opened_at?: string | null
+          parent_seen_at?: string | null
+          relationship_id?: string
+          sent_on?: string
+          seq_no?: number
+          status?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exchange_questions_bank_question_id_fkey"
+            columns: ["bank_question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exchange_questions_custom_question_id_fkey"
+            columns: ["custom_question_id"]
+            isOneToOne: false
+            referencedRelation: "custom_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exchange_questions_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
             referencedColumns: ["id"]
           },
         ]
@@ -347,6 +516,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      question_bank: {
+        Row: {
+          created_at: string
+          id: string
+          is_example: boolean
+          reviewed: boolean
+          text: string
+          topic: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_example?: boolean
+          reviewed?: boolean
+          text: string
+          topic?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_example?: boolean
+          reviewed?: boolean
+          text?: string
+          topic?: string | null
+        }
+        Relationships: []
       }
       relationship_settings: {
         Row: {
