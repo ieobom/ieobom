@@ -1,5 +1,5 @@
 begin;
-select plan(28);
+select plan(29);
 
 -- 기준 때: 2026-10-14(수) 20:30 한국 시간
 create temp table t as select '2026-10-14 20:30+09'::timestamptz as at;
@@ -76,6 +76,11 @@ select is((select (f ->> 'answered_together')::int from h1, jsonb_array_elements
   1, '함께 답한 질문 수');
 select is((select (f ->> 'memo_count')::int from h1, jsonb_array_elements(h -> 'families') f where f ->> 'relationship_id' = '00000000-0000-0000-0000-00000000a001'),
   0, '남긴 메모 수');
+
+reset role;
+insert into public.invites (code, inviter_id, invite_as, parent_kind, expires_at) values ('593827', pg_temp.user_id('자녀'), 'dad', 'dad', now() + interval '1 day');
+select pg_temp.login('자녀');
+select is((select public.home((select at from t)) -> 'pending_invites' -> 0 ->> 'invite_as'), 'dad', '기다리는 초대(아빠 초대 중)');
 
 -- ── 엄마: 못 받은 전화는 받는 사람에게만, 새 질문은 할 일 ──
 select pg_temp.login('엄마');
