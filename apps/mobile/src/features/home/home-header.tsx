@@ -1,5 +1,5 @@
 // 홈 맨 위(39차 HomeHeader · FamilyPicker): '이어봄' 글자와 오늘 날짜, 가족 고르기, 초대.
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { ko } from "@/copy/ko";
 import { seoulParts } from "@/lib/dates";
@@ -7,36 +7,43 @@ import { C, IcoChevronDown, IcoChevronRight, IcoPlus, T, WORDMARK } from "@/ui";
 
 export type FamilyOption = { id: string; label: string };
 
-function FamilyPicker({
+/** 가족 고르기(39차 FamilyPicker). 홈은 큰 글자(big), 기록은 칩 모양. 가족이 하나면 이름만 */
+export function FamilyPicker({
   value,
   options,
   onChange,
+  big = false,
 }: {
   value: FamilyOption;
   options: FamilyOption[];
   onChange: (id: string) => void;
+  big?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState<null | { top: number; left: number }>(null);
+  const ref = useRef<View>(null);
   const one = options.length < 2;
   const title = (
-    <T size={24} weight={800} ls={-0.03}>
+    <T size={big ? 24 : 15} weight={big ? 800 : 700} ls={big ? -0.03 : undefined}>
       {value.label}
     </T>
   );
-  if (one) return <View style={styles.picker}>{title}</View>;
+  const box = big ? styles.picker : [styles.picker, styles.chip];
+  if (one) return <View style={box}>{title}</View>;
+  // 단추 바로 아래에 목록을 연다
+  const openMenu = () => ref.current?.measureInWindow((x, y, _w, h) => setMenu({ top: y + h + 2, left: x }));
   return (
     <>
-      <Pressable accessibilityRole="button" onPress={() => setOpen(true)} style={styles.picker}>
+      <Pressable ref={ref} accessibilityRole="button" onPress={openMenu} style={box}>
         {title}
-        <IcoChevronDown />
+        <IcoChevronDown size={big ? 18 : 13} />
       </Pressable>
-      <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
+      <Modal visible={!!menu} transparent animationType="fade" onRequestClose={() => setMenu(null)}>
         <Pressable
           style={StyleSheet.absoluteFill}
-          onPress={() => setOpen(false)}
+          onPress={() => setMenu(null)}
           accessibilityLabel={ko.common.close}
         />
-        <View style={styles.menu}>
+        <View style={[styles.menu, menu ?? undefined, { minWidth: big ? 180 : 150 }]}>
           {options.map((o) => {
             const on = o.id === value.id;
             return (
@@ -46,11 +53,11 @@ function FamilyPicker({
                 accessibilityState={{ selected: on }}
                 onPress={() => {
                   onChange(o.id);
-                  setOpen(false);
+                  setMenu(null);
                 }}
-                style={[styles.menuItem, on && styles.menuOn]}
+                style={[styles.menuItem, !big && styles.menuItemSmall, on && styles.menuOn]}
               >
-                <T size={17} weight={on ? 700 : 500} ls={-0.02} color={on ? C.primary : C.text}>
+                <T size={big ? 17 : 14} weight={on ? 700 : 500} ls={-0.02} color={on ? C.primary : C.text}>
                   {o.label}
                 </T>
               </Pressable>
@@ -91,7 +98,7 @@ export function HomeHeader({
         </T>
       </View>
       <View style={styles.row}>
-        {family ? <FamilyPicker value={family} options={families} onChange={onFamily} /> : null}
+        {family ? <FamilyPicker big value={family} options={families} onChange={onFamily} /> : null}
         {canInvite ? (
           <Pressable
             accessibilityRole="button"
@@ -134,14 +141,13 @@ const styles = StyleSheet.create({
   },
   menu: {
     position: "absolute",
-    top: 140,
-    left: 24,
-    minWidth: 180,
     backgroundColor: C.white,
     borderRadius: 14,
     overflow: "hidden",
     boxShadow: "0 2px 6px rgba(0,0,0,0.06), 0 12px 32px rgba(0,0,0,0.12)",
   },
   menuItem: { paddingVertical: 14, paddingHorizontal: 20, backgroundColor: C.white },
+  menuItemSmall: { paddingVertical: 12, paddingHorizontal: 16 },
+  chip: { paddingLeft: 14, paddingRight: 12, borderRadius: 999, backgroundColor: C.plainBg, gap: 5 },
   menuOn: { backgroundColor: C.primaryLight },
 });

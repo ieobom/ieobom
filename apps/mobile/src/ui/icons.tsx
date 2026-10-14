@@ -262,3 +262,64 @@ export function IcoArrow({ dir, color = C.text }: { dir: -1 | 1; color?: string 
     </Svg>
   );
 }
+
+export function IcoCalendar({ color = C.primary, size = 17 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Rect x={3.5} y={4.5} width={17} height={16} rx={3} stroke={color} strokeWidth={1.7} />
+      <Path d="M8 2.5v4M16 2.5v4M3.5 10h17" stroke={color} strokeWidth={1.7} strokeLinecap="round" />
+    </Svg>
+  );
+}
+
+export function IcoEdit({ color = C.primary }: P) {
+  return (
+    <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+      <Path
+        d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+        stroke={color}
+        strokeWidth={1.7}
+        strokeLinecap="round"
+      />
+      <Path
+        d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+        stroke={color}
+        strokeWidth={1.7}
+        strokeLinecap="round"
+      />
+    </Svg>
+  );
+}
+
+/** 달력 근황 날짜 뒤 하트(39차 HEART_D) */
+export const HEART_D =
+  "M12 20.6c-.55-.34-8.6-5.35-8.6-11.2A4.45 4.45 0 0112 6.55a4.45 4.45 0 018.6 2.85c0 5.85-8.05 10.86-8.6 11.2z";
+
+export function HeartBack({ fill, stroke, size = 38 }: { fill: string; stroke?: string; size?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d={HEART_D}
+        fill={fill}
+        stroke={stroke ?? "none"}
+        strokeWidth={stroke ? 1.1 : 0}
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** '여쭤봤어요' 동그라미 안 체크 */
+export function IcoTickBig({ color = C.white }: P) {
+  return (
+    <Svg width={13} height={13} viewBox="0 0 12 12" fill="none">
+      <Path
+        d="M2 6.2l2.8 2.8L10 3.6"
+        stroke={color}
+        strokeWidth={1.9}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}

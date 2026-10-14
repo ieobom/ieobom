@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { ko } from "@/copy/ko";
 import { HomeScreen, type HomeHandlers } from "@/features/home/home-screen";
 import { useHome, useHomeAction, useTalkList } from "@/features/home/use-home";
@@ -26,7 +27,8 @@ function SignedInHome({ userId }: { userId: string }) {
     onCall: soon,
     onCallScreen: soon,
     onAnswer: soon,
-    onPast: soon,
+    onPast: (f) =>
+      router.navigate({ pathname: "/archive", params: { kind: "question", family: f.relationship_id } }),
     onMakeQuestion: soon,
     onInvite: soon,
     onCode: soon,
