@@ -1467,6 +1467,13 @@ export type Database = {
         Args: { after: string; relationship: string }
         Returns: string
       }
+      daily_digest_targets: {
+        Args: { at?: string }
+        Returns: {
+          items: Json
+          user_id: string
+        }[]
+      }
       decline_call: {
         Args: { call: string }
         Returns: {
