@@ -17,6 +17,11 @@ export const ko = {
     leave: "나가기",
   },
   tabs: { home: "홈", archive: "기록", settings: "마이" },
+  /** 화면을 다 만들기 전 · 로그인 전 임시 안내 */
+  app: {
+    comingSoon: "곧 만들어요",
+    signedOut: "로그인 전이에요. 카카오 로그인은 곧 붙어요.",
+  },
   kind: { memo: "메모", question: "질문", news: "근황" },
   /** 서버 함수 오류 code별 문구 (supabase/functions/_shared/http.ts) */
   error: {
