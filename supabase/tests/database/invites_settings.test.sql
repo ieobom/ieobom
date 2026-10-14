@@ -15,21 +15,21 @@ insert into public.relationship_settings (relationship_id, user_id) values
   ('00000000-0000-0000-0000-00000000a001', pg_temp.user_id('자녀')),
   ('00000000-0000-0000-0000-00000000a001', pg_temp.user_id('엄마')),
   ('00000000-0000-0000-0000-00000000a002', pg_temp.user_id('자녀'));
-insert into public.invites (code, inviter_id, invite_as, status) values
-  ('482716', pg_temp.user_id('자녀'), 'mom', 'used'),
-  ('482716', pg_temp.user_id('자녀'), 'dad', 'waiting'),
-  ('593827', pg_temp.user_id('엄마'), 'child', 'waiting');
+insert into public.invites (code, inviter_id, invite_as, parent_kind, status) values
+  ('482716', pg_temp.user_id('자녀'), 'mom', 'mom', 'used'),
+  ('482716', pg_temp.user_id('자녀'), 'dad', 'dad', 'waiting'),
+  ('593827', pg_temp.user_id('엄마'), 'child', 'mom', 'waiting');
 
 -- ── 초대 코드 ──
-select throws_ok($$ insert into public.invites (code, inviter_id, invite_as) values ('482716', pg_temp.user_id('엄마'), 'child') $$,
+select throws_ok($$ insert into public.invites (code, inviter_id, invite_as, parent_kind) values ('482716', pg_temp.user_id('엄마'), 'child', 'mom') $$,
   '23505', null, '기다리는 코드끼리는 겹치지 않는다');
-select throws_ok($$ insert into public.invites (code, inviter_id, invite_as) values ('12a456', pg_temp.user_id('엄마'), 'child') $$,
+select throws_ok($$ insert into public.invites (code, inviter_id, invite_as, parent_kind) values ('12a456', pg_temp.user_id('엄마'), 'child', 'mom') $$,
   '23514', null, '코드는 숫자 6자리');
 select is((select expires_at - created_at from public.invites where code = '593827'), interval '48 hours', '코드는 48시간');
 
 select pg_temp.login('자녀');
 select is((select count(*)::int from public.invites), 2, '내가 만든 코드만 보인다');
-select throws_ok($$ insert into public.invites (code, inviter_id, invite_as) values ('111111', pg_temp.user_id('자녀'), 'mom') $$,
+select throws_ok($$ insert into public.invites (code, inviter_id, invite_as, parent_kind) values ('111111', pg_temp.user_id('자녀'), 'mom', 'mom') $$,
   '42501', null, '코드는 함수로만 만든다');
 select throws_ok($$ select * from public.code_attempts $$, '42501', null, '틀린 횟수는 앱이 못 읽는다');
 

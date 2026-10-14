@@ -560,6 +560,7 @@ export type Database = {
           invite_as: string
           inviter_id: string
           joined_by: string | null
+          parent_kind: string
           relationship_id: string | null
           status: string
         }
@@ -571,6 +572,7 @@ export type Database = {
           invite_as: string
           inviter_id: string
           joined_by?: string | null
+          parent_kind: string
           relationship_id?: string | null
           status?: string
         }
@@ -582,6 +584,7 @@ export type Database = {
           invite_as?: string
           inviter_id?: string
           joined_by?: string | null
+          parent_kind?: string
           relationship_id?: string | null
           status?: string
         }
@@ -1281,15 +1284,272 @@ export type Database = {
         }
         Relationships: []
       }
+      weather_lines: {
+        Row: {
+          season: string
+          to_child: string
+          to_parent: string
+          topic: string
+        }
+        Insert: {
+          season: string
+          to_child: string
+          to_parent: string
+          topic?: string
+        }
+        Update: {
+          season?: string
+          to_child?: string
+          to_parent?: string
+          topic?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      usage_weekly: {
+        Row: {
+          ai_tokens: number | null
+          call_minutes: number | null
+          photo_mb: number | null
+          recording_minutes: number | null
+          relationship_id: string | null
+          stt_call_seconds: number | null
+          stt_short_seconds: number | null
+          week: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      accept_invite: { Args: { code: string }; Returns: Json }
+      align_side: { Args: { uid: string; wanted: string }; Returns: undefined }
+      answer_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      call_days: { Args: { days: string }; Returns: number[] }
+      call_time_overlap: {
+        Args: { at?: string; relationship: string }
+        Returns: {
+          free_now: boolean
+          next_ends_at: string
+          next_starts_at: string
+        }[]
+      }
+      cancel_call: {
+        Args: { call: string; missed?: boolean }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      cancel_invite: { Args: { invite: string }; Returns: undefined }
+      choose_early: {
+        Args: { choice: string; question: string }
+        Returns: undefined
+      }
+      create_custom_question: {
+        Args: { relationship: string; text: string }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          relationship_id: string
+          send_on: string
+          status: string
+          text: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "custom_questions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_invite: {
+        Args: { invite_as: string; my_kind?: string }
+        Returns: {
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          invite_as: string
+          inviter_id: string
+          joined_by: string | null
+          parent_kind: string
+          relationship_id: string | null
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "invites"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_news: {
+        Args: {
+          method?: string
+          news_id: string
+          photo_count?: number
+          relationship: string
+          text?: string
+          topic?: string
+          topic_by?: string
+        }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          method: string
+          relationship_id: string
+          seen_at: string | null
+          text: string
+          topic: string | null
+          topic_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "news"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      custom_question_slot: {
+        Args: { after: string; relationship: string }
+        Returns: string
+      }
+      daily_digest_targets: {
+        Args: { at?: string }
+        Returns: {
+          items: Json
+          user_id: string
+        }[]
+      }
+      decline_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      delete_custom_question: { Args: { question: string }; Returns: undefined }
+      delete_memo: { Args: { memo: string }; Returns: undefined }
+      delete_news: { Args: { news_id: string }; Returns: undefined }
+      discard_draft: { Args: { draft: string }; Returns: undefined }
+      end_call: {
+        Args: { call: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      end_relationship: { Args: { relationship: string }; Returns: undefined }
       feature_enabled: { Args: { feature: string }; Returns: boolean }
+      freq_on: {
+        Args: {
+          day: string
+          s: Database["public"]["Tables"]["relationship_settings"]["Row"]
+        }
+        Returns: number
+      }
+      home: { Args: { at?: string }; Returns: Json }
+      invite_lookup: {
+        Args: { code: string; uid: string }
+        Returns: Record<string, unknown>
+      }
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
+      mark_asked: {
+        Args: { relationship: string; suggestion?: string }
+        Returns: string
+      }
+      mark_early_asked: { Args: { question: string }; Returns: undefined }
       my_families: {
         Args: never
         Returns: {
@@ -1302,6 +1562,49 @@ export type Database = {
           status: string
         }[]
       }
+      next_question_day: {
+        Args: { day: string; relationship: string }
+        Returns: string
+      }
+      overlap_windows: {
+        Args: { a: string; at?: string; b: string }
+        Returns: {
+          ends_at: string
+          starts_at: string
+        }[]
+      }
+      partner_custom_question: {
+        Args: { relationship: string }
+        Returns: {
+          send_on: string
+        }[]
+      }
+      preview_invite: { Args: { code: string }; Returns: Json }
+      purge_expired: { Args: { at?: string }; Returns: Json }
+      question_days: { Args: { freq: number }; Returns: number[] }
+      random_code: { Args: never; Returns: string }
+      record_calendar: {
+        Args: { month: string; relationship: string }
+        Returns: Json
+      }
+      record_items: {
+        Args: { relationship: string; uid: string }
+        Returns: {
+          at: string
+          id: string
+          kind: string
+        }[]
+      }
+      records: {
+        Args: {
+          before_at?: string
+          before_id?: string
+          kind?: string
+          page_size?: number
+          relationship: string
+        }
+        Returns: Json
+      }
       register_device: {
         Args: {
           app_version: string
@@ -1312,8 +1615,156 @@ export type Database = {
         }
         Returns: undefined
       }
+      relationship_freq: {
+        Args: { day: string; relationship: string }
+        Returns: number
+      }
+      restore_draft: { Args: { draft: string }; Returns: undefined }
+      save_call_memo: {
+        Args: { call: string; mood?: string; text?: string }
+        Returns: {
+          call_id: string | null
+          created_at: string
+          id: string
+          mood: string | null
+          relationship_id: string
+          suggest_status: string
+          text: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "memos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      season_of: { Args: { day: string }; Returns: string }
+      see_missed_call: { Args: { call: string }; Returns: undefined }
+      see_news: { Args: { news_id: string }; Returns: undefined }
+      see_question: { Args: { question: string }; Returns: undefined }
+      send_due_questions: { Args: { day?: string }; Returns: number }
+      seoul_today: { Args: never; Returns: string }
+      set_memo_draft: {
+        Args: { doc_version?: string; turn_on: boolean }
+        Returns: undefined
+      }
+      set_question_freq: {
+        Args: { freq: number; relationship: string }
+        Returns: {
+          avoid_topics: string[]
+          curious_topics: string[]
+          next_freq: number | null
+          next_freq_from: string | null
+          question_freq: number
+          relationship_id: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "relationship_settings"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      signup_complete: {
+        Args: {
+          agreed: string[]
+          doc_version?: string
+          name: string
+          side: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          large_text: boolean
+          memo_draft_on: boolean
+          name: string
+          notify_on: boolean
+          notify_time: string
+          side: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "users"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      start_call: {
+        Args: { relationship: string }
+        Returns: {
+          answered_at: string | null
+          callee_draft_on: boolean | null
+          callee_id: string | null
+          caller_draft_on: boolean | null
+          caller_id: string | null
+          ended_at: string | null
+          id: string
+          in_free_time: boolean
+          missed_seen_at: string | null
+          recording: string
+          relationship_id: string
+          room_name: string | null
+          started_at: string
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "calls"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      submit_answer: {
+        Args: { method?: string; question: string; text: string }
+        Returns: Json
+      }
+      talk_list: { Args: { relationship: string }; Returns: Json }
       try_uuid: { Args: { value: string }; Returns: string }
+      unmark_asked: { Args: { suggestion: string }; Returns: undefined }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
+      update_custom_question: {
+        Args: { question: string; text: string }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          relationship_id: string
+          send_on: string
+          status: string
+          text: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "custom_questions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      update_memo: {
+        Args: { memo: string; mood: string; text: string }
+        Returns: {
+          call_id: string | null
+          created_at: string
+          id: string
+          mood: string | null
+          relationship_id: string
+          suggest_status: string
+          text: string
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "memos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

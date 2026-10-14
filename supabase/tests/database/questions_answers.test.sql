@@ -53,7 +53,7 @@ select is((select count(*)::int from public.exchange_questions), 0, '남은 질�
 
 -- ── 둘 다 답했거나 먼저 보냄 → 보이게 됨 ──
 reset role;
-update public.answers set visible_to_partner = true;
+update public.answers set visible_to_partner = true where exchange_question_id = '00000000-0000-0000-0000-0000000e0001';
 select pg_temp.login('엄마');
 select is((select count(*)::int from public.answers), 1, '보이게 된 상대 답은 읽는다');
 select pg_temp.login('남');

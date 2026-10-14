@@ -23,6 +23,7 @@
 | `consents` | 문서에 `memo_draft`(선택) 더함, `withdrawn_at`(철회한 때) 더함 | 마이에서 끄면 철회로 남긴다 |
 | `devices` | `install_id`(앱이 만든 기기 번호), `last_active_at` 더함 | 같은 휴대폰에서 다시 로그인해도 줄이 늘지 않게. 전화는 가장 최근 휴대폰 하나로 |
 | `relationships` | 상태에 `left`(상대 탈퇴) 더함. 탈퇴하면 그 사람 칸만 비움 | ERD 7-1 |
+| `invites` | `parent_kind`(이어지면 만들어질 연결의 엄마 · 아빠) 더함 | 부모님이 자녀를 초대할 때 엄마 · 아빠를 같이 정한다(계획 7장 14번) |
 | `code_attempts` | 새로 | 초대 코드 10분 5번 틀리면 막기(ERD 7-3) |
 | `calls` | `caller_draft_on` · `callee_draft_on`(받는 순간 값), `recording` 상태 더함 | 두 사람 모두 켰을 때만 녹음, 안내 문구(내가 끔 · 상대가 끔) |
 | `call_transcripts` | 새로 (서버만) | 녹음을 글로 바꾼 것을 초안 만들 때까지만 둔다. 만들면 지운다 |
