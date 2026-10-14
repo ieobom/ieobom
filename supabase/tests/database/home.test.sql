@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(28);
 
 -- 기준 때: 2026-10-14(수) 20:30 한국 시간
 create temp table t as select '2026-10-14 20:30+09'::timestamptz as at;
@@ -130,6 +130,23 @@ select pg_temp.login('자녀');
 select ok(not ('missed_call' = any (pg_temp.kinds(public.home('2026-10-15 07:00+09'), '00000000-0000-0000-0000-00000000a001'))), '다음 날 못 받은 전화는 빠진다');
 select ok(not ('memo_draft' = any (pg_temp.kinds(public.home('2026-10-16 07:00+09'), '00000000-0000-0000-0000-00000000a001'))), '3일 지난 초안은 빠진다');
 select ok(not ('free_now' = any (pg_temp.kinds(public.home('2026-10-14 23:30+09'), '00000000-0000-0000-0000-00000000a001'))), '편한 시간이 끝나면 빠진다');
+
+-- ── 먼저 온 답: 상대가 먼저 보냈는데 내가 답하기 전에 질문이 끝남 ──
+reset role;
+insert into public.exchange_questions (id, relationship_id, seq_no, sent_on, text, status, closed_at) values
+  ('00000000-0000-0000-0000-0000000e0003', '00000000-0000-0000-0000-00000000a001', 3, '2026-10-15', '새 질문', 'waiting', null);
+update public.exchange_questions set status = 'closed', closed_at = '2026-10-15 05:00+09', opened_at = null, child_seen_at = null
+  where id = '00000000-0000-0000-0000-0000000e0002';
+delete from public.answers where exchange_question_id = '00000000-0000-0000-0000-0000000e0002' and user_id = pg_temp.user_id('자녀');
+update public.answers set early_choice = 'send', visible_to_partner = true where exchange_question_id = '00000000-0000-0000-0000-0000000e0002';
+select pg_temp.login('자녀');
+select is((select pg_temp.card(public.home('2026-10-15 09:00+09'), '00000000-0000-0000-0000-00000000a001', 'question') ->> 'state'), 'received',
+  '먼저 온 답(지난 질문)');
+reset role;
+update public.exchange_questions set child_seen_at = now() where id = '00000000-0000-0000-0000-0000000e0002';
+select pg_temp.login('자녀');
+select is((select pg_temp.card(public.home('2026-10-15 09:00+09'), '00000000-0000-0000-0000-00000000a001', 'question') ->> 'state'), 'new',
+  '확인했어요 하면 오늘 온 새 질문으로');
 
 reset role;
 insert into public.notice_reads (notice_id, user_id) values ('00000000-0000-0000-0000-000000001001', pg_temp.user_id('자녀'));
