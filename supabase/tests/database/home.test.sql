@@ -1,5 +1,5 @@
 begin;
-select plan(20);
+select plan(26);
 
 -- 기준 때: 2026-10-14(수) 20:30 한국 시간
 create temp table t as select '2026-10-14 20:30+09'::timestamptz as at;
@@ -60,6 +60,22 @@ select is((select f ->> 'partner_name' from h1, jsonb_array_elements(h -> 'famil
 select is((select f ->> 'next_question_on' from h1, jsonb_array_elements(h -> 'families') f where f ->> 'relationship_id' = '00000000-0000-0000-0000-00000000a001'),
   '2026-10-15', '다음 질문은 목요일');
 select is((select h -> 'notice' ->> 'title' from h1), '점검 안내', '보일 때인 공지');
+
+-- 화면에 그릴 값
+create function pg_temp.card(home jsonb, rel text, k text) returns jsonb
+language sql as $$
+  select c from jsonb_array_elements(home -> 'families') f, jsonb_array_elements(f -> 'cards') c
+  where f ->> 'relationship_id' = rel and c ->> 'kind' = k limit 1
+$$;
+select is((select pg_temp.card(h, '00000000-0000-0000-0000-00000000a001', 'free_now') ->> 'from' from h1)::timestamptz,
+  '2026-10-14 06:00+09'::timestamptz, '지금 편한 시간의 시작');
+select is((select pg_temp.card(h, '00000000-0000-0000-0000-00000000a001', 'question') ->> 'my_answer' from h1), '옛날 가요', '기다림 카드에 내 답');
+select is((select pg_temp.card(h, '00000000-0000-0000-0000-00000000a001', 'news') -> 'items' -> 0 ->> 'text' from h1), '등산 다녀왔어', '근황 글(최근 것부터)');
+select is((select pg_temp.card(h, '00000000-0000-0000-0000-00000000a001', 'memo_draft') ->> 'text' from h1), '엄마가 병원에 다녀오셨대요.', '초안 글');
+select is((select (f ->> 'answered_together')::int from h1, jsonb_array_elements(h -> 'families') f where f ->> 'relationship_id' = '00000000-0000-0000-0000-00000000a001'),
+  1, '함께 답한 질문 수');
+select is((select (f ->> 'memo_count')::int from h1, jsonb_array_elements(h -> 'families') f where f ->> 'relationship_id' = '00000000-0000-0000-0000-00000000a001'),
+  0, '남긴 메모 수');
 
 -- ── 엄마: 못 받은 전화는 받는 사람에게만, 새 질문은 할 일 ──
 select pg_temp.login('엄마');
