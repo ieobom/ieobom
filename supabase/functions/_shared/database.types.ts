@@ -1582,6 +1582,13 @@ export type Database = {
       preview_invite: { Args: { code: string }; Returns: Json }
       purge_expired: { Args: { at?: string }; Returns: Json }
       question_days: { Args: { freq: number }; Returns: number[] }
+      question_record_status: {
+        Args: {
+          q: Database["public"]["Tables"]["exchange_questions"]["Row"]
+          uid: string
+        }
+        Returns: string
+      }
       random_code: { Args: never; Returns: string }
       record_calendar: {
         Args: { month: string; relationship: string }
@@ -1600,6 +1607,7 @@ export type Database = {
           before_at?: string
           before_id?: string
           kind?: string
+          on_day?: string
           page_size?: number
           relationship: string
         }
