@@ -1699,6 +1699,24 @@ export type Database = {
       try_uuid: { Args: { value: string }; Returns: string }
       unmark_asked: { Args: { suggestion: string }; Returns: undefined }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
+      update_custom_question: {
+        Args: { question: string; text: string }
+        Returns: {
+          author_id: string
+          created_at: string
+          id: string
+          relationship_id: string
+          send_on: string
+          status: string
+          text: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "custom_questions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       update_memo: {
         Args: { memo: string; mood: string; text: string }
         Returns: {
