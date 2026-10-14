@@ -45,7 +45,9 @@ const DESC = {
   "apps/mobile/src/features/": "기능별 데이터 불러오기 · 부품",
   "apps/mobile/src/features/config/": "기능 켜고 끄기 읽기 (useFeature · IfFeature)",
   "apps/mobile/src/features/dev/": "개발 확인용 (서버 연결)",
-  "apps/mobile/src/app/dev/": "개발 확인용 화면 (공통 부품 모음 · 출시 빌드에서는 안 열림)",
+  "apps/mobile/src/app/(tabs)/": "아래 탭 화면 (홈 · 기록 · 마이)",
+  "apps/mobile/src/app/dev/":
+    "개발 확인용 화면 (서버 연결 · 공통 부품 · 가짜 데이터 화면, 출시 빌드에서는 안 열림)",
   "apps/mobile/src/ui/": "디자인 값(39차 시안의 C · R) · 글꼴 · 공통 부품",
   "apps/mobile/src/lib/": "서버 연결 · 세션 저장 · 데이터 불러오기 설정",
   "docs/": "개발 문서",
