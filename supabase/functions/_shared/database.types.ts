@@ -1307,7 +1307,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      usage_weekly: {
+        Row: {
+          ai_tokens: number | null
+          call_minutes: number | null
+          photo_mb: number | null
+          recording_minutes: number | null
+          relationship_id: string | null
+          stt_call_seconds: number | null
+          stt_short_seconds: number | null
+          week: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_relationship_id_fkey"
+            columns: ["relationship_id"]
+            isOneToOne: false
+            referencedRelation: "relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_invite: { Args: { code: string }; Returns: Json }
