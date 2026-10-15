@@ -20,9 +20,10 @@ const FIRST_HOUR = 6;
 const LAST_HOUR = 23;
 const MAX = 3;
 
-type Slot = { t: CallTime; on: boolean };
+export type Slot = { t: CallTime; on: boolean };
 
-function startSlots(saved: CallTime[]): Slot[] {
+/** 기본 세 가지에 저장해 둔 시간을 붙이고, 저장해 둔 것은 골라 둔다 */
+export function startSlots(saved: CallTime[]): Slot[] {
   return [
     ...PRESETS.map((p) => ({ t: p, on: saved.some((s) => sameSlot(s, p)) })),
     ...saved.filter((s) => !PRESETS.some((p) => sameSlot(p, s))).map((t) => ({ t, on: true })),
@@ -39,24 +40,10 @@ export function ScheduleScreen({
   onSave: (times: CallTime[]) => void;
 }) {
   const m = ko.my;
-  const toast = useToast();
   const [slots, setSlots] = useState<Slot[]>(() => startSlots(saved));
-  const [adding, setAdding] = useState(false);
   const [leave, setLeave] = useState(false);
   const picked = slots.filter((s) => s.on).map((s) => s.t);
   const dirty = picked.length !== saved.length || picked.some((p) => !saved.some((s) => sameSlot(s, p)));
-
-  const flip = (i: number) => {
-    if (!slots[i]!.on && picked.length >= MAX) return toast(m.maxTimes);
-    setSlots(slots.map((s, j) => (j === i ? { ...s, on: !s.on } : s)));
-  };
-  const add = (t: CallTime) => {
-    setAdding(false);
-    const had = slots.find((s) => sameSlot(s.t, t));
-    if (had?.on) return toast(m.already);
-    setSlots(had ? slots.map((s) => (s === had ? { ...s, on: true } : s)) : [...slots, { t, on: true }]);
-    toast(m.added);
-  };
 
   return (
     <Screen>
@@ -65,26 +52,7 @@ export function ScheduleScreen({
         <T size={14} lh={1.65} color={C.textTertiary} style={styles.lead}>
           {m.scheduleNote}
         </T>
-        <View style={styles.list}>
-          {slots.map((s, i) => (
-            <Option
-              key={slotLabel(s.t)}
-              label={slotLabel(s.t)}
-              selected={s.on}
-              mark
-              onPress={() => flip(i)}
-            />
-          ))}
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => (picked.length >= MAX ? toast(m.maxTimes) : setAdding(true))}
-          style={styles.addLink}
-        >
-          <T size={15} weight={600} color={C.primary}>
-            {m.addTime}
-          </T>
-        </Pressable>
+        <TimesEditor slots={slots} onChange={setSlots} />
       </ScrollView>
       <BottomBar>
         {picked.length === 0 ? (
@@ -94,7 +62,6 @@ export function ScheduleScreen({
         ) : null}
         <Button onPress={() => onSave(picked)}>{m.save}</Button>
       </BottomBar>
-      {adding ? <TimeAddSheet onClose={() => setAdding(false)} onAdd={add} /> : null}
       <Dialog
         visible={leave}
         title={m.leaveTitle}
@@ -108,6 +75,44 @@ export function ScheduleScreen({
         onCancel={() => setLeave(false)}
       />
     </Screen>
+  );
+}
+
+/** 시간 목록(3개까지 고르기) + '+ 시간 더하기'. 마이와 가입(3-4)이 같이 쓴다 */
+export function TimesEditor({ slots, onChange }: { slots: Slot[]; onChange: (slots: Slot[]) => void }) {
+  const m = ko.my;
+  const toast = useToast();
+  const [adding, setAdding] = useState(false);
+  const picked = slots.filter((s) => s.on).length;
+  const flip = (i: number) => {
+    if (!slots[i]!.on && picked >= MAX) return toast(m.maxTimes);
+    onChange(slots.map((s, j) => (j === i ? { ...s, on: !s.on } : s)));
+  };
+  const add = (t: CallTime) => {
+    setAdding(false);
+    const had = slots.find((s) => sameSlot(s.t, t));
+    if (had?.on) return toast(m.already);
+    onChange(had ? slots.map((s) => (s === had ? { ...s, on: true } : s)) : [...slots, { t, on: true }]);
+    toast(m.added);
+  };
+  return (
+    <>
+      <View style={styles.list}>
+        {slots.map((s, i) => (
+          <Option key={slotLabel(s.t)} label={slotLabel(s.t)} selected={s.on} mark onPress={() => flip(i)} />
+        ))}
+      </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => (picked >= MAX ? toast(m.maxTimes) : setAdding(true))}
+        style={styles.addLink}
+      >
+        <T size={15} weight={600} color={C.primary}>
+          {m.addTime}
+        </T>
+      </Pressable>
+      {adding ? <TimeAddSheet onClose={() => setAdding(false)} onAdd={add} /> : null}
+    </>
   );
 }
 

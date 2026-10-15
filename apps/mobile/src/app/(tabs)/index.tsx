@@ -1,15 +1,17 @@
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { ko } from "@/copy/ko";
 import { HomeScreen, type HomeHandlers } from "@/features/home/home-screen";
 import { useHome, useHomeAction, useTalkList } from "@/features/home/use-home";
+import { useSignedUp } from "@/features/signup/use-signup";
 import { useSession } from "@/lib/session";
-import { Placeholder, useToast } from "@/ui";
+import { useToast } from "@/ui";
 
-// 홈. 로그인(3-x) 전에는 안내만 보여 준다
+// 홈. 로그인 전이거나 가입을 마치지 않았으면 가입으로 보낸다
 export default function Home() {
   const session = useSession();
-  if (session === undefined) return null;
-  if (!session) return <Placeholder title={ko.appName} body={ko.app.signedOut} />;
+  const signedUp = useSignedUp(session?.user.id);
+  if (session === undefined || (session && signedUp.isPending)) return null;
+  if (!session || signedUp.data === false) return <Redirect href="/signup" />;
   return <SignedInHome userId={session.user.id} />;
 }
 

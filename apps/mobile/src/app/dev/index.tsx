@@ -31,6 +31,13 @@ function DevHub() {
         </T>
       ) : null}
       {__DEV__ ? (
+        <Link href="/dev/signup" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.signupGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
         <Link href="/dev/memo" style={styles.link}>
           <T size={14} color={C.primary}>
             {ko.dev.memoGallery}
