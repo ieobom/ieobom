@@ -19,7 +19,8 @@
     "fn:test": "deno test --config supabase/functions/deno.json supabase/functions",
     "app": "pnpm --filter @ieobom/mobile start",
     "app:web": "pnpm --filter @ieobom/mobile exec expo start --web",
-    "test:db": "node scripts/test-db.mjs"
+    "test:db": "node scripts/test-db.mjs",
+    "perf:db": "node scripts/perf-db.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

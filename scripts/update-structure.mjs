@@ -63,6 +63,7 @@ const DESC = {
   "scripts/": "개발용 스크립트",
   "scripts/update-structure.mjs": "이 구조도를 다시 만든다 (pnpm structure)",
   "scripts/test-db.mjs": "DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)",
+  "scripts/perf-db.mjs": "DB 속도 점검 (pnpm perf:db, 가짜 1만 쌍을 넣고 재고 되돌림)",
   "supabase/": "서버 (Supabase)",
   "supabase/config.toml": "Supabase CLI 설정",
   "supabase/seed.sql": "시험용 가짜 데이터 (로컬 DB · CI만, 가족 3쌍)",
@@ -70,6 +71,7 @@ const DESC = {
   "supabase/tests/": "DB 검사 (pgTAP)",
   "supabase/tests/helpers.sql": "시험용 사용자 만들기 · 로그인 바꾸기",
   "supabase/tests/database/": "표마다 보는 사람 규칙 · DB 함수 검사",
+  "supabase/tests/perf/": "속도 점검용 가짜 데이터와 잴 함수 (scripts/perf-db.mjs가 씀)",
   "supabase/functions/": "Edge Functions — AI · 말 → 글 · 통화 · 알림",
   "supabase/functions/deno.json": "서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)",
   "supabase/functions/_shared/": "서버 함수끼리 쓰는 코드와 DB 타입",
@@ -86,7 +88,7 @@ const DESC = {
   ".npmrc": "pnpm 설치 방식 (네이티브 모듈 때문에 hoisted)",
   "CLAUDE.md": "Claude 작업 규칙",
   "README.md": "이 문서",
-  "package.json": "pnpm 버전 고정 · 스크립트 (structure · db:types)",
+  "package.json": "pnpm 버전 고정 · 스크립트 (structure · db:types · test:db · perf:db)",
   "pnpm-workspace.yaml": "워크스페이스 목록",
 };
 

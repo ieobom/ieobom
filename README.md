@@ -31,6 +31,7 @@ ieobom/
 │       │   └── index.ts                  근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기
 │       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
+│   ├── perf-db.mjs                       DB 속도 점검 (pnpm perf:db, 가짜 1만 쌍을 넣고 재고 되돌림)
 │   ├── test-db.mjs                       DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
@@ -46,6 +47,7 @@ ieobom/
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
 │   ├── tests/                            DB 검사 (pgTAP)
 │   │   ├── database/                     표마다 보는 사람 규칙 · DB 함수 검사
+│   │   ├── perf/                         속도 점검용 가짜 데이터와 잴 함수 (scripts/perf-db.mjs가 씀)
 │   │   └── helpers.sql                   시험용 사용자 만들기 · 로그인 바꾸기
 │   ├── config.toml                       Supabase CLI 설정
 │   └── seed.sql                          시험용 가짜 데이터 (로컬 DB · CI만, 가족 3쌍)
@@ -54,7 +56,7 @@ ieobom/
 ├── .prettierrc.json                      모양 맞추기 설정 (pnpm format)
 ├── CLAUDE.md                             Claude 작업 규칙
 ├── eslint.config.mjs                     코드 검사 설정 (pnpm lint, 서버 함수는 제외)
-├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types)
+├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types · test:db · perf:db)
 ├── pnpm-workspace.yaml                   워크스페이스 목록
 ├── README.md                             이 문서
 └── tsconfig.base.json                    패키지들이 같이 쓰는 타입 검사 설정
