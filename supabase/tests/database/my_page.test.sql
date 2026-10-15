@@ -1,5 +1,5 @@
 begin;
-select plan(21);
+select plan(22);
 
 select pg_temp.make_user('자녀');
 select pg_temp.make_user('엄마');
@@ -48,7 +48,10 @@ select is((select v -> 'families' -> 0 -> 'avoid_topics' from p), '["건강"]'::
 select is((select v -> 'invites' from p) #>> '{0,code}', '987650', '기다리는 내 초대만(취소한 것 · 남의 것은 빼고)');
 select is((select v -> 'call_times' -> 0 ->> 'days' from p), 'weekdays', '통화 편한 시간은 평일부터');
 
+reset role;
+update public.users set large_text = true where id = pg_temp.user_id('엄마');
 select pg_temp.login('엄마');
+select is((select (public.home() ->> 'large_text')::boolean), true, '홈에도 글자 크게 보기를 준다');
 select is((select public.my_page() -> 'families' -> 0 ->> 'partner_name'), '아영', '부모님 화면에는 자녀 이름');
 select public.set_question_freq('00000000-0000-0000-0000-00000000b001', 1);
 
