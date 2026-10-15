@@ -388,6 +388,49 @@ export const ko = {
     privacyNote:
       "이어봄은 휴대폰 번호, 휴대폰 통화 기록, 연락처, 위치, 캘린더 일정 내용을 모으지 않아요. 통화는 두 분 모두 통화 메모 초안을 켰을 때만 녹음하고, 녹음은 글로 바꾸면 바로, 글로 바꾼 통화 내용은 초안을 만든 뒤 지워요.",
   },
+  /** 통화 후 메모 · 메모 고치기 (39차 MemoEditorScreen) */
+  memo: {
+    afterTitle: "통화 후 메모",
+    editTitle: "메모 고치기",
+    label: "메모",
+    howWas: (who: string) => `${withWa(who)}의 통화는 어땠어요?`,
+    askedHead: (parent: boolean) => `${parent ? "물어본" : "여쭤본"} 이야기가 있으면 눌러요`,
+    askedLabel: (parent: boolean, t: string) => `${parent ? "물어봤어요" : "여쭤봤어요"}: ${t}`,
+    memoHead: "통화 메모",
+    aiDraft: "AI 초안",
+    drafting1: "통화 내용을 정리하고 있어요…",
+    drafting2:
+      "통화 길이에 따라 시간이 더 걸릴 수 있어요. 나가도 괜찮아요. 다 되면 홈의 '통화 메모 초안' 카드로 알려 드려요.",
+    notes: {
+      draft: "AI가 통화를 줄여 쓴 초안이에요. 틀린 곳은 고쳐 주세요. 통화 녹음은 지웠어요.",
+      short: "1분이 안 된 통화는 초안을 만들지 않아요. 직접 남겨 주세요.",
+      off: "통화 메모 초안이 꺼져 있어요. 직접 남기거나 마이에서 켤 수 있어요.",
+      partnerOff: (who: string) =>
+        `${josa(who, "이", "가")} 통화 메모 초안을 꺼 두어 이번 통화는 초안이 없어요. 직접 남겨 주세요.`,
+      fail: "이번 통화는 초안을 만들지 못했어요. 직접 남겨 주세요.",
+    },
+    placeholder: (parent: boolean) => `예: ${parent ? "아영이 다음 주에 이사한대" : "무릎 검사 다음 주래"}`,
+    moodHead: "오늘 기분은 어땠어요? ",
+    optional: "(선택)",
+    toHome: "홈으로 가기",
+    later: "나중에 하기",
+    save: "저장",
+    skip: "지금은 건너뛰기",
+    skipAsked: "메모 없이 마치기",
+    keptMaking: "초안이 다 되면 홈에 카드로 보여 드려요",
+    keptReady: "초안은 홈에 3일 동안 남아 있어요",
+    savedTitle: "기록에 남겼어요",
+    moodOnly: (m: string) => `기분만 남겼어요 · ${m}`,
+    askedCount: (parent: boolean, n: number) => `${parent ? "물어본" : "여쭤본"} 이야기 ${n}개도 표시했어요`,
+    savedMemo: "남긴 메모",
+    finish: "마치기",
+    left: "메모를 남겼어요",
+    edited: "메모를 고쳤어요",
+    leaveEditTitle: "고친 내용이 있어요",
+    leaveEditBody: "저장하지 않고 나가면 고친 내용은 지워져요.",
+    leaveNewTitle: "쓰던 메모가 있어요",
+    leaveNewBody: "저장하지 않고 나가면 쓴 내용은 지워져요.",
+  },
   /** 질문 답하기 (39차 QuestionAnswerScreen) */
   answer: {
     head: "오늘의 질문",
@@ -622,5 +665,6 @@ export const ko = {
     myGallery: "마이 화면 (가짜 데이터)",
     inviteGallery: "초대 · 코드 넣기 (가짜 데이터)",
     composeGallery: "답하기 · 질문 만들기 · 근황 (가짜 데이터)",
+    memoGallery: "통화 후 메모 (가짜 데이터)",
   },
 } as const;

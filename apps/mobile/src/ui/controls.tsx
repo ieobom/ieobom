@@ -136,6 +136,7 @@ export function TextField({
   size: fontSize,
   card = false,
   autoFocus,
+  borderColor,
 }: {
   value: string;
   onChangeText: (v: string) => void;
@@ -150,6 +151,8 @@ export function TextField({
   /** 카드처럼 크게 둥근 칸 (답 · 질문 쓰기) */
   card?: boolean;
   autoFocus?: boolean;
+  /** 테두리 색 (AI 초안 칸) */
+  borderColor?: string;
 }) {
   const scale = useTextScale();
   const size = (fontSize ?? (lines ? 16 : 18)) * scale;
@@ -177,6 +180,7 @@ export function TextField({
             }
           : null,
         card ? styles.card : null,
+        borderColor ? { borderColor } : null,
       ]}
     />
   );

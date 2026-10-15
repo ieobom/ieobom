@@ -21,7 +21,7 @@ function SignedInHome({ userId }: { userId: string }) {
   const talk = useTalkList(userId, first?.relationship_id);
   if (!home.data) return null;
 
-  // 아직 만들지 않은 화면(통화 · 초안 저장)은 안내만 띄운다
+  // 아직 만들지 않은 화면(통화)은 안내만 띄운다
   const soon = () => toast(ko.app.comingSoon);
   const handlers: HomeHandlers = {
     onCall: soon,
@@ -34,7 +34,7 @@ function SignedInHome({ userId }: { userId: string }) {
     onInvite: () => router.push("/invite"),
     onInviteOpen: (as) => router.push({ pathname: "/my/invite/[as]", params: { as } }),
     onCode: () => router.push("/invite/code"),
-    onDraftOpen: soon,
+    onDraftOpen: (draft) => router.push({ pathname: "/memo", params: { draft } }),
     onMissedOk: (call) => act.mutate({ type: "see_missed", call }),
     onNewsOk: (ids) => act.mutate({ type: "see_news", ids }),
     onQuestionSeen: (question) => act.mutate({ type: "see_question", question }),

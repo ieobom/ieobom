@@ -372,3 +372,19 @@ export function IcoQuestion({ color = C.primary, size = 19 }: P) {
     </Svg>
   );
 }
+
+/** 동그라미 안 체크 (여쭤본 이야기 표시했어요) */
+export function IcoCheckRound({ color = C.accent2Deep }: P) {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={1.8} />
+      <Path
+        d="M8 12.3l2.7 2.7L16.2 9.5"
+        stroke={color}
+        strokeWidth={1.8}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
