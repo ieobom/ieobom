@@ -8,7 +8,7 @@
 //   개발 확인용 화면(src/app/dev, src/features/dev)과 주석은 예외다.
 
 import type { SeoulParts } from "@/lib/dates";
-import { josa, withKke, withWa } from "@/lib/korean";
+import { josa, withEge, withKke, withWa } from "@/lib/korean";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -35,11 +35,16 @@ export const ko = {
   family: { mom: "엄마", dad: "아빠", someone: "가족" },
   time: {
     hour: (h: number) => `${seg(h)} ${hour12(h)}시`,
-    /** '저녁 8시 – 10시' (같은 때면 뒤는 시만) */
+    /** '저녁 8시 – 10시' · '오전 10시 – 12시' (같은 때거나 이어지는 때면 뒤는 시만. 시안의 기본 시간 글자와 같게) */
     range: (s: number, e: number) => {
-      const same = seg(s) === seg(e) || (seg(s) === "저녁" && seg(e) === "밤");
+      const same =
+        seg(s) === seg(e) || (seg(s) === "저녁" && seg(e) === "밤") || (seg(s) === "오전" && e === 12);
       return `${seg(s)} ${hour12(s)}시 – ${same ? `${hour12(e)}시` : `${seg(e)} ${hour12(e)}시`}`;
     },
+    /** '저녁 7시 52분' · '밤 9시' */
+    clock: (p: SeoulParts) => `${seg(p.hour)} ${hour12(p.hour)}시${p.minute ? ` ${p.minute}분` : ""}`,
+    /** 통화 편한 시간 요일 (call_times.days) */
+    days: { weekdays: "평일", sat: "토요일", sun: "일요일", everyday: "매일" },
     date: (p: SeoulParts) => `${p.month}월 ${p.day}일`,
     dateDay: (p: SeoulParts) => `${p.month}월 ${p.day}일 ${WEEK[p.dow]}요일`,
     weekday: (p: SeoulParts) => `${WEEK[p.dow]}요일`,
@@ -213,6 +218,159 @@ export const ko = {
       code: "받은 초대 코드 넣기",
     },
   },
+  /** 마이 (39차 마이 · 연결된 가족 · 가족별 설정 · 통화 편한 시간 · 알림 받는 시각 · 보이는 정보) */
+  my: {
+    title: "마이",
+    loginKakao: "카카오 계정으로 로그인",
+    loginApple: "Apple 계정으로 로그인",
+    rename: "이름 바꾸기",
+    renameHintChild: "가족에게 이 이름으로 보여요.",
+    renameHintParent: (child: string, kind: string) =>
+      `${child} 화면에는 '${kind}'로 보여요. 이 이름은 마이에만 보여요.`,
+    renameHintAlone: "이 이름은 마이에만 보여요.",
+    nameLabel: "이름",
+    save: "저장",
+    saved: "저장했어요",
+    renamed: "이름을 바꿨어요",
+    families: "연결된 가족",
+    familiesNone: "아직 없어요",
+    familyInvited: "(초대 코드 보냄)",
+    familyExpired: "(코드 기한 지남)",
+    schedule: "통화 편한 시간",
+    scheduleNone: "아직 정하지 않았어요",
+    scheduleMore: (first: string, more: number) => `${first} 외 ${more}개`,
+    notify: "알림 받는 시각",
+    notifyOff: "받지 않아요",
+    notifyAt: (t: string) => `매일 ${t}`,
+    memoDraft: "통화 메모 초안",
+    memoDraftOn: "두 분 모두 켜면 통화를 녹음해 초안을 써요",
+    memoDraftOff: "꺼져 있어요 · 통화를 녹음하지 않아요",
+    memoDraftTurnedOn: "통화 메모 초안을 켰어요",
+    memoDraftTurnedOff: "통화 메모 초안을 껐어요. 다음 통화부터 녹음하지 않아요",
+    bigText: "글자 크게 보기",
+    bigTextSub: "글자와 버튼이 커져요",
+    infoHead: "개인정보와 안내",
+    privacy: "가족에게 보이는 정보",
+    docs: {
+      terms: "[필수] 이용약관",
+      privacy: "[필수] 개인정보 수집 · 이용",
+      ai: "[필수] AI 사용 안내 확인",
+    },
+    agreed: (date: string, version: string) => `${date}에 세 문서에 동의했어요 · 버전 ${version}`,
+    help: "도움말 · 문의",
+    helpSub: "전화가 안 울릴 때 · 글자가 작을 때 · 문의하기",
+    logout: "로그아웃",
+    logoutTitle: "로그아웃할까요?",
+    logoutBody: "카카오로 다시 로그인하면 지금 계정으로 돌아와요.",
+    withdraw: "탈퇴하기",
+    withdrawTitle: "탈퇴할까요?",
+    withdrawBody: (names: string) =>
+      names
+        ? `메모와 기록이 모두 지워지고 ${withWa(names)}의 연결도 끊겨요. 되돌릴 수 없어요.`
+        : "메모와 기록이 모두 지워져요. 되돌릴 수 없어요.",
+    back: "뒤로",
+    // 연결된 가족
+    child: "자녀",
+    perFamily: "가족마다 질문과 기록이 따로예요.",
+    noFamily: "아직 이어진 가족이 없어요.",
+    linked: "연결됨",
+    codeExpired: "초대 코드 기한이 지났어요",
+    codeSentUntil: (date: string) => `초대 코드 보냄 · ${date}까지`,
+    openSettings: "설정",
+    openCode: "코드 보기",
+    settingsLabel: (who: string) => `${who} 설정`,
+    codeLabel: (who: string) => `${who} 초대 코드 보기`,
+    invite: "가족 초대하기",
+    enterCode: "받은 초대 코드 넣기",
+    // 초대 코드 보기
+    invited: (who: string) => `${josa(who, "을", "를")} 초대했어요`,
+    expiredTitle: "초대 코드 기한이\n지났어요",
+    resend: (who: string) => `코드를 ${withKke(who)} 다시 보내도 돼요.`,
+    expiredBody: "이 코드로는 더 이상 이어지지 않아요.\n새 코드를 만들어 다시 보내 주세요.",
+    usableUntil: (when: string) => `${when}까지 쓸 수 있어요`,
+    endedAt: (when: string) => `${when}에 끝났어요`,
+    renew: "새 코드 만들기",
+    renewed: "새 코드를 만들었어요. 이전 코드는 이제 쓸 수 없어요",
+    sendKakao: "카카오톡으로 보내기",
+    copy: "코드 복사",
+    waiting: (who: string) => `${josa(who, "이", "가")} 코드를 넣기를 기다리는 중`,
+    scopeHead: (who: string) => `이어지면 ${withEge(who)}`,
+    scopeShown: "보여요 · 질문에 쓴 답, 근황, 통화 편한 시간",
+    scopeHidden: "안 보여요 · 메모, 기분",
+    cancelInvite: "초대 취소하기",
+    cancelTitle: "초대를 취소할까요?",
+    cancelBody: "보낸 코드로는 더 이상 이어지지 않아요. 나중에 다시 초대할 수 있어요.",
+    keep: "그대로 두기",
+    canceled: "초대를 취소했어요",
+    // 가족별 설정
+    familyTitle: (who: string) => `${withWa(who)}의 설정`,
+    two: (parent: boolean) => (parent ? "둘" : "두 분"),
+    freq: "질문 받는 횟수",
+    freqs: ["주 1번", "주 2번", "주 3번"],
+    freqDays: ["목요일", "월 · 목", "월 · 수 · 금"],
+    freqChip: (f: string, d: string) => `${f} (${d})`,
+    freqLess: (applied: string, two: string) => `${applied} · ${two} 중 적은 쪽`,
+    freqSame: (two: string) => `${two}이 고른 횟수가 다르면 적은 쪽에 맞춰요.`,
+    freqDiff: (mine: string, two: string, applied: string) =>
+      `나는 ${mine}을 골랐지만, ${two} 중 적은 쪽에 맞춰 ${applied} 받아요.`,
+    freqNext: " 바꾼 횟수는 다음 주부터 적용돼요.",
+    freqSet: (f: string) => `질문을 ${f} 받아요`,
+    freqSetLess: (two: string, f: string) => `${two} 중 적은 쪽에 맞춰 ${f} 받아요`,
+    curious: "요즘 궁금한 것",
+    curiousNote: (who: string) => `이 주제의 근황이 오면 먼저 보여 드려요. ${withEge(who)}는 알리지 않아요.`,
+    avoid: "피하고 싶은 주제",
+    avoidNote: (who: string) => `고른 주제는 AI 질문에서 빼고, ${withEge(who)}는 알리지 않아요.`,
+    none: "없음",
+    shownTo: (who: string) => `${withEge(who)} 보이는 정보`,
+    disconnect: (who: string) => `연결 끊기 (${who})`,
+    disconnectTitle: (who: string) => `${withWa(who)}의 연결을 끊을까요?`,
+    disconnectBody: "새 질문 · 알림 · 통화가 멈춰요. 다시 이어지면 지난 기록도 그대로 보여요.",
+    disconnectOk: "연결 끊기",
+    disconnected: (who: string) => `${withWa(who)}의 연결을 끊었어요`,
+    // 통화 편한 시간
+    scheduleNote: "고른 시간은 가족에게도 보여요. 서로 고른 시간이 겹칠 때만 알려 드려요.",
+    scheduleEmpty: "고르지 않으면 통화 편한 시간 알림이 오지 않아요.",
+    maxTimes: "시간은 3개까지 고를 수 있어요",
+    addTime: "+ 시간 더하기",
+    addTitle: "통화 편한 시간 더하기",
+    day: "요일",
+    start: "시작",
+    end: "끝",
+    earlier: "한 시간 앞으로",
+    later: "한 시간 뒤로",
+    badRange: "끝나는 시각은 시작보다 늦어야 해요.",
+    add: "더하기",
+    added: "시간을 더했어요",
+    already: "이미 고른 시간이에요",
+    leaveTitle: "바꾼 내용이 있어요",
+    leaveBody: "저장하지 않고 나가면 바꾼 내용은 지워져요.",
+    keepEditing: "계속 고치기",
+    // 알림 받는 시각
+    notifyOn: "알림 받기",
+    notifyOnSub: "새 질문 · 열린 답 · 통화 편한 시간",
+    notifyNote: "알림은 하루에 한 번, 정한 시각에 모아서 보내요. 가족이 건 전화는 바로 울려요.",
+    notifyTimeHead: "받는 시각",
+    notifyTimes: { "08:00": "아침 8시", "12:00": "낮 12시", "19:00": "저녁 7시", "21:00": "밤 9시" },
+    // 보이는 정보
+    shownToFamily: "연결된 가족에게 보여요",
+    shownToWho: (who: string) => `${withEge(who)} 보여요`,
+    onlyMe: "나에게만 보여요",
+    shared: [
+      "질문에 쓴 내 답 · 둘 다 답했거나 내가 먼저 보냈을 때",
+      "두 사람이 같이 받는 질문",
+      "내가 정한 통화 편한 시간",
+      "내가 남긴 근황과 사진",
+    ],
+    notShared: [
+      "통화 메모 · 메모 초안과 기분",
+      "메모로 만든 다음 통화 질문",
+      "내가 만든 질문 · 보내는 날 전까지",
+      "요즘 궁금한 것 · 피하고 싶은 주제",
+      "앱 사용 기록과 아직 답하지 않은 질문",
+    ],
+    privacyNote:
+      "이어봄은 휴대폰 번호, 휴대폰 통화 기록, 연락처, 위치, 캘린더 일정 내용을 모으지 않아요. 통화는 두 분 모두 통화 메모 초안을 켰을 때만 녹음하고, 녹음은 글로 바꾸면 바로, 글로 바꾼 통화 내용은 초안을 만든 뒤 지워요.",
+  },
   /** 서버 함수 오류 code별 문구 (supabase/functions/_shared/http.ts) */
   error: {
     unauthorized: "다시 로그인해 주세요",
@@ -226,5 +384,6 @@ export const ko = {
     gallery: "공통 부품 보기",
     homeGallery: "홈 화면 (가짜 데이터)",
     archiveGallery: "기록 화면 (가짜 데이터)",
+    myGallery: "마이 화면 (가짜 데이터)",
   },
 } as const;

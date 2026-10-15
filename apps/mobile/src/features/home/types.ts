@@ -57,6 +57,8 @@ export type PendingInvite = {
 };
 
 export type HomeData = {
+  /** 글자 크게 보기(마이). 앱 전체가 이 값으로 글자 크기를 정한다 */
+  large_text?: boolean;
   families: HomeFamily[];
   notice: HomeNotice | null;
   pending_invites?: PendingInvite[];

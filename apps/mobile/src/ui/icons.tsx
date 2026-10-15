@@ -99,10 +99,19 @@ export function IcoList({ color = C.textSub, size = 15 }: P) {
 }
 
 /** 선택지 오른쪽 동그라미 안의 작은 체크 */
-export function IcoTick({ color = C.white }: P) {
+export function IcoTick({ color = C.white, size = 11 }: P) {
   return (
-    <Svg width={11} height={11} viewBox="0 0 12 12" fill="none">
+    <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
       <Path d="M2 6l3 3 5-5" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** '안 보여요' 동그라미 안의 작은 ✕ */
+export function IcoCross({ color = C.textTertiary, size = 10 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
+      <Path d="M3 3l6 6M9 3l-6 6" stroke={color} strokeWidth={1.6} strokeLinecap="round" />
     </Svg>
   );
 }

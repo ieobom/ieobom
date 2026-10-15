@@ -21,6 +21,11 @@ export function withKke(name: string): string {
   return (hasBatchim(name) ? name + "이" : name) + "에게";
 }
 
+/** '엄마에게' · '아영이에게' (시안의 withEge) */
+export function withEge(name: string): string {
+  return (hasBatchim(name) ? name + "이" : name) + "에게";
+}
+
 /** 부모님이 자녀를 부를 때: '아영' → '아영이', '민지' → '민지' */
 export function callName(name: string): string {
   return hasBatchim(name) ? name + "이" : name;

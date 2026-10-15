@@ -1,9 +1,10 @@
-// 고르는 부품. 시안의 Chip · Toggle · Option · Tag.
+// 고르는 부품 · 글 넣는 칸. 시안의 Chip · Toggle · Option · Tag · input.
 
 import type { ReactNode } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Platform, Pressable, StyleSheet, TextInput, View, type TextStyle } from "react-native";
+import { FAMILY } from "./fonts";
 import { IcoTick } from "./icons";
-import { T } from "./text";
+import { T, useTextScale } from "./text";
 import { C, R } from "./theme";
 
 /** 둥근 칩 (근황 주제 · 종류 거르기) */
@@ -121,6 +122,38 @@ export function Option({
   );
 }
 
+// 웹에서 누를 때 생기는 파란 테두리를 없앤다(시안의 outline: none)
+const noOutline: TextStyle = Platform.OS === "web" ? ({ outlineStyle: "none" } as unknown as TextStyle) : {};
+
+/** 한 줄 글 넣는 칸 (이름 바꾸기). 글자 크게 보기를 따른다 */
+export function TextField({
+  value,
+  onChangeText,
+  label,
+  placeholder,
+  maxLength,
+}: {
+  value: string;
+  onChangeText: (v: string) => void;
+  /** 읽어 주기용 이름 */
+  label: string;
+  placeholder?: string;
+  maxLength?: number;
+}) {
+  const scale = useTextScale();
+  return (
+    <TextInput
+      accessibilityLabel={label}
+      value={value}
+      onChangeText={onChangeText}
+      placeholder={placeholder}
+      placeholderTextColor={C.disabledText}
+      maxLength={maxLength}
+      style={[noOutline, styles.field, { fontFamily: FAMILY[400], fontSize: 18 * scale }]}
+    />
+  );
+}
+
 const TAG_TONE = {
   primary: { bg: "#FDF0E8", fg: C.primaryDeep },
   family: { bg: "#EFF4E8", fg: C.accent2Deep },
@@ -176,6 +209,16 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
+  },
+  field: {
+    width: "100%",
+    minHeight: 56,
+    borderWidth: 1.5,
+    borderColor: C.border,
+    borderRadius: R.btn,
+    paddingHorizontal: 16,
+    color: C.text,
+    backgroundColor: C.bg,
   },
   tag: {
     alignSelf: "flex-start",
