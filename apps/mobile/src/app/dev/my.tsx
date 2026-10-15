@@ -3,13 +3,14 @@ import { Redirect } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ko } from "@/copy/ko";
-import { applyFixture, MY_CASES } from "@/features/dev/my-fixtures";
+import { ANSWERED, applyFixture, MY_CASES } from "@/features/dev/my-fixtures";
 import { partnerLabel } from "@/features/home/partner";
 import { FamilyListScreen, FamilySettingsScreen, InviteScreen } from "@/features/my/family-screens";
 import { NotifyScreen } from "@/features/my/notify-screen";
 import { PrivacyScreen } from "@/features/my/privacy-screen";
 import { ScheduleScreen } from "@/features/my/schedule-screen";
 import { SettingsScreen } from "@/features/my/settings-screen";
+import type { Inquiry } from "@/features/my/use-help";
 import type { MyAction } from "@/features/my/use-my";
 import { BIG_TEXT_SCALE, C, Chip, T, TextScaleProvider, useToast } from "@/ui";
 
@@ -30,6 +31,7 @@ export default function DevMy() {
   const [data, setData] = useState(MY_CASES[0]!.data);
   const [screen, setScreen] = useState<ScreenKey>("my");
   const [privacyFor, setPrivacyFor] = useState<string | undefined>(undefined);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   if (!__DEV__) return <Redirect href="/" />;
 
   const act = (a: MyAction, message?: string) => {
@@ -52,6 +54,7 @@ export default function DevMy() {
     screen === "my" ? (
       <SettingsScreen
         data={data}
+        inquiries={inquiries}
         handlers={{
           onFamilies: () => setScreen("families"),
           onSchedule: () => setScreen("schedule"),
@@ -61,7 +64,29 @@ export default function DevMy() {
             setScreen("privacy");
           },
           onDoc: (k) => toast(ko.my.docs[k]),
-          onHelp: say("도움말 · 문의"),
+          onHelpOpen: () => {},
+          onHelpGo: (go) => {
+            if (go === "big") act({ type: "profile", patch: { large_text: true } }, ko.help.bigDone);
+            else if (go === "privacy") setScreen("privacy");
+            else if (go === "schedule") setScreen("schedule");
+            else if (go === "family") setScreen("families");
+            else toast("가족 전화 받기 (6-8)");
+          },
+          onSendInquiry: (body, item) => {
+            setInquiries((xs) => [
+              {
+                id: String(xs.length),
+                help_item: item,
+                body,
+                created_at: new Date().toISOString(),
+                answer: null,
+                answered_at: null,
+                answer_seen_at: null,
+              },
+              ...xs,
+            ]);
+            toast(ko.help.sentToast);
+          },
           onLogout: say("로그아웃"),
           onWithdraw: say("탈퇴"),
           onRename: (name) => act({ type: "profile", patch: { name } }, ko.my.renamed),
@@ -157,6 +182,7 @@ export default function DevMy() {
               onPress={() => {
                 setCaseKey(c.key);
                 setData(c.data);
+                setInquiries(c.key === "answered" ? ANSWERED : []);
                 setScreen("my");
               }}
             />

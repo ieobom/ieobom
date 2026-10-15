@@ -132,6 +132,7 @@ export function TextField({
   label,
   placeholder,
   maxLength,
+  lines,
 }: {
   value: string;
   onChangeText: (v: string) => void;
@@ -139,8 +140,11 @@ export function TextField({
   label: string;
   placeholder?: string;
   maxLength?: number;
+  /** 여러 줄 칸이면 보이는 줄 수 (문의하기 4줄) */
+  lines?: number;
 }) {
   const scale = useTextScale();
+  const size = (lines ? 16 : 18) * scale;
   return (
     <TextInput
       accessibilityLabel={label}
@@ -149,7 +153,20 @@ export function TextField({
       placeholder={placeholder}
       placeholderTextColor={C.disabledText}
       maxLength={maxLength}
-      style={[noOutline, styles.field, { fontFamily: FAMILY[400], fontSize: 18 * scale }]}
+      multiline={!!lines}
+      numberOfLines={lines}
+      style={[
+        noOutline,
+        styles.field,
+        { fontFamily: FAMILY[400], fontSize: size },
+        lines
+          ? {
+              ...styles.area,
+              lineHeight: Math.round(size * 1.6),
+              minHeight: Math.round(size * 1.6 * lines) + 28,
+            }
+          : null,
+      ]}
     />
   );
 }
@@ -220,6 +237,7 @@ const styles = StyleSheet.create({
     color: C.text,
     backgroundColor: C.bg,
   },
+  area: { paddingVertical: 14, textAlignVertical: "top" },
   tag: {
     alignSelf: "flex-start",
     minHeight: 22,

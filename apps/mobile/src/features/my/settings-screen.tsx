@@ -1,16 +1,18 @@
 // 마이 첫 화면(39차 SettingsScreen): 이름 → 연결된 가족 · 통화 편한 시간 → 알림 · 통화 메모 초안 · 글자 크게 보기
 // → 개인정보와 안내 → 도움말 · 문의 → 로그아웃 · 탈퇴하기.
-// '가족 전화 받기'(알림 · 마이크 권한)는 6-8, 설문 카드는 10-10에서 더한다.
+// '가족 전화 받기'(알림 · 마이크 권한)는 6-8, 설문 카드는 10-10에서 더한다. 도움말 · 문의는 아래 창(help-sheet).
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { ko } from "@/copy/ko";
+import { ko, type HelpGo } from "@/copy/ko";
 import { partnerLabel } from "@/features/home/partner";
 import { seoulParts } from "@/lib/dates";
 import { callName } from "@/lib/korean";
 import { Avatar, Button, C, Dialog, Divider, Screen, Sheet, T, TextField } from "@/ui";
+import { HelpSheet } from "./help-sheet";
 import { familiesDesc, scheduleDesc } from "./labels";
 import { Group, SettingsRow } from "./parts";
 import type { MyPage } from "./types";
+import type { Inquiry } from "./use-help";
 
 export type DocKey = keyof typeof ko.my.docs;
 
@@ -20,7 +22,11 @@ export type MyHandlers = {
   onNotify: () => void;
   onPrivacy: () => void;
   onDoc: (key: DocKey) => void;
-  onHelp: () => void;
+  /** 도움말을 열 때 (새로 온 답을 봤다고 적는다) */
+  onHelpOpen: () => void;
+  /** 도움말 답 아래 단추. 할 일을 한 뒤 도움말은 닫힌다 */
+  onHelpGo: (go: HelpGo) => void;
+  onSendInquiry: (body: string, helpItem: string) => void;
   onRename: (name: string) => void;
   onMemoDraft: (on: boolean) => void;
   onBigText: (on: boolean) => void;
@@ -30,19 +36,29 @@ export type MyHandlers = {
 
 const DOC_KEYS = Object.keys(ko.my.docs) as DocKey[];
 
-export function SettingsScreen({ data, handlers: h }: { data: MyPage; handlers: MyHandlers }) {
+export function SettingsScreen({
+  data,
+  inquiries,
+  handlers: h,
+}: {
+  data: MyPage;
+  inquiries: Inquiry[];
+  handlers: MyHandlers;
+}) {
   const m = ko.my;
   const me = data.me;
   const parent = me.side === "parent";
   const [naming, setNaming] = useState(false);
   const [askOut, setAskOut] = useState(false);
   const [askWithdraw, setAskWithdraw] = useState(false);
+  const [help, setHelp] = useState(false);
 
   const agreed = me.agreed_at ? ko.time.date(seoulParts(me.agreed_at)) : null;
   const notify = me.notify_on ? m.notifyAt(m.notifyTimes[me.notify_time]) : m.notifyOff;
   const connected = data.families.map(partnerLabel).join(" · ");
   // 부모님 이름은 자녀 화면에 '엄마 · 아빠'로 보인다. 자녀가 한 명이면 그 이름으로 알려 준다
   const [first] = data.families;
+  const example = first ? partnerLabel(first) : ko.family.someone;
   const renameHint = !parent
     ? m.renameHintChild
     : first
@@ -123,7 +139,14 @@ export function SettingsScreen({ data, handlers: h }: { data: MyPage; handlers: 
         ) : null}
 
         <Group>
-          <SettingsRow label={m.help} desc={m.helpSub} onPress={h.onHelp} />
+          <SettingsRow
+            label={m.help}
+            desc={m.helpSub}
+            onPress={() => {
+              setHelp(true);
+              h.onHelpOpen();
+            }}
+          />
         </Group>
 
         <View style={styles.out}>
@@ -149,6 +172,18 @@ export function SettingsScreen({ data, handlers: h }: { data: MyPage; handlers: 
           }}
         />
       ) : null}
+      <HelpSheet
+        visible={help}
+        big={me.large_text}
+        example={example}
+        inquiries={inquiries}
+        onClose={() => setHelp(false)}
+        onGo={(go) => {
+          setHelp(false);
+          h.onHelpGo(go);
+        }}
+        onSend={h.onSendInquiry}
+      />
       <Dialog
         visible={askOut}
         title={m.logoutTitle}

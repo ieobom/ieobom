@@ -1,4 +1,5 @@
 // 마이 개발 확인용 가짜 데이터(39차 시연과 같은 값). 로그인 없이 /dev/my에서 화면을 본다.
+import type { Inquiry } from "@/features/my/use-help";
 import type { MyAction } from "@/features/my/use-my";
 import type { Freq, MyPage } from "@/features/my/types";
 
@@ -65,6 +66,21 @@ export const MY_CASES: { key: string; label: string; data: MyPage }[] = [
     key: "none",
     label: "이어진 가족 없음",
     data: { ...CHILD, families: [], invites: [], call_times: [] },
+  },
+  { key: "answered", label: "문의에 답이 왔을 때", data: CHILD },
+];
+
+/** 시안 '문의에 답이 왔을 때' */
+export const ANSWERED: Inquiry[] = [
+  {
+    id: "q1",
+    help_item: "ring",
+    body: "엄마 전화가 소리 없이 와요",
+    created_at: "2026-10-10T10:00:00+09:00",
+    answer:
+      "무음이나 방해 금지 모드면 소리 없이 화면만 켜져요. 휴대폰 설정 > 이어봄 > 알림에서 '소리'를 켜 주세요.",
+    answered_at: "2026-10-12T15:00:00+09:00",
+    answer_seen_at: null,
   },
 ];
 
