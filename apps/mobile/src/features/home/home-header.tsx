@@ -76,6 +76,7 @@ export function HomeHeader({
   canInvite,
   inviting,
   onInvite,
+  onInviting,
   now = new Date(),
 }: {
   family?: FamilyOption;
@@ -85,6 +86,8 @@ export function HomeHeader({
   /** 더 초대할 사람이 없고 보내 둔 초대가 있으면 '아빠 초대 중' */
   inviting?: string;
   onInvite: () => void;
+  /** 'OO 초대 중'을 누르면 그 초대 코드 보기 */
+  onInviting?: () => void;
   now?: Date;
 }) {
   return (
@@ -112,7 +115,7 @@ export function HomeHeader({
             </T>
           </Pressable>
         ) : inviting ? (
-          <Pressable accessibilityRole="button" onPress={onInvite} style={styles.invite}>
+          <Pressable accessibilityRole="button" onPress={onInviting ?? onInvite} style={styles.invite}>
             <T size={15} weight={600} color={C.textSub}>
               {ko.home.inviting(inviting)}
             </T>

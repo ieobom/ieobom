@@ -388,6 +388,51 @@ export const ko = {
     privacyNote:
       "이어봄은 휴대폰 번호, 휴대폰 통화 기록, 연락처, 위치, 캘린더 일정 내용을 모으지 않아요. 통화는 두 분 모두 통화 메모 초안을 켰을 때만 녹음하고, 녹음은 글로 바꾸면 바로, 글로 바꾼 통화 내용은 초안을 만든 뒤 지워요.",
   },
+  /** 가족 초대 · 받은 코드 넣기 (39차 가입의 '누구와 이어볼까요' · 초대 · 코드 입력, 앱 안에서 더 초대할 때도 같다) */
+  invite: {
+    pickTitle: "누구와 이어볼까요?",
+    pickSubAll: "이어질 가족 한 분을 골라요.\n내가 부모님이면 '자녀'를 골라요.",
+    pickSubParents: "이어질 가족 한 분을 골라요.",
+    pickSubChild: "자녀와 1:1로 이어져요.",
+    childDesc: "아들 · 딸",
+    takenLinked: "이미 이어져 있어요",
+    takenSent: "초대 코드를 보냈어요",
+    haveCode: "초대 코드를 받았어요",
+    asTitle: "나는 누구로 이어질까요?",
+    asSubSaved: "전에 고른 대로 골라 두었어요.\n다르면 바꿔 주세요.",
+    asSubNew: "자녀가 코드를 넣으면\n'엄마의 자녀로 이어져요'처럼 보여요.",
+    asOption: (kind: string) => `나는 ${kind}`,
+    next: "다음",
+    title: (who: string) => `${josa(who, "을", "를")} 초대해요`,
+    sub: (who: string) =>
+      `이 코드를 ${withKke(who)} 보내 주세요.\n이어봄을 깔고 이 코드를 넣으면 바로 이어져요.`,
+    close: "닫기",
+    closed: "코드는 마이 > 연결된 가족에서 다시 볼 수 있어요",
+    connected: (who: string) => `${withWa(who)} 이어졌어요`,
+    codeTitle: "받은 초대 코드를\n넣어 주세요",
+    codeSub: "가족이 카카오톡으로 보낸\n6자리 숫자예요.",
+    codeLabel: "초대 코드 여섯 자리",
+    invitedBy: (who: string) => `${josa(who, "이", "가")} 초대했어요`,
+    asChild: (parent: string) => `${parent}의 자녀로 이어져요`,
+    asParent: (child: string, kind: string) => `${child} ${josa(kind, "으로", "로")} 이어져요`,
+    askParent: (parent: string) => `맞지 않으면 ${parent}께 여쭤봐 주세요`,
+    askChild: (child: string) => `맞지 않으면 ${withEge(child)} 물어봐 주세요`,
+    connect: "연결하기",
+    errors: {
+      code_not_found: "코드가 맞지 않아요. 숫자를 다시 확인해 주세요.",
+      code_expired: "48시간이 지나 쓸 수 없는 코드예요. 초대한 가족에게 새 코드를 부탁해 주세요.",
+      code_used: "이미 연결에 쓴 코드예요. 초대한 가족에게 확인해 주세요.",
+      code_canceled: "취소됐거나 새 코드로 바뀐 코드예요. 초대한 가족에게 새 코드를 부탁해 주세요.",
+      too_many_attempts: "코드를 여러 번 틀렸어요. 10분 뒤에 다시 넣어 주세요.",
+      own_code: "내가 만든 코드예요. 이어질 가족에게 보내 주세요.",
+      side_mismatch: (who: string) =>
+        `이 코드는 ${josa(who, "이", "가")} 넣는 코드예요. 초대한 가족에게 다시 확인해 주세요.`,
+      already_connected: (who: string) => `${withWa(who)}는 이미 이어져 있어요.`,
+      /** child는 부르는 말('아영이') */
+      already_has_parent: (child: string, kind: string) =>
+        `${child}에게는 이미 ${josa(kind, "이", "가")} 이어져 있어요.`,
+    },
+  },
   /** 이용 설문 (39차 SurveyScreen · 마이의 설문 카드) */
   survey: {
     cardTitle: (round: number) => (round ? `이어봄, ${round}주 써 보니 어떠세요?` : "이어봄을 시작하며"),
@@ -500,5 +545,6 @@ export const ko = {
     homeGallery: "홈 화면 (가짜 데이터)",
     archiveGallery: "기록 화면 (가짜 데이터)",
     myGallery: "마이 화면 (가짜 데이터)",
+    inviteGallery: "초대 · 코드 넣기 (가짜 데이터)",
   },
 } as const;

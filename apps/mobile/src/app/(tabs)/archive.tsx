@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ko } from "@/copy/ko";
 import { ArchiveScreen, type ArchiveMode } from "@/features/archive/archive-screen";
@@ -120,8 +120,8 @@ function SignedInArchive({
         onEditMemo: () => toast(ko.app.comingSoon),
         onRetryTalk: () => toast(ko.app.comingSoon),
       }}
-      onInvite={() => toast(ko.app.comingSoon)}
-      onCode={() => toast(ko.app.comingSoon)}
+      onInvite={() => router.push("/invite")}
+      onCode={() => router.push("/invite/code")}
     />
   );
 }

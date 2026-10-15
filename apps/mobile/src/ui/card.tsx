@@ -61,8 +61,7 @@ export function KindBadge({ kind, size = 36 }: { kind: Kind; size?: number }) {
   const m = Math.round(size * 0.47);
   return (
     <View
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
+      aria-hidden
       style={[
         styles.round,
         { width: size, height: size, borderRadius: size / 2, backgroundColor: KIND[kind].bg },

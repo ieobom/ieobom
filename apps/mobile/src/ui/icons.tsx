@@ -1,6 +1,6 @@
 // 아이콘. 39차 시안의 SVG 경로를 그대로 옮겼다.
 
-import Svg, { Circle, Path, Rect } from "react-native-svg";
+import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
 import { C } from "./theme";
 
 type P = { color?: string; size?: number };
@@ -329,6 +329,36 @@ export function IcoTickBig({ color = C.white }: P) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </Svg>
+  );
+}
+
+/** 이어봄 리본(두 줄이 매듭으로 이어짐). knot이면 매듭 부분만 크게. 꾸밈이라 읽어 주기에서 빼려면 감싼 View에서 뺀다 */
+export function BowMark({ width = 220, knot = false }: { width?: number; knot?: boolean }) {
+  const line = { strokeLinecap: "round", strokeLinejoin: "round", fill: "none" } as const;
+  return (
+    <Svg
+      width={width}
+      height={width * (knot ? 0.72 : 0.42)}
+      viewBox={knot ? "120 22 128 92" : "54 14 260 110"}
+    >
+      <Path d="M 60 84 C 96 58, 128 100, 184 60" stroke={C.brand} strokeWidth={6} {...line} />
+      <Path d="M 308 84 C 272 58, 240 100, 184 60" stroke={C.accent2} strokeWidth={6} {...line} />
+      <Path
+        d="M 184 60 C 152 22, 126 48, 148 66 C 160 75, 176 67, 184 60"
+        stroke={C.brand}
+        strokeWidth={5.5}
+        {...line}
+      />
+      <Path
+        d="M 184 60 C 216 22, 242 48, 220 66 C 208 75, 192 67, 184 60"
+        stroke={C.accent2}
+        strokeWidth={5.5}
+        {...line}
+      />
+      <Path d="M 184 60 C 177 76, 170 88, 158 98" stroke={C.brand} strokeWidth={5.5} {...line} />
+      <Path d="M 184 60 C 191 76, 198 88, 210 98" stroke={C.accent2} strokeWidth={5.5} {...line} />
+      <Ellipse cx={184} cy={60} rx={7.5} ry={8.5} fill={C.primaryDeep} />
     </Svg>
   );
 }
