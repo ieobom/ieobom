@@ -515,8 +515,10 @@ export type Database = {
           answer: string | null
           answer_seen_at: string | null
           answered_at: string | null
+          app_version: string
           body: string
           created_at: string
+          device: string
           help_item: string
           id: string
           user_id: string | null
@@ -525,8 +527,10 @@ export type Database = {
           answer?: string | null
           answer_seen_at?: string | null
           answered_at?: string | null
+          app_version?: string
           body: string
           created_at?: string
+          device?: string
           help_item?: string
           id?: string
           user_id?: string | null
@@ -535,8 +539,10 @@ export type Database = {
           answer?: string | null
           answer_seen_at?: string | null
           answered_at?: string | null
+          app_version?: string
           body?: string
           created_at?: string
+          device?: string
           help_item?: string
           id?: string
           user_id?: string | null

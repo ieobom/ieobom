@@ -1,5 +1,5 @@
 begin;
-select plan(18);
+select plan(19);
 
 select pg_temp.make_user('자녀');
 select pg_temp.make_user('엄마');
@@ -31,6 +31,8 @@ select throws_ok($$ insert into public.notice_reads (notice_id, user_id) values 
   '42501', null, '남의 이름으로 확인하지 못한다');
 select lives_ok($$ insert into public.inquiries (user_id, help_item, body) values (pg_temp.user_id('자녀'), 'call', '전화가 안 울려요') $$, '문의를 보낸다');
 select is((select count(*)::int from public.inquiries), 1, '내 문의만 보인다');
+select lives_ok($$ insert into public.inquiries (user_id, help_item, body, app_version, device) values
+  (pg_temp.user_id('자녀'), '', '소리가 안 나요', '0.1.0', 'ios 18.2') $$, '앱 버전 · 휴대폰 종류를 같이 보낸다');
 select throws_ok($$ insert into public.inquiries (user_id, body, answer) values (pg_temp.user_id('자녀'), '답까지', '스스로 답') $$,
   '42501', null, '답은 운영팀만 쓴다');
 select throws_ok($$ update public.inquiries set answer = '바꿈' $$, '42501', null, '답을 고치지 못한다');
