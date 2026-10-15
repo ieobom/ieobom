@@ -15,10 +15,21 @@ export function Screen({ children }: { children: ReactNode }) {
   );
 }
 
-/** 뒤로 단추 + 제목 (시안의 설정 화면 머리). 제목이 없으면 뒤로 단추만 */
-export function ScreenHeader({ title, onBack }: { title?: string; onBack: () => void }) {
+/** 뒤로 단추 + 제목 (시안의 설정 화면 머리). 제목이 없으면 뒤로 단추만.
+ *  middle은 제목 자리에 넣는 것('질문 | 근황'), right는 오른쪽 끝('지우기') */
+export function ScreenHeader({
+  title,
+  onBack,
+  middle,
+  right,
+}: {
+  title?: string;
+  onBack: () => void;
+  middle?: ReactNode;
+  right?: ReactNode;
+}) {
   return (
-    <View style={[styles.header, !title && styles.headerBare]}>
+    <View style={[styles.header, !title && !middle && styles.headerBare]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={ko.my.back}
@@ -28,11 +39,16 @@ export function ScreenHeader({ title, onBack }: { title?: string; onBack: () => 
       >
         <IcoBack />
       </Pressable>
-      {title ? (
+      {middle ? (
+        <View style={styles.middle}>{middle}</View>
+      ) : title ? (
         <T size={20} weight={800} ls={-0.04} accessibilityRole="header" style={styles.flex}>
           {title}
         </T>
-      ) : null}
+      ) : (
+        <View style={styles.flex} />
+      )}
+      {right}
     </View>
   );
 }
@@ -75,5 +91,6 @@ const styles = StyleSheet.create({
     marginRight: -14,
   },
   flex: { flex: 1 },
+  middle: { flex: 1, flexDirection: "row" },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 8, paddingHorizontal: 24 },
 });

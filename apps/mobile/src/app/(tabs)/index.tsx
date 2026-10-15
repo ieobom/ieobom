@@ -21,15 +21,16 @@ function SignedInHome({ userId }: { userId: string }) {
   const talk = useTalkList(userId, first?.relationship_id);
   if (!home.data) return null;
 
-  // 아직 만들지 않은 화면(답하기 · 통화 · 질문 만들기 · 초안 저장)은 안내만 띄운다
+  // 아직 만들지 않은 화면(통화 · 초안 저장)은 안내만 띄운다
   const soon = () => toast(ko.app.comingSoon);
   const handlers: HomeHandlers = {
     onCall: soon,
     onCallScreen: soon,
-    onAnswer: soon,
+    // 말로 답하기(7-4)가 붙기 전에는 글로 답하기로 연다
+    onAnswer: (f) => router.push({ pathname: "/answer", params: { rel: f.relationship_id } }),
     onPast: (f) =>
       router.navigate({ pathname: "/archive", params: { kind: "question", family: f.relationship_id } }),
-    onMakeQuestion: soon,
+    onMakeQuestion: (f) => router.push({ pathname: "/compose", params: { rel: f.relationship_id } }),
     onInvite: () => router.push("/invite"),
     onInviteOpen: (as) => router.push({ pathname: "/my/invite/[as]", params: { as } }),
     onCode: () => router.push("/invite/code"),

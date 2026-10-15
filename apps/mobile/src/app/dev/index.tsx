@@ -31,6 +31,13 @@ function DevHub() {
         </T>
       ) : null}
       {__DEV__ ? (
+        <Link href="/dev/compose" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.composeGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
         <Link href="/dev/invite" style={styles.link}>
           <T size={14} color={C.primary}>
             {ko.dev.inviteGallery}

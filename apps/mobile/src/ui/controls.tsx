@@ -125,7 +125,7 @@ export function Option({
 // 웹에서 누를 때 생기는 파란 테두리를 없앤다(시안의 outline: none)
 const noOutline: TextStyle = Platform.OS === "web" ? ({ outlineStyle: "none" } as unknown as TextStyle) : {};
 
-/** 한 줄 글 넣는 칸 (이름 바꾸기). 글자 크게 보기를 따른다 */
+/** 글 넣는 칸 (이름 바꾸기 · 문의 · 답 · 질문). 글자 크게 보기를 따른다 */
 export function TextField({
   value,
   onChangeText,
@@ -133,6 +133,9 @@ export function TextField({
   placeholder,
   maxLength,
   lines,
+  size: fontSize,
+  card = false,
+  autoFocus,
 }: {
   value: string;
   onChangeText: (v: string) => void;
@@ -142,9 +145,15 @@ export function TextField({
   maxLength?: number;
   /** 여러 줄 칸이면 보이는 줄 수 (문의하기 4줄) */
   lines?: number;
+  /** 글자 크기(기본: 한 줄 18 · 여러 줄 16) */
+  size?: number;
+  /** 카드처럼 크게 둥근 칸 (답 · 질문 쓰기) */
+  card?: boolean;
+  autoFocus?: boolean;
 }) {
   const scale = useTextScale();
-  const size = (lines ? 16 : 18) * scale;
+  const size = (fontSize ?? (lines ? 16 : 18)) * scale;
+  const lh = card ? 1.7 : 1.6;
   return (
     <TextInput
       accessibilityLabel={label}
@@ -155,6 +164,7 @@ export function TextField({
       maxLength={maxLength}
       multiline={!!lines}
       numberOfLines={lines}
+      autoFocus={autoFocus}
       style={[
         noOutline,
         styles.field,
@@ -162,10 +172,11 @@ export function TextField({
         lines
           ? {
               ...styles.area,
-              lineHeight: Math.round(size * 1.6),
-              minHeight: Math.round(size * 1.6 * lines) + 28,
+              lineHeight: Math.round(size * lh),
+              minHeight: Math.round(size * lh * lines) + 32,
             }
           : null,
+        card ? styles.card : null,
       ]}
     />
   );
@@ -238,6 +249,7 @@ const styles = StyleSheet.create({
     backgroundColor: C.bg,
   },
   area: { paddingVertical: 14, textAlignVertical: "top" },
+  card: { borderRadius: R.card, paddingVertical: 16, paddingHorizontal: 18 },
   tag: {
     alignSelf: "flex-start",
     minHeight: 22,

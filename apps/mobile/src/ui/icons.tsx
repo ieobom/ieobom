@@ -362,3 +362,13 @@ export function BowMark({ width = 220, knot = false }: { width?: number; knot?: 
     </Svg>
   );
 }
+
+export function IcoQuestion({ color = C.primary, size = 19 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={1.7} />
+      <Path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke={color} strokeWidth={1.7} strokeLinecap="round" />
+      <Circle cx={12} cy={17} r={0.8} fill={color} />
+    </Svg>
+  );
+}
