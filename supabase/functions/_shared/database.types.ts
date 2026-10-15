@@ -1469,6 +1469,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      custom_question_next: { Args: { relationship: string }; Returns: string }
       custom_question_slot: {
         Args: { after: string; relationship: string }
         Returns: string
