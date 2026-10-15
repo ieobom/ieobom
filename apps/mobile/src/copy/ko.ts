@@ -12,6 +12,20 @@ import { josa, withEge, withKke, withWa } from "@/lib/korean";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
 
+// 세는 말: 한 · 두 · 세 가지
+const COUNT: Record<number, string> = {
+  1: "한",
+  2: "두",
+  3: "세",
+  4: "네",
+  5: "다섯",
+  6: "여섯",
+  7: "일곱",
+  8: "여덟",
+  9: "아홉",
+  10: "열",
+};
+
 /** 도움말 답 아래 단추가 하는 일 */
 export type HelpGo = "ready" | "big" | "privacy" | "schedule" | "family";
 
@@ -373,6 +387,26 @@ export const ko = {
     ],
     privacyNote:
       "이어봄은 휴대폰 번호, 휴대폰 통화 기록, 연락처, 위치, 캘린더 일정 내용을 모으지 않아요. 통화는 두 분 모두 통화 메모 초안을 켰을 때만 녹음하고, 녹음은 글로 바꾸면 바로, 글로 바꾼 통화 내용은 초안을 만든 뒤 지워요.",
+  },
+  /** 이용 설문 (39차 SurveyScreen · 마이의 설문 카드) */
+  survey: {
+    cardTitle: (round: number) => (round ? `이어봄, ${round}주 써 보니 어떠세요?` : "이어봄을 시작하며"),
+    cardSub: "짧은 설문 · 2분이면 끝나요",
+    title: "이용 설문",
+    firstTitle: "이어봄을 시작하며\n몇 가지만 여쭤볼게요",
+    lead: "요즘 가족과 지낸 일을 떠올려 주세요. 답은 가족에게 보이지 않아요.",
+    low: "전혀 아니에요",
+    high: "매우 그래요",
+    score: (q: string, n: number) => `${q} ${n}점`,
+    more: "더 하고 싶은 말",
+    optional: "(선택)",
+    morePlaceholder: "편하게 적어 주세요",
+    needAll: (n: number) => `${COUNT[n] ?? n} 가지를 모두 고르면 보낼 수 있어요.`,
+    send: "설문 보내기",
+    sent: "설문을 보냈어요. 고마워요",
+    leaveTitle: "쓰던 설문이 있어요",
+    leaveBody: "지금 나가면 고른 답은 보내지 않고 지워져요.",
+    keep: "계속 쓰기",
   },
   /** 도움말 · 문의 (39차 HelpSheet). go는 답 아래 단추: [글자, 할 일] */
   help: {

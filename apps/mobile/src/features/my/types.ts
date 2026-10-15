@@ -45,4 +45,8 @@ export type MyPage = {
   families: MyFamily[];
   invites: MyInvite[];
   call_times: (CallTime & { id: string })[];
+  /** 지금 받을 이용 설문(이어진 날 기준 0 · 3 · 6주차). 다 보냈으면 null */
+  survey: { relationship_id: string; round: SurveyRound } | null;
 };
+
+export type SurveyRound = 0 | 3 | 6;

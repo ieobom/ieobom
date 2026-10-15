@@ -1,13 +1,13 @@
 // 마이 첫 화면(39차 SettingsScreen): 이름 → 연결된 가족 · 통화 편한 시간 → 알림 · 통화 메모 초안 · 글자 크게 보기
 // → 개인정보와 안내 → 도움말 · 문의 → 로그아웃 · 탈퇴하기.
-// '가족 전화 받기'(알림 · 마이크 권한)는 6-8, 설문 카드는 10-10에서 더한다. 도움말 · 문의는 아래 창(help-sheet).
+// '가족 전화 받기'(알림 · 마이크 권한)는 6-8에서 더한다. 도움말 · 문의는 아래 창(help-sheet).
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { ko, type HelpGo } from "@/copy/ko";
 import { partnerLabel } from "@/features/home/partner";
 import { seoulParts } from "@/lib/dates";
 import { callName } from "@/lib/korean";
-import { Avatar, Button, C, Dialog, Divider, Screen, Sheet, T, TextField } from "@/ui";
+import { Avatar, Button, C, CARD, Dialog, Divider, IcoChevronRight, Screen, Sheet, T, TextField } from "@/ui";
 import { HelpSheet } from "./help-sheet";
 import { familiesDesc, scheduleDesc } from "./labels";
 import { Group, SettingsRow } from "./parts";
@@ -17,6 +17,7 @@ import type { Inquiry } from "./use-help";
 export type DocKey = keyof typeof ko.my.docs;
 
 export type MyHandlers = {
+  onSurvey: () => void;
   onFamilies: () => void;
   onSchedule: () => void;
   onNotify: () => void;
@@ -95,6 +96,25 @@ export function SettingsScreen({
             </T>
           </Pressable>
         </View>
+
+        {/* 이용 설문은 이름 바로 아래(39차 2회) */}
+        {data.survey ? (
+          <Pressable
+            accessibilityRole="button"
+            onPress={h.onSurvey}
+            style={({ pressed }) => [CARD, styles.survey, pressed && styles.pressed]}
+          >
+            <View style={styles.flex}>
+              <T size={16} weight={700} ls={-0.02} style={styles.surveyTitle}>
+                {ko.survey.cardTitle(data.survey.round)}
+              </T>
+              <T size={13} color={C.textTertiary}>
+                {ko.survey.cardSub}
+              </T>
+            </View>
+            <IcoChevronRight />
+          </Pressable>
+        ) : null}
 
         <Group>
           <SettingsRow label={m.families} desc={familiesDesc(data)} onPress={h.onFamilies} />
@@ -277,6 +297,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  survey: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    padding: 18,
+    marginBottom: 16,
+  },
+  surveyTitle: { marginBottom: 3 },
+  pressed: { opacity: 0.9 },
   section: { marginTop: 12, marginHorizontal: 4, marginBottom: 10 },
   agreed: { marginTop: -6, marginHorizontal: 4, marginBottom: 20 },
   out: { alignItems: "center", gap: 2 },

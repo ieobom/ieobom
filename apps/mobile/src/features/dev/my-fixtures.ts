@@ -36,6 +36,8 @@ const CHILD: MyPage = {
     { id: "t1", days: "weekdays", start_hour: 19, end_hour: 21 },
     { id: "t2", days: "sat", start_hour: 10, end_hour: 12 },
   ],
+  // 시연 계정은 이어진 지 42일이라 6주차
+  survey: { relationship_id: "mom", round: 6 },
 };
 
 const PARENT: MyPage = {
@@ -52,6 +54,7 @@ const PARENT: MyPage = {
   ],
   invites: [],
   call_times: [{ id: "t1", days: "weekdays", start_hour: 19, end_hour: 21 }],
+  survey: { relationship_id: "child", round: 6 },
 };
 
 export const MY_CASES: { key: string; label: string; data: MyPage }[] = [
@@ -65,9 +68,17 @@ export const MY_CASES: { key: string; label: string; data: MyPage }[] = [
   {
     key: "none",
     label: "이어진 가족 없음",
-    data: { ...CHILD, families: [], invites: [], call_times: [] },
+    data: { ...CHILD, families: [], invites: [], call_times: [], survey: null },
   },
   { key: "answered", label: "문의에 답이 왔을 때", data: CHILD },
+  { key: "first", label: "0주차 설문", data: { ...CHILD, survey: { relationship_id: "mom", round: 0 } } },
+];
+
+/** 39차 시안의 설문 문항 (survey_questions) */
+export const SURVEY_QUESTIONS = [
+  { id: "s1", text: "이번 주 가족과 연락하는 게 편했나요?" },
+  { id: "s2", text: "이어봄 질문 덕분에 이야깃거리가 생겼나요?" },
+  { id: "s3", text: "이어봄 알림이 부담스러웠나요?" },
 ];
 
 /** 시안 '문의에 답이 왔을 때' */

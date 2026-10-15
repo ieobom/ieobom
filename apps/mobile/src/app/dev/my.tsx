@@ -3,13 +3,14 @@ import { Redirect } from "expo-router";
 import { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { ko } from "@/copy/ko";
-import { ANSWERED, applyFixture, MY_CASES } from "@/features/dev/my-fixtures";
+import { ANSWERED, applyFixture, MY_CASES, SURVEY_QUESTIONS } from "@/features/dev/my-fixtures";
 import { partnerLabel } from "@/features/home/partner";
 import { FamilyListScreen, FamilySettingsScreen, InviteScreen } from "@/features/my/family-screens";
 import { NotifyScreen } from "@/features/my/notify-screen";
 import { PrivacyScreen } from "@/features/my/privacy-screen";
 import { ScheduleScreen } from "@/features/my/schedule-screen";
 import { SettingsScreen } from "@/features/my/settings-screen";
+import { SurveyScreen } from "@/features/my/survey-screen";
 import type { Inquiry } from "@/features/my/use-help";
 import type { MyAction } from "@/features/my/use-my";
 import { BIG_TEXT_SCALE, C, Chip, T, TextScaleProvider, useToast } from "@/ui";
@@ -22,6 +23,7 @@ const SCREENS = [
   ["schedule", "통화 편한 시간"],
   ["notify", "알림 받는 시각"],
   ["privacy", "보이는 정보"],
+  ["survey", "설문"],
 ] as const;
 type ScreenKey = (typeof SCREENS)[number][0];
 
@@ -56,6 +58,7 @@ export default function DevMy() {
         data={data}
         inquiries={inquiries}
         handlers={{
+          onSurvey: () => setScreen("survey"),
           onFamilies: () => setScreen("families"),
           onSchedule: () => setScreen("schedule"),
           onNotify: () => setScreen("notify"),
@@ -161,6 +164,21 @@ export default function DevMy() {
           home();
         }}
       />
+    ) : screen === "survey" ? (
+      data.survey ? (
+        <SurveyScreen
+          round={data.survey.round}
+          questions={SURVEY_QUESTIONS}
+          onBack={home}
+          onSend={() => {
+            setData((d) => ({ ...d, survey: null }));
+            toast(ko.survey.sent);
+            home();
+          }}
+        />
+      ) : (
+        nothing("받을 설문이 없어요")
+      )
     ) : (
       <PrivacyScreen family={privacyFor} onBack={home} />
     );

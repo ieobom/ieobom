@@ -28,6 +28,7 @@ function SignedInSettings({ userId }: { userId: string }) {
       data={my.data}
       inquiries={inquiries.data ?? []}
       handlers={{
+        onSurvey: () => router.push("/my/survey"),
         onFamilies: () => router.push("/my/families"),
         onSchedule: () => router.push("/my/schedule"),
         onNotify: () => router.push("/my/notify"),
