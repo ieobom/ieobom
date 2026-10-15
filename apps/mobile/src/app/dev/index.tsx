@@ -31,6 +31,41 @@ function DevHub() {
         </T>
       ) : null}
       {__DEV__ ? (
+        <Link href="/dev/signup" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.signupGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
+        <Link href="/dev/memo" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.memoGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
+        <Link href="/dev/compose" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.composeGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
+        <Link href="/dev/invite" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.inviteGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
+        <Link href="/dev/my" style={styles.link}>
+          <T size={14} color={C.primary}>
+            {ko.dev.myGallery}
+          </T>
+        </Link>
+      ) : null}
+      {__DEV__ ? (
         <Link href="/dev/archive" style={styles.link}>
           <T size={14} color={C.primary}>
             {ko.dev.archiveGallery}

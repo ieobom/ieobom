@@ -1,6 +1,6 @@
 // 아이콘. 39차 시안의 SVG 경로를 그대로 옮겼다.
 
-import Svg, { Circle, Path, Rect } from "react-native-svg";
+import Svg, { Circle, Ellipse, Path, Rect } from "react-native-svg";
 import { C } from "./theme";
 
 type P = { color?: string; size?: number };
@@ -99,10 +99,19 @@ export function IcoList({ color = C.textSub, size = 15 }: P) {
 }
 
 /** 선택지 오른쪽 동그라미 안의 작은 체크 */
-export function IcoTick({ color = C.white }: P) {
+export function IcoTick({ color = C.white, size = 11 }: P) {
   return (
-    <Svg width={11} height={11} viewBox="0 0 12 12" fill="none">
+    <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
       <Path d="M2 6l3 3 5-5" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </Svg>
+  );
+}
+
+/** '안 보여요' 동그라미 안의 작은 ✕ */
+export function IcoCross({ color = C.textTertiary, size = 10 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
+      <Path d="M3 3l6 6M9 3l-6 6" stroke={color} strokeWidth={1.6} strokeLinecap="round" />
     </Svg>
   );
 }
@@ -317,6 +326,62 @@ export function IcoTickBig({ color = C.white }: P) {
         d="M2 6.2l2.8 2.8L10 3.6"
         stroke={color}
         strokeWidth={1.9}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
+/** 이어봄 리본(두 줄이 매듭으로 이어짐). knot이면 매듭 부분만 크게. 꾸밈이라 읽어 주기에서 빼려면 감싼 View에서 뺀다 */
+export function BowMark({ width = 220, knot = false }: { width?: number; knot?: boolean }) {
+  const line = { strokeLinecap: "round", strokeLinejoin: "round", fill: "none" } as const;
+  return (
+    <Svg
+      width={width}
+      height={width * (knot ? 0.72 : 0.42)}
+      viewBox={knot ? "120 22 128 92" : "54 14 260 110"}
+    >
+      <Path d="M 60 84 C 96 58, 128 100, 184 60" stroke={C.brand} strokeWidth={6} {...line} />
+      <Path d="M 308 84 C 272 58, 240 100, 184 60" stroke={C.accent2} strokeWidth={6} {...line} />
+      <Path
+        d="M 184 60 C 152 22, 126 48, 148 66 C 160 75, 176 67, 184 60"
+        stroke={C.brand}
+        strokeWidth={5.5}
+        {...line}
+      />
+      <Path
+        d="M 184 60 C 216 22, 242 48, 220 66 C 208 75, 192 67, 184 60"
+        stroke={C.accent2}
+        strokeWidth={5.5}
+        {...line}
+      />
+      <Path d="M 184 60 C 177 76, 170 88, 158 98" stroke={C.brand} strokeWidth={5.5} {...line} />
+      <Path d="M 184 60 C 191 76, 198 88, 210 98" stroke={C.accent2} strokeWidth={5.5} {...line} />
+      <Ellipse cx={184} cy={60} rx={7.5} ry={8.5} fill={C.primaryDeep} />
+    </Svg>
+  );
+}
+
+export function IcoQuestion({ color = C.primary, size = 19 }: P) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={1.7} />
+      <Path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3" stroke={color} strokeWidth={1.7} strokeLinecap="round" />
+      <Circle cx={12} cy={17} r={0.8} fill={color} />
+    </Svg>
+  );
+}
+
+/** 동그라미 안 체크 (여쭤본 이야기 표시했어요) */
+export function IcoCheckRound({ color = C.accent2Deep }: P) {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none">
+      <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={1.8} />
+      <Path
+        d="M8 12.3l2.7 2.7L16.2 9.5"
+        stroke={color}
+        strokeWidth={1.8}
         strokeLinecap="round"
         strokeLinejoin="round"
       />

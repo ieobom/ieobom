@@ -13,6 +13,10 @@ type Props = {
   variant?: "primary" | "secondary" | "ghost";
   /** 글자 왼쪽 아이콘 */
   icon?: ReactNode;
+  /** 글자 색 (secondary · ghost). 시안의 '초대 취소하기'처럼 빨간 글자 단추 */
+  color?: string;
+  /** 글자 크기 (ghost) */
+  size?: number;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 };
@@ -23,6 +27,8 @@ export function Button({
   disabled = false,
   variant = "primary",
   icon,
+  color,
+  size,
   style,
   testID,
 }: Props) {
@@ -38,11 +44,11 @@ export function Button({
         {children}
       </T>
     ) : variant === "secondary" ? (
-      <T size={16} weight={600} ls={-0.02} color={C.primary} align="center">
+      <T size={16} weight={600} ls={-0.02} color={color ?? C.primary} align="center">
         {children}
       </T>
     ) : (
-      <T size={15} weight={500} color={C.textTertiary} align="center">
+      <T size={size ?? 15} weight={500} color={color ?? C.textTertiary} align="center">
         {children}
       </T>
     );

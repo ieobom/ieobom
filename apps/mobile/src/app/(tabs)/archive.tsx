@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ko } from "@/copy/ko";
 import { ArchiveScreen, type ArchiveMode } from "@/features/archive/archive-screen";
@@ -116,12 +116,12 @@ function SignedInArchive({
         onDeleteNews: (news) =>
           act.mutate({ type: "delete_news", news }, { onSuccess: () => toast(ko.archive.newsDeleted) }),
         onOpenNews: (item) => act.mutate({ type: "see_news", news: item.id }),
-        // 메모 고치기 화면(7-12)과 이야기 다시 만들기(7-9, AI)는 아직 없다
-        onEditMemo: () => toast(ko.app.comingSoon),
+        onEditMemo: (memo) => router.push({ pathname: "/memo", params: { edit: memo } }),
+        // 이야기 다시 만들기(7-9, AI)는 아직 없다
         onRetryTalk: () => toast(ko.app.comingSoon),
       }}
-      onInvite={() => toast(ko.app.comingSoon)}
-      onCode={() => toast(ko.app.comingSoon)}
+      onInvite={() => router.push("/invite")}
+      onCode={() => router.push("/invite/code")}
     />
   );
 }

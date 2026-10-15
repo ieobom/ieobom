@@ -31,6 +31,8 @@ export type HomeHandlers = {
   onMakeQuestion: (family: HomeFamily) => void;
   onCallScreen: (family: HomeFamily) => void;
   onInvite: () => void;
+  /** 보내 둔 초대의 코드 보기 */
+  onInviteOpen: (inviteAs: "mom" | "dad" | "child") => void;
   onCode: () => void;
   onNoticeOk: (noticeId: string) => void;
 };
@@ -102,13 +104,15 @@ export function HomeScreen({
     .filter((f) => f.status === "connected")
     .map((f) => ({ id: f.relationship_id, label: partnerLabel(f) }));
   const parent = family?.my_side === "parent";
-  // 자녀는 엄마 · 아빠가 이어졌거나 초대를 보내 두었으면 더 초대할 사람이 없다(그때는 'OO 초대 중'). 부모님은 다른 자녀도 초대할 수 있다
+  // 자녀는 엄마 · 아빠가 이어졌거나 초대를 보내 두었으면 더 초대할 사람이 없다(그때는 'OO 초대 중').
+  // 부모님은 다른 자녀도 초대할 수 있고, 보내 둔 자녀 초대가 있으면 '자녀 초대 중'(기다리는 자녀 초대는 하나뿐)
   const pending = data.pending_invites ?? [];
   const taken = new Set<string>([
     ...families.filter((f) => f.status === "connected").map((f) => f.parent_kind),
     ...pending.map((p) => p.invite_as),
   ]);
-  const canInvite = options.length > 0 && (parent || !taken.has("mom") || !taken.has("dad"));
+  const canInvite =
+    options.length > 0 && (parent ? !taken.has("child") : !taken.has("mom") || !taken.has("dad"));
   const firstPending = pending[0];
   const inviting =
     options.length > 0 && firstPending
@@ -182,6 +186,7 @@ export function HomeScreen({
         canInvite={canInvite}
         inviting={inviting}
         onInvite={handlers.onInvite}
+        onInviting={firstPending ? () => handlers.onInviteOpen(firstPending.invite_as) : undefined}
         now={now}
       />
       <ScrollView contentContainerStyle={styles.body}>

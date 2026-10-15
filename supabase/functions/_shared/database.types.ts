@@ -515,8 +515,10 @@ export type Database = {
           answer: string | null
           answer_seen_at: string | null
           answered_at: string | null
+          app_version: string
           body: string
           created_at: string
+          device: string
           help_item: string
           id: string
           user_id: string | null
@@ -525,8 +527,10 @@ export type Database = {
           answer?: string | null
           answer_seen_at?: string | null
           answered_at?: string | null
+          app_version?: string
           body: string
           created_at?: string
+          device?: string
           help_item?: string
           id?: string
           user_id?: string | null
@@ -535,8 +539,10 @@ export type Database = {
           answer?: string | null
           answer_seen_at?: string | null
           answered_at?: string | null
+          app_version?: string
           body?: string
           created_at?: string
+          device?: string
           help_item?: string
           id?: string
           user_id?: string | null
@@ -1463,6 +1469,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      custom_question_next: { Args: { relationship: string }; Returns: string }
       custom_question_slot: {
         Args: { after: string; relationship: string }
         Returns: string
@@ -1562,6 +1569,7 @@ export type Database = {
           status: string
         }[]
       }
+      my_page: { Args: never; Returns: Json }
       next_question_day: {
         Args: { day: string; relationship: string }
         Returns: string
@@ -1655,6 +1663,23 @@ export type Database = {
       see_question: { Args: { question: string }; Returns: undefined }
       send_due_questions: { Args: { day?: string }; Returns: number }
       seoul_today: { Args: never; Returns: string }
+      set_call_times: {
+        Args: { times: Json }
+        Returns: {
+          created_at: string
+          days: string
+          end_hour: number
+          id: string
+          start_hour: number
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "call_times"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       set_memo_draft: {
         Args: { doc_version?: string; turn_on: boolean }
         Returns: undefined

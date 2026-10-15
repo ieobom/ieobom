@@ -1,7 +1,9 @@
 // 화면 틀. 위쪽 안전 영역과 흰 바탕을 맞춘다. 아래 탭이 있는 화면은 아래 안전 영역을 탭이 맡는다.
 import type { ReactNode } from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ko } from "@/copy/ko";
+import { IcoBack } from "./icons";
 import { T } from "./text";
 import { C } from "./theme";
 
@@ -10,6 +12,44 @@ export function Screen({ children }: { children: ReactNode }) {
     <SafeAreaView style={styles.root} edges={["top"]}>
       {children}
     </SafeAreaView>
+  );
+}
+
+/** 뒤로 단추 + 제목 (시안의 설정 화면 머리). 제목이 없으면 뒤로 단추만.
+ *  middle은 제목 자리에 넣는 것('질문 | 근황'), right는 오른쪽 끝('지우기') */
+export function ScreenHeader({
+  title,
+  onBack,
+  middle,
+  right,
+}: {
+  title?: string;
+  onBack: () => void;
+  middle?: ReactNode;
+  right?: ReactNode;
+}) {
+  return (
+    <View style={[styles.header, !title && !middle && styles.headerBare]}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={ko.my.back}
+        onPress={onBack}
+        hitSlop={8}
+        style={styles.back}
+      >
+        <IcoBack />
+      </Pressable>
+      {middle ? (
+        <View style={styles.middle}>{middle}</View>
+      ) : title ? (
+        <T size={20} weight={800} ls={-0.04} accessibilityRole="header" style={styles.flex}>
+          {title}
+        </T>
+      ) : (
+        <View style={styles.flex} />
+      )}
+      {right}
+    </View>
   );
 }
 
@@ -33,5 +73,24 @@ export function Placeholder({ title, body }: { title: string; body?: string }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: C.bg },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingTop: 10,
+    paddingHorizontal: 24,
+    paddingBottom: 18,
+  },
+  headerBare: { minHeight: 36, paddingTop: 14, paddingBottom: 22 },
+  back: {
+    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 20,
+    marginVertical: -4,
+    marginLeft: -10,
+    marginRight: -14,
+  },
+  flex: { flex: 1 },
+  middle: { flex: 1, flexDirection: "row" },
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 8, paddingHorizontal: 24 },
 });

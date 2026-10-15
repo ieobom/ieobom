@@ -34,7 +34,11 @@ export const C = {
   disabledBg: "#F1ECE6",
   disabledText: "#9A9186",
   plainBg: "#F3F0EC",
+  /** 초대 코드 칸 */
+  digitBg: "#F4F1ED",
   danger: "#C0392B",
+  /** 카카오 노란색 (로그인 표시 · 카카오로 계속하기) */
+  kakao: "#FEE500",
   well: "#F7F5F2",
   toastBg: "rgba(38, 35, 32, 0.92)",
   toastAction: "#F3B98F",

@@ -21,6 +21,7 @@ export default function DevHome() {
     onMakeQuestion: say("질문 만들기"),
     onInvite: say("가족 초대하기"),
     onCode: say("받은 초대 코드 넣기"),
+    onInviteOpen: say("초대 코드 보기"),
     onDraftOpen: say("초안 고치고 저장"),
     onMissedOk: say("못 받은 전화 확인했어요"),
     onNewsOk: say("근황 확인했어요"),
