@@ -1,0 +1,339 @@
+-- 9-4 근황 주제 · 피하고 싶은 주제를 39차 3회에 맞춘다.
+-- 1) 앱이 글을 쓰는 동안 낱말 규칙(@ieobom/shared의 guessTopic)으로 주제 칩을 켜 두고, 그대로 보내면 topic_by = 'rule'
+-- 2) 근황 주제와 피하고 싶은 주제는 이름이 달라서 잇는 표로 거른다(시안의 TOPIC_AVOID).
+--    예: 다이어트를 피하면 '먹은 것' 근황으로 만든 여쭤볼 이야기를 빼요. 직접 쓴 주제는 거르지 않는다
+--    여쭤볼 이야기 목록(talk_list) · 홈의 새 근황 카드(home)가 쓴다
+
+create function public.topic_avoided(topic text, avoid text[]) returns boolean
+language sql
+immutable
+set search_path = ''
+as $$
+  select coalesce(avoid && case topic
+    when '일·학교' then array['취업·직장', '학업']
+    when '건강' then array['건강', '다이어트']
+    when '먹은 것' then array['다이어트']
+    else array[]::text[]
+  end, false)
+$$;
+
+create or replace function public.create_news(
+  news_id uuid,
+  relationship uuid,
+  text text default '',
+  topic text default null,
+  topic_by text default null,
+  method text default 'text',
+  photo_count int default 0
+) returns public.news
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := auth.uid();
+  body text := btrim(coalesce(create_news.text, ''));
+  prefix text := relationship::text || '/' || news_id::text || '/';
+  n public.news;
+begin
+  if uid is null then
+    raise exception 'unauthorized';
+  end if;
+  if not public.is_connected(relationship) then
+    raise exception 'not_connected';
+  end if;
+  if photo_count not between 0 and 3 then
+    raise exception 'too_many_photos';
+  end if;
+  if photo_count > 0 and not public.feature_enabled('news_photos') then
+    raise exception 'photos_disabled';
+  end if;
+  if body = '' and photo_count = 0 then
+    raise exception 'empty_news';
+  end if;
+  -- 사진만 보낼 때는 주제를 고른다(사진은 AI가 보지 않음)
+  if body = '' and topic is null then
+    raise exception 'topic_required';
+  end if;
+  -- rule: 앱이 글을 쓰는 동안 낱말 규칙으로 골라 켜 둔 칩을 그대로 보냄(39차 3회). ai는 서버만 정한다
+  if topic is not null and (topic_by is null or topic_by not in ('chip', 'custom', 'rule')) then
+    raise exception 'invalid_topic_by';
+  end if;
+  if topic_by in ('chip', 'rule') and topic not in ('일·학교', '건강', '취미·운동', '먹은 것', '다녀온 곳', '가족·친구') then
+    raise exception 'invalid_topic';
+  end if;
+  -- 올린 파일이 모두 있어야 한다
+  if photo_count > 0 and (
+    select count(*) from storage.objects o
+    where o.bucket_id = 'news-photos'
+      and o.name in (
+        select prefix || i || suffix from generate_series(1, photo_count) as i cross join (values ('.jpg'), ('_s.jpg')) as s (suffix)
+      )
+  ) <> photo_count * 2 then
+    raise exception 'photos_not_uploaded';
+  end if;
+
+  insert into public.news (id, relationship_id, author_id, text, topic, topic_by, method)
+  values (news_id, relationship, uid, body, btrim(topic), topic_by, create_news.method)
+  returning * into n;
+
+  insert into public.news_photos (news_id, relationship_id, file_path, thumb_path, sort)
+  select news_id, relationship, prefix || i || '.jpg', prefix || i || '_s.jpg', i
+  from generate_series(1, photo_count) as i;
+  return n;
+end;
+$$;
+
+create or replace function public.talk_list(relationship uuid) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := auth.uid();
+  today date := public.seoul_today();
+  r public.relationships;
+  me_child boolean;
+  pref public.relationship_settings;
+  w public.weather_lines;
+  items jsonb;
+begin
+  select * into r from public.relationships x where x.id = relationship and uid in (x.child_id, x.parent_id);
+  if r.id is null then
+    raise exception 'not_member';
+  end if;
+  me_child := r.child_id = uid;
+  select * into pref from public.relationship_settings s where s.relationship_id = relationship and s.user_id = uid;
+  select * into w from public.weather_lines x where x.season = public.season_of(today);
+
+  with listed as (
+    select
+      s.id,
+      s.source,
+      s.text,
+      case
+        when s.source = 'news' and n.topic = any (coalesce(pref.curious_topics, '{}')) then 1
+        when s.source = 'memo' then 2
+        when s.source = 'news' then 3
+        else 4
+      end as rank,
+      s.created_at,
+      jsonb_build_object('news_text', n.text, 'memo_at', m.created_at, 'question_seq', q.seq_no) as note
+    from public.talk_suggestions s
+    left join public.news n on n.id = s.news_id
+    left join public.memos m on m.id = s.memo_id
+    left join public.exchange_questions q on q.id = s.exchange_question_id
+    where s.owner_id = uid and s.relationship_id = relationship and s.status = 'picked' and s.asked_on is null
+      and s.source <> 'weather'
+      and not (s.source = 'news' and public.topic_avoided(n.topic, pref.avoid_topics))
+    union all
+    -- 요즘 날씨: 이번 계절에 아직 안 여쭤봤고, 그 주제를 피하지 않을 때
+    select null, 'weather', case when me_child then w.to_parent else w.to_child end, 5, now(), '{}'::jsonb
+    where w.season is not null
+      and not public.topic_avoided(w.topic, pref.avoid_topics)
+      and not exists (
+        select 1 from public.talk_suggestions s
+        where s.owner_id = uid and s.relationship_id = relationship and s.source = 'weather'
+          and public.season_of(s.asked_on) = w.season and s.asked_on > today - 120
+      )
+  )
+  select coalesce(jsonb_agg(jsonb_build_object('id', l.id, 'source', l.source, 'text', l.text, 'note', l.note) order by l.rank, l.created_at desc), '[]'::jsonb)
+  into items
+  from (select * from listed order by rank, created_at desc limit 3) l;
+  return items;
+end;
+$$;
+
+create or replace function public.home(at timestamptz default now()) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  uid uuid := auth.uid();
+  today date := (at at time zone 'Asia/Seoul')::date;
+  fam record;
+  partner uuid;
+  cards jsonb;
+  families jsonb := '[]'::jsonb;
+  missed public.calls;
+  ov record;
+  q public.exchange_questions;
+  prev public.exchange_questions;
+  mine public.answers;
+  theirs public.answers;
+  my_seen timestamptz;
+  todo jsonb;
+  todo_state text;
+  news_ids jsonb;
+  draft_count int;
+  latest_draft public.memo_drafts;
+  sent_today boolean;
+  my_custom public.custom_questions;
+  my_avoid text[];
+begin
+  if uid is null then
+    raise exception 'unauthorized';
+  end if;
+
+  for fam in
+    select r.*, r.child_id = uid as i_am_child
+    from public.relationships r
+    where uid in (r.child_id, r.parent_id) and r.status in ('connected', 'left')
+    order by r.connected_at
+  loop
+    partner := case when fam.i_am_child then fam.parent_id else fam.child_id end;
+    cards := '[]'::jsonb;
+    select s.avoid_topics into my_avoid from public.relationship_settings s where s.relationship_id = fam.id and s.user_id = uid;
+
+    if fam.status = 'left' then
+      cards := jsonb_build_array(jsonb_build_object('kind', 'partner_left'));
+    else
+      -- 1 못 받은 전화: 오늘(한국) 온 것, 그 뒤로 통화가 없을 때(다시 걸면 빠짐)
+      select c.* into missed from public.calls c
+      where c.relationship_id = fam.id and c.callee_id = uid and c.status = 'missed' and c.missed_seen_at is null
+        and (c.started_at at time zone 'Asia/Seoul')::date = today
+        and not exists (select 1 from public.calls x where x.relationship_id = fam.id and x.started_at > c.started_at)
+      order by c.started_at desc limit 1;
+      if missed.id is not null then
+        cards := cards || jsonb_build_object('kind', 'missed_call', 'call_id', missed.id, 'at', missed.started_at);
+      end if;
+
+      -- 2 지금 둘 다 편한 시간: 그 시간에 통화했으면 빠짐
+      select * into ov from public.call_time_overlap(fam.id, at);
+      if ov.free_now and not exists (
+        select 1 from public.calls x where x.relationship_id = fam.id and x.status = 'completed' and x.started_at >= ov.next_starts_at
+      ) then
+        cards := cards || jsonb_build_object('kind', 'free_now', 'from', ov.next_starts_at, 'until', ov.next_ends_at);
+      end if;
+
+      -- 3 질문 · 할 일 / 6 질문 · 기다림
+      todo := null;
+      select * into q from public.exchange_questions x where x.relationship_id = fam.id order by x.seq_no desc limit 1;
+      -- 새 질문이 온 날, 지난 질문에 혼자 답해 두었으면 새 질문보다 먼저 그날 한 번 '먼저 보낼까요'
+      if q.id is not null then
+        select * into prev from public.exchange_questions x where x.relationship_id = fam.id and x.seq_no = q.seq_no - 1;
+        if prev.id is not null and prev.status = 'closed' and prev.opened_at is null
+           and (prev.closed_at at time zone 'Asia/Seoul')::date = today then
+          select * into mine from public.answers a where a.exchange_question_id = prev.id and a.user_id = uid;
+          if mine.id is not null and mine.early_choice is null
+             and not exists (select 1 from public.answers a where a.exchange_question_id = prev.id and a.user_id <> uid) then
+            todo := jsonb_build_object('kind', 'question', 'state', 'ask_early', 'question_id', prev.id, 'seq_no', prev.seq_no, 'text', prev.text,
+              'my_answer', mine.text);
+          end if;
+        end if;
+        -- 먼저 온 답: 상대가 먼저 보냈는데 내가 답하기 전에 질문이 끝남. '확인했어요'(see_question)까지
+        if todo is null and prev.id is not null and prev.status = 'closed' and prev.opened_at is null
+           and (case when fam.i_am_child then prev.child_seen_at else prev.parent_seen_at end) is null
+           and not exists (select 1 from public.answers a where a.exchange_question_id = prev.id and a.user_id = uid) then
+          select * into theirs from public.answers a where a.exchange_question_id = prev.id and a.user_id <> uid and a.visible_to_partner;
+          if theirs.id is not null then
+            todo := jsonb_build_object('kind', 'question', 'state', 'received', 'question_id', prev.id, 'seq_no', prev.seq_no, 'text', prev.text,
+              'partner_answer', theirs.text);
+          end if;
+        end if;
+      end if;
+      if todo is null and q.id is not null and q.status <> 'closed' then
+        mine := null;
+        theirs := null;
+        select * into mine from public.answers a where a.exchange_question_id = q.id and a.user_id = uid;
+        select * into theirs from public.answers a where a.exchange_question_id = q.id and a.user_id <> uid and a.visible_to_partner;
+        my_seen := case when fam.i_am_child then q.child_seen_at else q.parent_seen_at end;
+        todo_state := case
+          when mine.id is null and theirs.id is not null then 'partner_sent_first'
+          when mine.id is null then 'new'
+          when q.status = 'opened' and my_seen is null then 'opened'
+          when q.status = 'waiting' and mine.early_choice is null and mine.answered_at <= at - interval '3 days' then 'ask_early'
+        end;
+        if todo_state is not null then
+          todo := jsonb_build_object('kind', 'question', 'state', todo_state, 'question_id', q.id, 'seq_no', q.seq_no, 'text', q.text,
+            'source', case when q.custom_question_id is not null then 'custom' else 'bank' end,
+            'my_answer', mine.text, 'partner_answer', theirs.text);
+        end if;
+      end if;
+      if todo is not null then
+        cards := cards || todo;
+      end if;
+
+      -- 4 새 근황: 상대가 보낸 것 중 아직 '확인했어요' 안 한 것, 최근 것부터
+      select coalesce(jsonb_agg(jsonb_build_object(
+        'id', n.id, 'text', n.text, 'topic', n.topic, 'at', n.created_at,
+        'thumbs', coalesce((select jsonb_agg(p.thumb_path order by p.sort) from public.news_photos p where p.news_id = n.id), '[]'::jsonb),
+        -- 이 근황으로 만든 여쭤볼 이야기(아직 안 여쭤본 것). 내가 피하는 주제와 이어진 근황이면 빼요
+        'talk', (select s.text from public.talk_suggestions s where s.news_id = n.id and s.owner_id = uid and s.asked_on is null
+                 and not public.topic_avoided(n.topic, my_avoid) limit 1)
+      ) order by n.created_at desc), '[]'::jsonb) into news_ids
+      from public.news n where n.relationship_id = fam.id and n.author_id = partner and n.seen_at is null;
+      if jsonb_array_length(news_ids) > 0 then
+        cards := cards || jsonb_build_object('kind', 'news', 'news_ids', (select jsonb_agg(x -> 'id') from jsonb_array_elements(news_ids) x), 'items', news_ids);
+      end if;
+
+      -- 5 통화 메모 초안: 저장하지 않은 초안, 3일 안
+      select count(*) into draft_count from public.memo_drafts d
+      where d.relationship_id = fam.id and d.user_id = uid and d.status = 'ready' and d.expires_at > at;
+      if draft_count > 0 then
+        select * into latest_draft from public.memo_drafts d
+        where d.relationship_id = fam.id and d.user_id = uid and d.status = 'ready' and d.expires_at > at
+        order by d.created_at desc limit 1;
+        cards := cards || jsonb_build_object('kind', 'memo_draft', 'draft_id', latest_draft.id, 'call_id', latest_draft.call_id, 'count', draft_count,
+          'text', latest_draft.text, 'at', latest_draft.created_at);
+      end if;
+
+      -- 6 할 일이 없으면 기다림 카드를 맨 뒤에(질문 카드는 늘 있음)
+      sent_today := exists (select 1 from public.exchange_questions x where x.relationship_id = fam.id and x.sent_on = today);
+      if todo is null then
+        if q.id is not null and q.status = 'waiting' then
+          cards := cards || jsonb_build_object('kind', 'question', 'state', 'waiting', 'question_id', q.id, 'seq_no', q.seq_no, 'text', q.text,
+            'my_answer', (select a.text from public.answers a where a.exchange_question_id = q.id and a.user_id = uid));
+        else
+          cards := cards || jsonb_build_object('kind', 'question', 'state', 'next',
+            'next_on', public.next_question_day(fam.id, case when sent_today then today + 1 else today end));
+        end if;
+      end if;
+    end if;
+
+    select * into my_custom from public.custom_questions c
+    where c.relationship_id = fam.id and c.author_id = uid and c.status = 'waiting';
+
+    families := families || jsonb_build_object(
+      'relationship_id', fam.id,
+      'status', fam.status,
+      'my_side', case when fam.i_am_child then 'child' else 'parent' end,
+      'parent_kind', fam.parent_kind,
+      -- 자녀 화면에는 부모님 이름 대신 엄마 · 아빠
+      'partner_name', case when not fam.i_am_child then (select u.name from public.users u where u.id = fam.child_id) end,
+      'days_together', today - (fam.connected_at at time zone 'Asia/Seoul')::date + 1,
+      'next_question_on', public.next_question_day(fam.id, case when sent_today then today + 1 else today end),
+      'my_custom_question', case when my_custom.id is not null then jsonb_build_object('id', my_custom.id, 'text', my_custom.text, 'send_on', my_custom.send_on) end,
+      'partner_custom_question_on', (select c.send_on from public.custom_questions c
+                                     where c.relationship_id = fam.id and c.author_id = partner and c.status = 'waiting'),
+      -- 질문 카드 '다음 질문'의 이어온 기록: 함께 답한 질문 · 남긴 메모
+      'answered_together', (select count(*) from public.exchange_questions x where x.relationship_id = fam.id and x.opened_at is not null),
+      'memo_count', (select count(*) from public.memos m where m.relationship_id = fam.id and m.user_id = uid),
+      'cards', cards
+    );
+  end loop;
+
+  return jsonb_build_object(
+    -- 글자 크게 보기(마이). 앱이 첫 화면부터 이 크기로 그리게 홈과 같이 준다(앱 시작 때 부르는 함수는 홈 하나)
+    'large_text', (select u.large_text from public.users u where u.id = uid),
+    'families', families,
+    -- 내가 보내 두고 기다리는 초대(머리말 '아빠 초대 중'). 기한 지난 것도 '초대 코드 기한 지남'을 보이려고 담는다
+    'pending_invites', (
+      select coalesce(jsonb_agg(jsonb_build_object('id', i.id, 'invite_as', i.invite_as, 'parent_kind', i.parent_kind,
+                                                  'code', i.code, 'expires_at', i.expires_at) order by i.created_at), '[]'::jsonb)
+      from public.invites i where i.inviter_id = uid and i.status = 'waiting'
+    ),
+    -- 공지는 카드 줄이 아니라 제자리(39차). 보일 때이고 내가 '확인했어요' 안 한 것 하나
+    'notice', (
+      select jsonb_build_object('id', n.id, 'kind', n.kind, 'title', n.title, 'body', n.body, 'note', n.note)
+      from public.notices n
+      where at >= n.show_from and at < n.show_until
+        and not exists (select 1 from public.notice_reads r where r.notice_id = n.id and r.user_id = uid)
+      order by n.show_from desc limit 1
+    )
+  );
+end;
+$$;

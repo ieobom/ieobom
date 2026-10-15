@@ -1,5 +1,5 @@
 begin;
-select plan(15);
+select plan(17);
 
 select pg_temp.make_user('자녀');
 select pg_temp.make_user('엄마');
@@ -34,6 +34,10 @@ select is((select thumb_path from public.news_photos where sort = 2),
   '00000000-0000-0000-0000-00000000a001/00000000-0000-0000-0000-0000000f0001/2_s.jpg', '작은 그림 경로');
 select lives_ok($$ select public.create_news(gen_random_uuid(), '00000000-0000-0000-0000-00000000a001', '이사해요', '이사', 'custom') $$,
   '직접 쓴 주제');
+select lives_ok($$ select public.create_news(gen_random_uuid(), '00000000-0000-0000-0000-00000000a001', '수영 다시 시작했어', '취미·운동', 'rule') $$,
+  '낱말 규칙으로 고른 주제');
+select throws_ok($$ select public.create_news(gen_random_uuid(), '00000000-0000-0000-0000-00000000a001', '수영', '수영', 'rule') $$,
+  'P0001', 'invalid_topic', '규칙 주제도 목록에서만');
 
 -- 사진 기능을 끄면 사진은 못 보낸다
 reset role;

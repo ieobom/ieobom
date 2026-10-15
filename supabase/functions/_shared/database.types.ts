@@ -1757,6 +1757,10 @@ export type Database = {
         Returns: Json
       }
       talk_list: { Args: { relationship: string }; Returns: Json }
+      topic_avoided: {
+        Args: { avoid: string[]; topic: string }
+        Returns: boolean
+      }
       try_uuid: { Args: { value: string }; Returns: string }
       unmark_asked: { Args: { suggestion: string }; Returns: undefined }
       unregister_device: { Args: { install_id: string }; Returns: undefined }
