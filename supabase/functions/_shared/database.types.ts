@@ -1552,6 +1552,7 @@ export type Database = {
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
+      log_events: { Args: { items: Json }; Returns: number }
       mark_asked: {
         Args: { relationship: string; suggestion?: string }
         Returns: string
