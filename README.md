@@ -24,6 +24,7 @@ ieobom/
 ├── docs/                                 개발 문서
 │   ├── data-model.md                     데이터 구조 — 19 ERD에서 바뀐 점 · 표마다 누가 읽고 쓰나
 │   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화
+│   ├── operations.md                     운영 메모 — 관리 화면에서 할 일 · 저장해 둔 SQL · 기능 끄기 · 하루 한도
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
