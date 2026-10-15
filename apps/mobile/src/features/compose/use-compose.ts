@@ -29,7 +29,7 @@ export type ComposeAction =
       relationship: string;
       text: string;
       topic: string | null;
-      topicBy: "chip" | "custom" | null;
+      topicBy: "chip" | "custom" | "rule" | null;
     };
 
 async function run(a: ComposeAction) {

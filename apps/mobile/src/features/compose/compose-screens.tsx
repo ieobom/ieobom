@@ -1,7 +1,7 @@
 // 질문 답하기(39차 QuestionAnswerScreen) · 질문 만들기(MakeQuestionScreen) · 근황 보내기(NewsEditorScreen).
 // 질문 만들기와 근황 보내기는 위의 '질문 | 근황'으로 오간다(39차, 홈의 '질문 만들기 · 근황도 보내요' 네모가 입구).
 // 말로 답하기 · 말로 남기기(7-4)와 사진 붙이기(9-1)는 그 부품이 생기면 이 화면에 들어온다.
-import { NEWS_TOPICS } from "@ieobom/shared";
+import { guessTopic, NEWS_TOPICS } from "@ieobom/shared";
 import { useState, type ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { ko } from "@/copy/ko";
@@ -367,7 +367,7 @@ export function MakeQuestionScreen({
 
 // ── 근황 보내기 ──────────────────────────────
 
-export type NewsDraft = { text: string; topic: string | null; topicBy: "chip" | "custom" | null };
+export type NewsDraft = { text: string; topic: string | null; topicBy: "chip" | "custom" | "rule" | null };
 
 export function NewsEditorScreen({
   partner,
@@ -389,11 +389,14 @@ export function NewsEditorScreen({
 }) {
   const c = ko.compose;
   const [text, setText] = useState("");
+  // null: 아직 안 고름(글에서 낱말 규칙으로 고른 칩을 켜 둠) · "": 켜진 칩을 끔 · 그 밖: 고른 칩
   const [topic, setTopic] = useState<string | null>(null);
   const [own, setOwn] = useState(false);
   const [ownText, setOwnText] = useState("");
   const [leave, setLeave] = useState(false);
-  const chosen = own ? ownText.trim() || null : topic;
+  const auto = guessTopic(text);
+  const chosen = own ? ownText.trim() || null : topic === null ? auto : topic || null;
+  const topicBy = !chosen ? null : own ? "custom" : topic === null ? "rule" : "chip";
   const has = !!text.trim();
 
   return (
@@ -439,10 +442,10 @@ export function NewsEditorScreen({
             <Chip
               key={t}
               label={t}
-              selected={!own && topic === t}
+              selected={!own && chosen === t}
               onPress={() => {
                 setOwn(false);
-                setTopic(!own && topic === t ? null : t);
+                setTopic(!own && chosen === t ? "" : t);
               }}
             />
           ))}
@@ -465,9 +468,7 @@ export function NewsEditorScreen({
       <BottomBar>
         <Button
           disabled={!has || sending}
-          onPress={() =>
-            onSend({ text: text.trim(), topic: chosen, topicBy: chosen ? (own ? "custom" : "chip") : null })
-          }
+          onPress={() => onSend({ text: text.trim(), topic: chosen, topicBy })}
         >
           {c.sendNews(partner)}
         </Button>
