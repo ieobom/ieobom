@@ -1,5 +1,5 @@
 begin;
-select plan(22);
+select plan(25);
 
 select pg_temp.make_user('자녀');
 select pg_temp.make_user('엄마');
@@ -47,6 +47,12 @@ select is((select (v -> 'families' -> 0 ->> 'applied')::int from p), 2, '실제�
 select is((select v -> 'families' -> 0 -> 'avoid_topics' from p), '["건강"]'::jsonb, '피하고 싶은 주제');
 select is((select v -> 'invites' from p) #>> '{0,code}', '987650', '기다리는 내 초대만(취소한 것 · 남의 것은 빼고)');
 select is((select v -> 'call_times' -> 0 ->> 'days' from p), 'weekdays', '통화 편한 시간은 평일부터');
+select is((select v -> 'survey' from p), '{"relationship_id": "00000000-0000-0000-0000-00000000b001", "round": 6}'::jsonb,
+  '이어진 지 6주가 지나면 6주차 설문');
+select is((select count(*)::int from public.survey_questions where round = 3), 3, '차수마다 시안의 세 문항');
+insert into public.survey_responses (user_id, relationship_id, round, scores)
+values (pg_temp.user_id('자녀'), '00000000-0000-0000-0000-00000000b001', 6, '{}');
+select is((select public.my_page() -> 'survey'), 'null'::jsonb, '보낸 차수는 다시 묻지 않는다');
 
 reset role;
 update public.users set large_text = true where id = pg_temp.user_id('엄마');

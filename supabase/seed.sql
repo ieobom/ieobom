@@ -130,6 +130,4 @@ insert into public.talk_suggestions (owner_id, relationship_id, source, news_id,
   ('5eed0000-0000-0000-0000-000000000001', '5eed0000-0000-0000-0000-0000000000a1', 'news', '5eed0000-0000-0000-0000-0000000f0001', '단풍 구경 가셨어요?', 'picked');
 
 -- ── 운영 ───────────────────────────────────────
-insert into public.survey_questions (round, sort, text) values
-  (0, 1, '이어봄을 쓰기 전, 가족과 얼마나 자주 이야기했나요?'),
-  (0, 2, '가족에게 하고 싶은 말을 편하게 하는 편인가요?');
+-- 설문 문항은 마이그레이션(*_survey.sql)이 넣는다
