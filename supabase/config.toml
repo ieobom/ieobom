@@ -392,6 +392,11 @@ deno_version = 2
 verify_jwt = false
 import_map = "./functions/deno.json"
 
+# 정해진 시간 작업(pg_cron)이 부르는 일. 로그인 토큰 대신 CRON_SECRET으로 확인한다
+[functions.jobs]
+verify_jwt = false
+import_map = "./functions/deno.json"
+
 [analytics]
 enabled = true
 port = 54327

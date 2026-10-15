@@ -41,6 +41,7 @@ ieobom/
 │   │   │   ├── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
 │   │   │   ├── env.ts                    환경 변수 · Supabase 열쇠 읽기
 │   │   │   └── http.ts                   응답 · 오류 형식
+│   │   ├── jobs/                         정해진 시간 작업이 부르는 일 (남은 녹음 · 사진 파일 지우기)
 │   │   ├── ping/                         살아 있는지 · 로그인 토큰이 통하는지 확인
 │   │   ├── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
 │   │   └── deno.json                     서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)
