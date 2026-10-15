@@ -1752,6 +1752,14 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      storage_cleanup_done: {
+        Args: { bucket: string; names: string[] }
+        Returns: number
+      }
+      storage_cleanup_targets: {
+        Args: { at?: string; limit_n?: number }
+        Returns: Json
+      }
       submit_answer: {
         Args: { method?: string; question: string; text: string }
         Returns: Json
