@@ -2,6 +2,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Crypto from "expo-crypto";
 import { ko } from "@/copy/ko";
+import { track } from "@/lib/events";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/ui";
 
@@ -28,7 +29,7 @@ export type ComposeAction =
       relationship: string;
       text: string;
       topic: string | null;
-      topicBy: "chip" | "custom" | null;
+      topicBy: "chip" | "custom" | "rule" | null;
     };
 
 async function run(a: ComposeAction) {
@@ -61,6 +62,12 @@ export function useComposeAction(userId: string | undefined) {
   const toast = useToast();
   return useMutation({
     mutationFn: run,
+    onSuccess: (_, a) => {
+      // 말로 답하기 · 말로 남기기(7-4)를 붙이면 mode에 voice도 온다
+      if (a.type === "answer") track("answer_sent", { mode: "text" });
+      if (a.type === "make") track("question_made");
+      if (a.type === "news") track("news_sent", { mode: "text", topic_by: a.topicBy ?? "none" });
+    },
     onError: (e) => {
       // 답할 기간이 지난 것은 화면이 따로 알려 준다
       if (errorCode(e) !== "question_closed") toast(ko.error.internal);

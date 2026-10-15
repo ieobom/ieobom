@@ -1,5 +1,5 @@
 begin;
-select plan(29);
+select plan(31);
 
 -- 기준 때: 2026-10-14(수) 20:30 한국 시간
 create temp table t as select '2026-10-14 20:30+09'::timestamptz as at;
@@ -77,7 +77,25 @@ select is((select (f ->> 'answered_together')::int from h1, jsonb_array_elements
 select is((select (f ->> 'memo_count')::int from h1, jsonb_array_elements(h -> 'families') f where f ->> 'relationship_id' = '00000000-0000-0000-0000-00000000a001'),
   0, '남긴 메모 수');
 
+-- 새 근황 카드의 여쭤볼 이야기: 내가 피하는 주제와 이어진 근황이면 빼요(다이어트 → 먹은 것)
 reset role;
+update public.news set topic = '먹은 것', topic_by = 'chip' where id = '00000000-0000-0000-0000-0000000f0001';
+insert into public.talk_suggestions (owner_id, relationship_id, source, news_id, text, status) values
+  (pg_temp.user_id('자녀'), '00000000-0000-0000-0000-00000000a001', 'news', '00000000-0000-0000-0000-0000000f0001', '단풍 구경은 어디로 가셨어요?', 'picked');
+select pg_temp.login('자녀');
+select is((select pg_temp.card(public.home((select at from t)), '00000000-0000-0000-0000-00000000a001', 'news') -> 'items' -> 1 ->> 'talk'),
+  '단풍 구경은 어디로 가셨어요?', '근황 카드에 여쭤볼 이야기');
+reset role;
+insert into public.relationship_settings (relationship_id, user_id, avoid_topics) values
+  ('00000000-0000-0000-0000-00000000a001', pg_temp.user_id('자녀'), '{다이어트}');
+select pg_temp.login('자녀');
+select is((select pg_temp.card(public.home((select at from t)), '00000000-0000-0000-0000-00000000a001', 'news') -> 'items' -> 1 ->> 'talk'),
+  null, '피하는 주제와 이어진 근황이면 빠진다');
+
+reset role;
+delete from public.relationship_settings where user_id = pg_temp.user_id('자녀');
+delete from public.talk_suggestions where owner_id = pg_temp.user_id('자녀');
+update public.news set topic = null, topic_by = null where id = '00000000-0000-0000-0000-0000000f0001';
 insert into public.invites (code, inviter_id, invite_as, parent_kind, expires_at) values ('593827', pg_temp.user_id('자녀'), 'dad', 'dad', now() + interval '1 day');
 select pg_temp.login('자녀');
 select is((select public.home((select at from t)) -> 'pending_invites' -> 0 ->> 'invite_as'), 'dad', '기다리는 초대(아빠 초대 중)');

@@ -1,6 +1,7 @@
 // 초대 코드 만들기 · 이어졌는지 보기 · 받은 코드 확인 · 연결하기 (DB 함수 create_invite · preview_invite · accept_invite)
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ko } from "@/copy/ko";
+import { track } from "@/lib/events";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/ui";
 
@@ -23,6 +24,7 @@ export function useIssueInvite(userId: string | undefined) {
       if (error) throw error;
       return { id: data.id, code: data.code, expires_at: data.expires_at };
     },
+    onSuccess: (_, a) => track("invite_issued", { as: a.invite_as }),
     onError: () => toast(ko.error.internal),
     onSettled: () => {
       qc.invalidateQueries({ queryKey: ["my", userId] });
@@ -68,6 +70,9 @@ export function useAcceptInvite(userId: string | undefined) {
       const { data, error } = await supabase.rpc("accept_invite", { code });
       if (error) throw error;
       return data as unknown as Lookup | { ok: true; relationship_id: string };
+    },
+    onSuccess: (r) => {
+      if (r.ok) track("invite_accepted");
     },
     onError: () => toast(ko.error.internal),
     onSettled: () => {

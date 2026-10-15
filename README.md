@@ -17,13 +17,14 @@ ieobom/
 │       │   ├── app/                      화면 (Expo Router, 파일 = 주소)
 │       │   ├── copy/                     화면 문구 (ko.ts 하나에 모음)
 │       │   ├── features/                 기능별 데이터 불러오기 · 부품
-│       │   ├── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정
+│       │   ├── lib/                      서버 연결 · 세션 저장 · 데이터 불러오기 설정 · 앱 오류 · 이용 기록
 │       │   └── ui/                       디자인 값(39차 시안의 C · R) · 글꼴 · 공통 부품
 │       ├── .env.example                  앱 공개 값 목록 (Supabase 주소 · 공개 키 · 카카오 앱 키)
 │       └── app.config.ts                 앱 이름 · 번들 ID (개발용 빌드는 APP_VARIANT=development)
 ├── docs/                                 개발 문서
 │   ├── data-model.md                     데이터 구조 — 19 ERD에서 바뀐 점 · 표마다 누가 읽고 쓰나
 │   ├── dev-plan.md                       개발 계획 — 작업 단위 · 커밋 · 일정 · 최적화
+│   ├── operations.md                     운영 메모 — 관리 화면에서 할 일 · 저장해 둔 SQL · 기능 끄기 · 하루 한도
 │   └── tech-stack.md                     기술 스택 · 정할 것
 ├── packages/                             앱이 같이 쓰는 패키지
 │   └── shared/                           @ieobom/shared — 공통 값과 DB 타입
@@ -31,6 +32,7 @@ ieobom/
 │       │   └── index.ts                  근황 주제 · 기분 · 요일 · 기능 이름 같은 정해진 값 + DB 타입 다시 내보내기
 │       └── tsconfig.json                 타입 검사 설정 (tsconfig.base.json을 이어 씀)
 ├── scripts/                              개발용 스크립트
+│   ├── perf-db.mjs                       DB 속도 점검 (pnpm perf:db, 가짜 1만 쌍을 넣고 재고 되돌림)
 │   ├── test-db.mjs                       DB 검사 실행 (pnpm test:db, 끝나면 모두 되돌림)
 │   └── update-structure.mjs              이 구조도를 다시 만든다 (pnpm structure)
 ├── supabase/                             서버 (Supabase)
@@ -40,12 +42,14 @@ ieobom/
 │   │   │   ├── database.types.ts         DB 타입 — pnpm db:types로 만든다 (손으로 고치지 않음)
 │   │   │   ├── env.ts                    환경 변수 · Supabase 열쇠 읽기
 │   │   │   └── http.ts                   응답 · 오류 형식
+│   │   ├── jobs/                         정해진 시간 작업이 부르는 일 (남은 녹음 · 사진 파일 지우기)
 │   │   ├── ping/                         살아 있는지 · 로그인 토큰이 통하는지 확인
 │   │   ├── .env.example                  서버 함수 비밀값 목록 (AI · 말 → 글 · 통화 · 알림 · 카카오)
 │   │   └── deno.json                     서버 함수 의존성 · 검사 설정 (pnpm fn:lint · fn:check · fn:test)
 │   ├── migrations/                       표 · RLS · DB 함수 · pg_cron SQL (기준: 19 ERD)
 │   ├── tests/                            DB 검사 (pgTAP)
 │   │   ├── database/                     표마다 보는 사람 규칙 · DB 함수 검사
+│   │   ├── perf/                         속도 점검용 가짜 데이터와 잴 함수 (scripts/perf-db.mjs가 씀)
 │   │   └── helpers.sql                   시험용 사용자 만들기 · 로그인 바꾸기
 │   ├── config.toml                       Supabase CLI 설정
 │   └── seed.sql                          시험용 가짜 데이터 (로컬 DB · CI만, 가족 3쌍)
@@ -54,7 +58,7 @@ ieobom/
 ├── .prettierrc.json                      모양 맞추기 설정 (pnpm format)
 ├── CLAUDE.md                             Claude 작업 규칙
 ├── eslint.config.mjs                     코드 검사 설정 (pnpm lint, 서버 함수는 제외)
-├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types)
+├── package.json                          pnpm 버전 고정 · 스크립트 (structure · db:types · test:db · perf:db)
 ├── pnpm-workspace.yaml                   워크스페이스 목록
 ├── README.md                             이 문서
 └── tsconfig.base.json                    패키지들이 같이 쓰는 타입 검사 설정

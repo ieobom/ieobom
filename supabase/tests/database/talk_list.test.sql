@@ -1,5 +1,5 @@
 begin;
-select plan(11);
+select plan(14);
 
 select pg_temp.make_user('자녀');
 select pg_temp.make_user('엄마');
@@ -56,6 +56,17 @@ select pg_temp.login('엄마');
 select is(jsonb_array_length(public.talk_list('00000000-0000-0000-0000-00000000a001')), 0, '피하고 싶은 주제는 빠진다');
 select throws_ok($$ select public.mark_asked('00000000-0000-0000-0000-00000000a001', '00000000-0000-0000-0000-000000005001') $$,
   'P0001', 'suggestion_not_found', '남의 이야기는 표시하지 못한다');
+
+-- 근황 주제와 피하고 싶은 주제는 잇는 표로 거른다: 다이어트를 피하면 '먹은 것'(김장) 근황 이야기가 빠진다
+reset role;
+update public.relationship_settings set avoid_topics = '{다이어트}'
+where relationship_id = '00000000-0000-0000-0000-00000000a001' and user_id = pg_temp.user_id('자녀');
+select pg_temp.login('자녀');
+select ok(not exists (select 1 from jsonb_array_elements(public.talk_list('00000000-0000-0000-0000-00000000a001')) i where i ->> 'text' = '김장 맛있었어요?'),
+  '다이어트를 피하면 먹은 것 근황 이야기가 빠진다');
+select ok(not exists (select 1 from jsonb_array_elements(public.talk_list('00000000-0000-0000-0000-00000000a001')) i where i ->> 'source' = 'weather'),
+  '날씨(건강)도 다이어트와 이어져 빠진다');
+select is(public.topic_avoided('이사', '{결혼·연애,취업·직장,돈·재정,건강,종교,정치,다이어트,학업}'), false, '직접 쓴 주제는 거르지 않는다');
 
 select pg_temp.login('남');
 select throws_ok($$ select public.talk_list('00000000-0000-0000-0000-00000000a001') $$, 'P0001', 'not_member', '남은 못 본다');

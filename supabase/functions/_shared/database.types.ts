@@ -1552,6 +1552,7 @@ export type Database = {
       is_connected: { Args: { relationship: string }; Returns: boolean }
       is_family: { Args: { other: string }; Returns: boolean }
       is_member: { Args: { relationship: string }; Returns: boolean }
+      log_events: { Args: { items: Json }; Returns: number }
       mark_asked: {
         Args: { relationship: string; suggestion?: string }
         Returns: string
@@ -1751,11 +1752,32 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      storage_cleanup_done: {
+        Args: { bucket: string; names: string[] }
+        Returns: number
+      }
+      storage_cleanup_targets: {
+        Args: { at?: string; limit_n?: number }
+        Returns: Json
+      }
       submit_answer: {
         Args: { method?: string; question: string; text: string }
         Returns: Json
       }
+      take_quota: {
+        Args: {
+          amount?: number
+          force?: boolean
+          kind: string
+          subject: string
+        }
+        Returns: boolean
+      }
       talk_list: { Args: { relationship: string }; Returns: Json }
+      topic_avoided: {
+        Args: { avoid: string[]; topic: string }
+        Returns: boolean
+      }
       try_uuid: { Args: { value: string }; Returns: string }
       unmark_asked: { Args: { suggestion: string }; Returns: undefined }
       unregister_device: { Args: { install_id: string }; Returns: undefined }

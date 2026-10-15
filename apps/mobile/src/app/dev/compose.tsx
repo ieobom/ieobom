@@ -62,7 +62,9 @@ export default function DevCompose() {
         tabs={tabs}
         onBack={say("뒤로")}
         onAddPhoto={say("사진 고르기 (9-1)")}
-        onSend={(d) => toast(`${ko.compose.sentNews(partner)} · ${d.topic ?? "주제 없음"}`)}
+        onSend={(d) =>
+          toast(`${ko.compose.sentNews(partner)} · ${d.topic ?? "주제 없음"} (${d.topicBy ?? "-"})`)
+        }
       />
     ) : (
       <MakeQuestionScreen
