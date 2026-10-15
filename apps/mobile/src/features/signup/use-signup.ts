@@ -1,6 +1,7 @@
 // 가입을 마쳤는지(users 줄이 있는지)와 가입 마무리(signup_complete)
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ko } from "@/copy/ko";
+import { track } from "@/lib/events";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/ui";
 
@@ -28,6 +29,7 @@ export function useSignupComplete() {
       });
       if (error) throw error;
     },
+    onSuccess: () => track("signup_done"),
     onError: () => toast(ko.error.internal),
   });
 }

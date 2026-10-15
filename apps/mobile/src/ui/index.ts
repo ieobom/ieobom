@@ -2,6 +2,7 @@
 export * from "./button";
 export * from "./card";
 export * from "./controls";
+export * from "./crash";
 export * from "./fonts";
 export * from "./icons";
 export * from "./overlays";

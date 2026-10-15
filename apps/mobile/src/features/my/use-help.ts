@@ -1,8 +1,9 @@
 // 보낸 문의 불러오기 · 보내기 · 답 본 때 적기 (inquiries 표, 나만 읽음)
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Constants from "expo-constants";
 import { Platform } from "react-native";
 import { ko } from "@/copy/ko";
+import { appVersion } from "@/lib/errors";
+import { track } from "@/lib/events";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/ui";
 
@@ -45,7 +46,7 @@ export function useInquiryAction(userId: string | undefined) {
               body: a.body,
               help_item: a.help_item,
               // 답할 때 원인을 찾기 쉽게 앱 버전과 휴대폰 종류를 같이 보낸다
-              app_version: Constants.expoConfig?.version ?? "",
+              app_version: appVersion,
               device: `${Platform.OS} ${Platform.Version ?? ""}`.trim(),
             })
           : await supabase
@@ -53,6 +54,9 @@ export function useInquiryAction(userId: string | undefined) {
               .update({ answer_seen_at: new Date().toISOString() })
               .in("id", a.ids);
       if (r.error) throw r.error;
+    },
+    onSuccess: (_, a) => {
+      if (a.type === "send") track("inquiry_sent");
     },
     onError: () => toast(ko.error.internal),
     onSettled: () => qc.invalidateQueries({ queryKey: ["inquiries", userId] }),

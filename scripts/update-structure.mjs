@@ -49,7 +49,7 @@ const DESC = {
   "apps/mobile/src/app/dev/":
     "개발 확인용 화면 (서버 연결 · 공통 부품 · 가짜 데이터 화면, 출시 빌드에서는 안 열림)",
   "apps/mobile/src/ui/": "디자인 값(39차 시안의 C · R) · 글꼴 · 공통 부품",
-  "apps/mobile/src/lib/": "서버 연결 · 세션 저장 · 데이터 불러오기 설정",
+  "apps/mobile/src/lib/": "서버 연결 · 세션 저장 · 데이터 불러오기 설정 · 앱 오류 · 이용 기록",
   "docs/": "개발 문서",
   "docs/tech-stack.md": "기술 스택 · 정할 것",
   "docs/data-model.md": "데이터 구조 — 19 ERD에서 바뀐 점 · 표마다 누가 읽고 쓰나",

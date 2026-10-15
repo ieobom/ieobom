@@ -1,6 +1,7 @@
 // 통화 후 메모의 초안 · 메모 불러오기와 저장 · 고치기 · 지우기 · 여쭤봤어요 (memo_drafts · memos · DB 함수 *_memo · mark_asked)
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ko } from "@/copy/ko";
+import { track } from "@/lib/events";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/ui";
 import type { DraftStatus, Mood, TalkItem } from "./memo-screen";
@@ -122,6 +123,9 @@ export function useMemoAction(userId: string | undefined) {
   const toast = useToast();
   return useMutation({
     mutationFn: run,
+    onSuccess: (_, a) => {
+      if (a.type === "save") track("memo_saved", { mood: a.mood !== null, text: a.text.trim() !== "" });
+    },
     onError: () => toast(ko.error.internal),
     onSettled: () => {
       for (const key of ["home", "records", "calendar", "records-day", "talk", "talk-items", "memo"]) {
