@@ -41,5 +41,5 @@ export const MOODS = ["좋았어요", "보통", "힘들었어요"] as const;
 export const CALL_DAYS = ["weekdays", "sat", "sun", "everyday"] as const;
 
 /** 기능 켜고 끄기 이름 (app_config.key, 계획 1-9). 앱 · 서버 함수가 같이 쓴다 */
-export const FEATURES = ["ai", "call_recording", "news_photos"] as const;
+export const FEATURES = ["ai", "call_recording", "news_photos", "voice"] as const;
 export type Feature = (typeof FEATURES)[number];

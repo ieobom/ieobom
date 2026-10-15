@@ -1764,6 +1764,15 @@ export type Database = {
         Args: { method?: string; question: string; text: string }
         Returns: Json
       }
+      take_quota: {
+        Args: {
+          amount?: number
+          force?: boolean
+          kind: string
+          subject: string
+        }
+        Returns: boolean
+      }
       talk_list: { Args: { relationship: string }; Returns: Json }
       topic_avoided: {
         Args: { avoid: string[]; topic: string }

@@ -33,7 +33,8 @@
 | `memo_drafts` | 새로 | 통화 메모 초안. 사람마다 따로, 나만 봄, 3일 |
 | `news` | `topic`은 칩 또는 직접 쓰기(12자), `topic_by`에 `custom` 더함 | 39차 '+ 직접 쓰기' |
 | `news_photos` | `ai_tag` 뺌, `thumb_path` 더함 | 사진 AI 태그 뺌(계획 1장), 작은 그림(9-1) |
-| `app_config` · `client_errors` · `usage` | 새로 | 기능 켜고 끄기(1-9), 앱 오류 기록(11-3), 사용량(11-1) |
+| `app_config` · `client_errors` · `usage` | 새로 | 기능 켜고 끄기(1-9, 하루 한도 값도 여기), 앱 오류 기록(11-3), 사용량(11-1) |
+| `private.daily_quota` · `private.storage_trash` · `private.secrets` | 새로 (서버만, 앱 API에 안 보임) | 하루 한도 센 값(11-2), 지울 사진 경로(9-6), 이용 기록 표시용 숨긴 값(11-4) |
 | `calendar_links` · `timing_feedback` | 만들지 않음 | 시범 운영 뒤 |
 
 ## 3. 누가 읽고 쓰나
