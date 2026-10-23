@@ -41,6 +41,8 @@ export default function Signup() {
   const [issued, setIssued] = useState<Issued | undefined>(undefined);
   const [lookup, setLookup] = useState<Lookup | undefined>(undefined);
   const [linked, setLinked] = useState<string | undefined>(undefined);
+  // 이 화면에서 가입을 마친 사람. 남은 단계(가족 · 통화 편한 시간 · 질문 · 알림)를 끝낼 때까지 여기 둔다
+  const [joinedHere, setJoinedHere] = useState<string | null>(null);
   const latest = useRef("");
   const status = useInviteStatus(issued?.id);
   const used = status.data?.status === "used" ? status.data.relationship_id : null;
@@ -58,8 +60,8 @@ export default function Signup() {
   }, [used]);
 
   if (session === undefined || (userId && signedUp.isPending)) return null;
-  // 가입을 마친 사람은 홈으로(가입 흐름 중에는 다시 묻지 않아서 끝날 때까지 여기 있는다)
-  if (session && signedUp.data && !complete.isSuccess) return <Redirect href="/" />;
+  // 전에 가입을 마친 사람(다시 로그인)은 홈으로. 이 화면에서 가입했으면 흐름이 끝날 때까지 여기 있는다
+  if (session && signedUp.data && joinedHere !== userId) return <Redirect href="/" />;
   const soon = () => toast(ko.app.comingSoon);
 
   return (
@@ -75,7 +77,10 @@ export default function Signup() {
       }}
       onCancelLogin={kakao.cancel}
       onDoc={soon}
-      onSignup={(name, agreed) => complete.mutateAsync({ name, agreed })}
+      onSignup={async (name, agreed) => {
+        await complete.mutateAsync({ name, agreed });
+        setJoinedHere(userId ?? null);
+      }}
       issued={issued}
       onIssue={(invite_as, my_kind) => issue.mutate({ invite_as, my_kind }, { onSuccess: setIssued })}
       onKakaoShare={soon}
