@@ -5,6 +5,27 @@ import type { ExpoConfig } from "expo/config";
 const dev = process.env.APP_VARIANT === "development";
 const id = dev ? "com.ieobom.app.dev" : "com.ieobom.app";
 
+// 카카오 로그인 (계획 3-1). 네이티브 앱 키는 apps/mobile/.env에 둔다(공개해도 되는 값).
+// 키가 없으면 카카오 플러그인을 빼서, 키 없이도 웹 미리보기 · Expo Go는 그대로 열린다
+const kakaoKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY;
+const kakaoPlugins: NonNullable<ExpoConfig["plugins"]> = kakaoKey
+  ? [
+      [
+        "expo-build-properties",
+        { android: { extraMavenRepos: ["https://devrepo.kakao.com/nexus/content/groups/public/"] } },
+      ],
+      [
+        "@react-native-kakao/core",
+        // 카카오톡에서 로그인하고 돌아오는 주소를 안드로이드 · 아이폰이 앱으로 넘겨 주게 한다
+        {
+          nativeAppKey: kakaoKey,
+          android: { authCodeHandlerActivity: true },
+          ios: { handleKakaoOpenUrl: true },
+        },
+      ],
+    ]
+  : [];
+
 // 권한 창 설명 (계획 12-3). 마이크는 39차 시안의 권한 창 문구 그대로.
 // 녹음 · 사진 모듈(12-4)을 넣을 때 그 플러그인의 권한 문구에도 이 값을 넘긴다.
 // 알림 권한 창은 iOS · 안드로이드 모두 설명 문구를 받지 않는다(가입의 '가족 전화 받기' 화면이 먼저 알려 줌)
@@ -30,7 +51,7 @@ const config: ExpoConfig = {
     },
   },
   android: { package: id },
-  plugins: ["expo-router", "expo-status-bar", "expo-splash-screen", "expo-font"],
+  plugins: ["expo-router", "expo-status-bar", "expo-splash-screen", "expo-font", ...kakaoPlugins],
 };
 
 export default config;

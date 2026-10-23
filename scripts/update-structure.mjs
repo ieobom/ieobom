@@ -44,6 +44,8 @@ const DESC = {
   "apps/mobile/src/copy/": "화면 문구 (ko.ts 하나에 모음)",
   "apps/mobile/src/features/": "기능별 데이터 불러오기 · 부품",
   "apps/mobile/src/features/config/": "기능 켜고 끄기 읽기 (useFeature · IfFeature)",
+  "apps/mobile/src/features/auth/": "카카오 로그인 (휴대폰 · 개발 확인용 웹) → 서버 로그인",
+  "apps/mobile/src/app/auth/": "개발 확인용 웹에서 카카오 로그인이 돌아오는 곳",
   "apps/mobile/src/features/dev/": "개발 확인용 (서버 연결)",
   "apps/mobile/src/app/(tabs)/": "아래 탭 화면 (홈 · 기록 · 마이)",
   "apps/mobile/src/app/dev/":

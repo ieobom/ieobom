@@ -12,4 +12,9 @@ export const env = {
     "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
     process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   ),
+  // 카카오 키는 없어도 앱이 열린다(로그인을 누르면 키가 없다고 알려 줌)
+  kakaoNativeKey: process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY ?? "",
+  // 개발 확인용 웹에서만
+  kakaoJsKey: process.env.EXPO_PUBLIC_KAKAO_JS_KEY ?? "",
+  kakaoRestKey: process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY ?? "",
 };

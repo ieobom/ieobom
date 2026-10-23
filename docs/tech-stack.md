@@ -93,7 +93,7 @@ Flutter는 쓰지 않는다(확정). 프론트 12차 비교조사는 숙련도�
 | 사진 | expo-image-picker + expo-image-manipulator + expo-image | 추천 | 3장까지 고르고 줄여서 올린다. 위치 정보가 지워지는지 확인. |
 | 짧은 녹음 | expo-audio | 추천 | 답·근황·메모 덧붙이기의 말로 남기기. 통화 녹음은 서버(LiveKit)가 하므로 앱에서 따로 녹음하지 않는다. |
 | 기기 저장 | SecureStore(세션) + AsyncStorage(일반 설정) | 추천 | SecureStore는 값 하나에 약 2KB 제한이라, 세션이 넘치면 Supabase 문서 방식(세션은 암호화해 AsyncStorage, 열쇠만 SecureStore). |
-| 카카오 | @react-native-kakao/core · user · share | 추천 | 로그인과 초대 공유를 한 라이브러리로. 커뮤니티 제작이라 첫 주에 검증. |
+| 카카오 | @react-native-kakao/core · user · share (v3) | 추천 | 로그인과 초대 공유를 한 라이브러리로. 커뮤니티 제작이라 첫 주에 검증. v3는 새 아키텍처 · Expo 52 이상. 문서는 GitHub 저장소(mym0404/react-native-kakao)의 `docs/`를 본다(예전 문서 주소 rnkakao.dev는 2026-10에 다른 사이트로 넘어감). 웹은 개발 확인용으로만 카카오 JavaScript SDK(2.8.3, 해시 고정)를 쓸 때 불러온다. |
 | 일반 알림 | expo-notifications | 확정 | 권한·기기 토큰·수신·눌렀을 때 화면 이동. |
 | 전화 수신 | LiveKit + react-native-callkeep | 추천 | 잠금 화면에서 휴대폰 기본 통화 화면(iOS CallKit)으로 받는다. 이름은 '이어봄 · 엄마'. 전화는 받는 사람이 가장 최근에 쓴 기기 하나로 울린다. |
 | 개발 확인용 웹 | react-native-web | 확정 | Xcode · 휴대폰 없이 화면과 서버 연결을 브라우저에서 확인한다(`pnpm app:web`). 출시하지 않는다. 서버 함수는 이 때문에 CORS를 연다. |
@@ -133,7 +133,7 @@ Flutter는 쓰지 않는다(확정). 프론트 12차 비교조사는 숙련도�
 
 | 무엇 | 왜 막히나 | 추천 |
 |---|---|---|
-| 카카오 → Supabase 로그인 연결 방식 | 카카오 SDK가 준 토큰을 Supabase Auth로 넘기는 방법(`signInWithIdToken` 지원 여부)을 확인해야 한다. | 2주차 실제 기기에서 확인(계획 3-2). 안 되면 Supabase 웹 로그인(카카오)으로. |
+| 카카오 → Supabase 로그인 연결 방식 | 카카오 SDK가 준 토큰을 Supabase Auth로 넘기는 방법(`signInWithIdToken` 지원 여부)을 확인해야 한다. 10/23: Supabase Auth 코드에서 카카오 ID 토큰 로그인(앱 키 여러 개 · nonce · 이메일 없이)을 확인했고 그 방식으로 만들었다. | 실제 기기에서 확인(계획 3-2). 안 되면 Supabase 웹 로그인(카카오)으로. |
 | AI 모델 | 처리방침의 국외 이전 항목과 AI 사용 안내가 업체에 따라 달라진다. | 계획 7-8(4주차) 전에 정한다. 정하면 시안의 처리방침·AI 안내를 그 업체로 맞춘다. |
 | 정책 문서의 AI·통화 업체 · 녹음 문장 | 39차 시안의 처리방침·AI 사용 안내가 'OpenAI(GPT-4o mini)', '최대 30일 보관' 기준이고 통화 업체 칸이 비어 있다. '녹음 파일은 만들지 않음'도 통화 녹음 방식과 맞지 않는다. | 'Google(미국), Gemini'와 'LiveKit(미국)'으로 채우고 Gemini 유료 등급의 보관 기간을 확인해 맞춘다. 녹음 문장은 '두 사람이 모두 켰을 때만 녹음하고 글로 바꾸면 바로 지움'으로 고친다. 시안 담당에게 2주차에 전한다(계획 12-1, 7장). |
 
