@@ -45,7 +45,6 @@ export default function Compose() {
         tabs={tabs}
         sending={act.isPending}
         onBack={() => router.back()}
-        onAddPhoto={() => toast(ko.app.comingSoon)}
         onSend={(d) =>
           act.mutate(
             { type: "news", relationship: family.relationship_id, ...d },

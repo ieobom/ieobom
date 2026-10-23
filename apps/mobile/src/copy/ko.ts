@@ -27,7 +27,7 @@ const COUNT: Record<number, string> = {
 };
 
 /** 도움말 답 아래 단추가 하는 일 */
-export type HelpGo = "ready" | "big" | "privacy" | "schedule" | "family";
+export type HelpGo = "big" | "privacy" | "schedule" | "family";
 
 // 시안의 hourSeg: 오전 · 낮 · 오후 · 저녁 · 밤
 const seg = (h: number) => (h < 12 ? "오전" : h === 12 ? "낮" : h < 18 ? "오후" : h < 21 ? "저녁" : "밤");
@@ -45,8 +45,9 @@ export const ko = {
   tabs: { home: "홈", archive: "기록", settings: "마이" },
   /** 화면을 다 만들기 전 · 로그인 전 임시 안내 */
   app: {
-    comingSoon: "곧 만들어요",
-    signedOut: "로그인 전이에요. 카카오 로그인은 곧 붙어요.",
+    /** 앱 안 통화(LiveKit, 단위 5)를 붙이기 전 */
+    callNotReady: "앱 안 통화는 아직 붙이는 중이에요. 급한 일은 휴대폰 전화로 걸어 주세요.",
+    signedOut: "카카오로 로그인하면 볼 수 있어요.",
     crashTitle: "화면을 여는 중에 문제가 생겼어요",
     crashBody: "다시 해 보기를 눌러 주세요. 계속 안 되면 앱을 껐다가 다시 켜 주세요.",
     retry: "다시 해 보기",
@@ -283,6 +284,9 @@ export const ko = {
     logout: "로그아웃",
     logoutTitle: "로그아웃할까요?",
     logoutBody: "카카오로 다시 로그인하면 지금 계정으로 돌아와요.",
+    loggedOut: "로그아웃했어요",
+    withdrawn: "탈퇴했어요. 메모와 답을 모두 지웠어요",
+    withdrawFailed: "탈퇴가 끝나지 않았어요. 인터넷을 확인하고 다시 해 주세요",
     withdraw: "탈퇴하기",
     withdrawTitle: "탈퇴할까요?",
     withdrawBody: (names: string) =>
@@ -597,6 +601,10 @@ export const ko = {
     askParent: (parent: string) => `맞지 않으면 ${parent}께 여쭤봐 주세요`,
     askChild: (child: string) => `맞지 않으면 ${withEge(child)} 물어봐 주세요`,
     connect: "연결하기",
+    shareMessage: (code: string) =>
+      `이어봄 초대 코드예요: ${code}\n이어봄을 열고 '받은 초대 코드 넣기'에 넣어 주세요. 48시간 안에 넣어야 해요.`,
+    copied: "코드를 복사했어요",
+    shareCopied: "보낼 글을 복사했어요. 카카오톡에 붙여 넣어 보내 주세요",
     errors: {
       code_not_found: "코드가 맞지 않아요. 숫자를 다시 확인해 주세요.",
       code_expired: "48시간이 지나 쓸 수 없는 코드예요. 초대한 가족에게 새 코드를 부탁해 주세요.",
@@ -657,23 +665,12 @@ export const ko = {
         key: "ring",
         q: "가족 전화가 울리지 않아요",
         a: "휴대폰 알림과 마이크가 켜져 있어야 울려요. 무음이나 방해 금지 모드이면 소리 없이 화면만 켜져요.",
-        go: ["알림 · 마이크 확인하기", "ready"],
       },
       {
         key: "big",
         q: "글자가 작아요",
         a: "글자 크게 보기를 켜면 글자와 버튼이 모두 커져요.",
         go: ["글자 크게 보기 켜기", "big"],
-      },
-      {
-        key: "emergency",
-        q: "급한 일이 생겼어요",
-        a: "이어봄 통화로는 112 · 119 같은 긴급 전화를 걸 수 없어요. 급한 일은 휴대폰 전화로 걸어 주세요.",
-      },
-      {
-        key: "cost",
-        q: "통화하면 요금이 드나요?",
-        a: "이어봄은 요금을 받지 않아요. 와이파이가 없으면 모바일 데이터를 쓰고, 데이터 요금은 쓰는 요금제를 따라요.",
       },
       {
         key: "memo",
@@ -709,6 +706,11 @@ export const ko = {
         a: "새 휴대폰에 이어봄을 깔고 같은 카카오 계정으로 로그인하면 가족 연결과 기록이 그대로 이어져요. 가족 전화는 가장 최근에 이어봄을 쓴 휴대폰 한 대로만 울려요.",
       },
     ] as { key: string; q: string; a: string; go?: readonly [string, HelpGo] }[],
+  },
+  /** 동의 문서 화면 (문서 내용은 src/copy/docs.ts) */
+  docs: {
+    summaryHead: "한눈에 보기",
+    consentHead: "개인정보 수집 · 이용 동의",
   },
   /** 서버 함수 오류 code별 문구 (supabase/functions/_shared/http.ts) */
   error: {

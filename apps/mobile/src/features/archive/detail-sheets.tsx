@@ -85,7 +85,8 @@ export type DetailActions = {
   onEditMemo: (memoId: string) => void;
   onDeleteMemo: (memoId: string) => void;
   onDeleteNews: (newsId: string) => void;
-  onRetryTalk: (memoId: string) => void;
+  /** 여쭤볼 이야기 다시 만들기(AI, 7-9). 없으면 단추를 숨긴다 */
+  onRetryTalk?: (memoId: string) => void;
 };
 
 export function RecordDetail({
@@ -173,9 +174,11 @@ export function RecordDetail({
             <T size={15} lh={1.6} color={C.textTertiary} style={styles.retryText}>
               {a.talkFailed}
             </T>
-            <Button variant="secondary" onPress={() => actions.onRetryTalk(item.id)}>
-              {a.talkRetry}
-            </Button>
+            {actions.onRetryTalk ? (
+              <Button variant="secondary" onPress={() => actions.onRetryTalk?.(item.id)}>
+                {a.talkRetry}
+              </Button>
+            ) : null}
           </View>
         ) : item.suggest_status === "making" ? (
           <View style={styles.ask}>

@@ -3,7 +3,8 @@
 // 서버 일(로그인 · 가입 마무리 · 코드 · 저장)은 부르는 쪽이 한다. 카카오 로그인은 3-1 · 3-2, 알림 · 마이크 권한은 6-2에서 붙인다.
 // 부모님이 되면(자녀를 고르거나 부모님으로 이어지면) 그 뒤 화면은 글자를 크게 그린다(시안 onBig).
 import { AVOID_TOPICS } from "@ieobom/shared";
-import { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { ko } from "@/copy/ko";
@@ -60,7 +61,8 @@ export type SignupProps = {
   onIssue: (inviteAs: InviteAs, myKind?: Kind) => void;
   onKakaoShare: () => void;
   onCopy: () => void;
-  onEarlyNotify: () => void;
+  /** 상대가 코드를 넣으면 알림 받기(알림 권한, 6-2). 없으면 그 줄을 숨긴다 */
+  onEarlyNotify?: () => void;
   /** 이어진 가족을 부르는 말. 생기면 '이어졌어요'로 간다(보낸 코드를 상대가 넣었을 때) */
   linked?: string;
   /** 받은 코드 확인 결과 */
@@ -84,6 +86,15 @@ export function SignupFlow(p: SignupProps) {
   const [typed, setName] = useState<string | null>(null);
   const name = typed ?? p.kakaoName;
   const [terms, setTerms] = useState(false);
+  // 동의 화면에서 문서를 보러 갔다 오면 동의 화면을 다시 연다(문서는 다른 화면이라 동의 창을 잠깐 닫는다)
+  const reopenTerms = useRef(false);
+  useFocusEffect(
+    useCallback(() => {
+      if (!reopenTerms.current) return;
+      reopenTerms.current = false;
+      setTerms(true);
+    }, []),
+  );
   const [relation, setRelation] = useState<InviteAs | undefined>(undefined);
   const [kind, setKind] = useState<Kind | undefined>(undefined);
   const [code, setCode] = useState("");
@@ -200,16 +211,18 @@ export function SignupFlow(p: SignupProps) {
             onKakao={p.onKakaoShare}
             onCopy={p.onCopy}
             extra={
-              <View style={styles.early}>
-                <T size={14} lh={1.55} color={C.textSub} style={styles.flex}>
-                  {s.earlyBody(asLabel(relation ?? "mom"))}
-                </T>
-                <Pressable accessibilityRole="button" onPress={p.onEarlyNotify} style={styles.earlyButton}>
-                  <T size={15} weight={700} color={C.primary}>
-                    {s.earlyButton}
+              p.onEarlyNotify ? (
+                <View style={styles.early}>
+                  <T size={14} lh={1.55} color={C.textSub} style={styles.flex}>
+                    {s.earlyBody(asLabel(relation ?? "mom"))}
                   </T>
-                </Pressable>
-              </View>
+                  <Pressable accessibilityRole="button" onPress={p.onEarlyNotify} style={styles.earlyButton}>
+                    <T size={15} weight={700} color={C.primary}>
+                      {s.earlyButton}
+                    </T>
+                  </Pressable>
+                </View>
+              ) : undefined
             }
           />
         );
@@ -495,7 +508,11 @@ export function SignupFlow(p: SignupProps) {
         <TermsSheet
           visible={terms}
           onClose={() => setTerms(false)}
-          onDoc={p.onDoc}
+          onDoc={(k) => {
+            reopenTerms.current = true;
+            setTerms(false);
+            p.onDoc(k);
+          }}
           onAgree={(agreed) => {
             setTerms(false);
             setBusy(true);

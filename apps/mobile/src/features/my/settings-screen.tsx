@@ -3,6 +3,7 @@
 // '가족 전화 받기'(알림 · 마이크 권한)는 6-8에서 더한다. 도움말 · 문의는 아래 창(help-sheet).
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { DOCS } from "@/copy/docs";
 import { ko, type HelpGo } from "@/copy/ko";
 import { partnerLabel } from "@/features/home/partner";
 import { seoulParts } from "@/lib/dates";
@@ -148,7 +149,7 @@ export function SettingsScreen({
           {DOC_KEYS.map((k) => (
             <View key={k}>
               <Divider />
-              <SettingsRow label={m.docs[k]} onPress={() => h.onDoc(k)} />
+              <SettingsRow label={DOCS[k].short} onPress={() => h.onDoc(k)} />
             </View>
           ))}
         </Group>

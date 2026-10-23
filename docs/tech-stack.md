@@ -91,6 +91,7 @@ Flutter는 쓰지 않는다(확정). 프론트 12차 비교조사는 숙련도�
 | 스타일 | React Native StyleSheet + 디자인 값 표, 글꼴 Pretendard(본문) · Jua(홈 '이어봄') | 확정 | 39차 시안이 디자인 값 표(색 `C` · 모서리 `R`)와 스타일 객체로 쓰여 있어 거의 그대로 옮길 수 있다(2026-10-13). 큰 글씨에서 줄바꿈·버튼 높이 검사. |
 | 목록 | FlatList + 페이지 단위 조회 | 추천 | 기본 기능으로 충분. 느린 게 측정되면 FlashList. |
 | 사진 | expo-image-picker + expo-image-manipulator + expo-image | 추천 | 3장까지 고르고 줄여서 올린다. 위치 정보가 지워지는지 확인. |
+| 복사 · 공유 | expo-clipboard + React Native Share | 확정 | 초대 코드 복사, 휴대폰 공유 창으로 보내기(카카오 메시지 모양은 @react-native-kakao/share). |
 | 짧은 녹음 | expo-audio | 추천 | 답·근황·메모 덧붙이기의 말로 남기기. 통화 녹음은 서버(LiveKit)가 하므로 앱에서 따로 녹음하지 않는다. |
 | 기기 저장 | SecureStore(세션) + AsyncStorage(일반 설정) | 추천 | SecureStore는 값 하나에 약 2KB 제한이라, 세션이 넘치면 Supabase 문서 방식(세션은 암호화해 AsyncStorage, 열쇠만 SecureStore). |
 | 카카오 | @react-native-kakao/core · user · share (v3) | 추천 | 로그인과 초대 공유를 한 라이브러리로. 커뮤니티 제작이라 첫 주에 검증. v3는 새 아키텍처 · Expo 52 이상. 문서는 GitHub 저장소(mym0404/react-native-kakao)의 `docs/`를 본다(예전 문서 주소 rnkakao.dev는 2026-10에 다른 사이트로 넘어감). 웹은 개발 확인용으로만 카카오 JavaScript SDK(2.8.3, 해시 고정)를 쓸 때 불러온다. |

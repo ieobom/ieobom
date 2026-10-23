@@ -55,6 +55,12 @@ export function track(name: EventName, detail?: Item["detail"]) {
   if (queue.length >= BATCH) void flush();
 }
 
+/** 모아 둔 기록 버리기(탈퇴 뒤 다음 사람 기록과 섞이지 않게) */
+export function clearEvents() {
+  queue = [];
+  save();
+}
+
 /** 아직 안 보낸 기록 수 (개발 확인용) */
 export const queuedCount = () => queue.length;
 

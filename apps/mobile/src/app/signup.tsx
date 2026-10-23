@@ -16,6 +16,7 @@ import {
 import type { MyPage } from "@/features/my/types";
 import { useMyAction } from "@/features/my/use-my";
 import { SignupFlow } from "@/features/signup/signup-flow";
+import { useShareCode } from "@/features/invite/share-code";
 import { useSignedUp, useSignupComplete } from "@/features/signup/use-signup";
 import { useSession } from "@/lib/session";
 import { useToast } from "@/ui";
@@ -34,6 +35,7 @@ export default function Signup() {
     toast(code === "needs_dev_build" ? ko.signup.needsDevBuild : ko.signup.notConfigured),
   );
   const complete = useSignupComplete(userId);
+  const shareCode = useShareCode();
   const act = useMyAction(userId);
   const issue = useIssueInvite(userId);
   const preview = usePreviewInvite();
@@ -62,7 +64,6 @@ export default function Signup() {
   if (session === undefined || (userId && signedUp.isPending)) return null;
   // 전에 가입을 마친 사람(다시 로그인)은 홈으로. 이 화면에서 가입했으면 흐름이 끝날 때까지 여기 있는다
   if (session && signedUp.data && joinedHere !== userId) return <Redirect href="/" />;
-  const soon = () => toast(ko.app.comingSoon);
 
   return (
     <SignupFlow
@@ -76,16 +77,15 @@ export default function Signup() {
         kakao.start();
       }}
       onCancelLogin={kakao.cancel}
-      onDoc={soon}
+      onDoc={(key) => router.push({ pathname: "/doc/[key]", params: { key } })}
       onSignup={async (name, agreed) => {
         await complete.mutateAsync({ name, agreed });
         setJoinedHere(userId ?? null);
       }}
       issued={issued}
       onIssue={(invite_as, my_kind) => issue.mutate({ invite_as, my_kind }, { onSuccess: setIssued })}
-      onKakaoShare={soon}
-      onCopy={soon}
-      onEarlyNotify={soon}
+      onKakaoShare={() => shareCode.share(issued?.code)}
+      onCopy={() => shareCode.copy(issued?.code)}
       linked={linked}
       lookup={lookup}
       onCode={(c) => {

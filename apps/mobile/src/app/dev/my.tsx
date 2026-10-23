@@ -72,8 +72,7 @@ export default function DevMy() {
             if (go === "big") act({ type: "profile", patch: { large_text: true } }, ko.help.bigDone);
             else if (go === "privacy") setScreen("privacy");
             else if (go === "schedule") setScreen("schedule");
-            else if (go === "family") setScreen("families");
-            else toast("가족 전화 받기 (6-8)");
+            else setScreen("families");
           },
           onSendInquiry: (body, item) => {
             setInquiries((xs) => [

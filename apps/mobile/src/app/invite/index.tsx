@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ko } from "@/copy/ko";
 import { partnerLabel } from "@/features/home/partner";
 import { InviteFlow } from "@/features/invite/invite-screens";
+import { useShareCode } from "@/features/invite/share-code";
 import { useInviteStatus, useIssueInvite, type Issued } from "@/features/invite/use-invite";
 import type { MyPage } from "@/features/my/types";
 import { useMyPage } from "@/features/my/use-my";
@@ -16,6 +17,7 @@ export default function Invite() {
   const session = useSession();
   const userId = session?.user.id;
   const toast = useToast();
+  const shareCode = useShareCode();
   const qc = useQueryClient();
   const my = useMyPage(userId);
   const issue = useIssueInvite(userId);
@@ -44,9 +46,9 @@ export default function Invite() {
       data={my.data}
       issued={issued}
       onIssue={onIssue}
-      // 카카오톡으로 보내기 · 코드 복사는 4-3에서 붙인다
-      onKakao={() => toast(ko.app.comingSoon)}
-      onCopy={() => toast(ko.app.comingSoon)}
+      // 카카오톡으로 바로 보내기(카카오 메시지 모양)는 4-3. 지금은 휴대폰 공유 창으로
+      onKakao={() => shareCode.share(issued?.code)}
+      onCopy={() => shareCode.copy(issued?.code)}
       onClose={() => {
         toast(ko.invite.closed);
         router.back();
