@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Redirect, router } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ko } from "@/copy/ko";
+import { kakaoName, useKakaoLogin } from "@/features/auth/use-kakao-login";
 import { partnerLabel } from "@/features/home/partner";
 import { inviterLabel } from "@/features/invite/labels";
 import {
@@ -20,13 +21,18 @@ import { useSession } from "@/lib/session";
 import { useToast } from "@/ui";
 
 // 가입. 로그인 전이면 카카오 로그인부터, 로그인했지만 가입을 마치지 않았으면 이름부터.
-// 아직 없는 것: 카카오 로그인(3-1 · 3-2), 문서 보기(12-2), 카카오톡으로 보내기 · 코드 복사(4-3), 알림 · 마이크 권한(6-2)
+// 아직 없는 것: 문서 보기(12-2), 카카오톡으로 보내기 · 코드 복사(4-3), 알림 · 마이크 권한(6-2)
 export default function Signup() {
   const session = useSession();
   const userId = session?.user.id;
   const signedUp = useSignedUp(userId);
   const toast = useToast();
   const qc = useQueryClient();
+  // 웹(개발 확인용)은 카카오에서 돌아온 화면(/auth/kakao)이 실패하면 ?login=failed 로 보낸다
+  const { login } = useLocalSearchParams<{ login?: string }>();
+  const kakao = useKakaoLogin((code) =>
+    toast(code === "needs_dev_build" ? ko.signup.needsDevBuild : ko.signup.notConfigured),
+  );
   const complete = useSignupComplete();
   const act = useMyAction(userId);
   const issue = useIssueInvite(userId);
@@ -60,11 +66,14 @@ export default function Signup() {
     <SignupFlow
       start={session ? "profile" : "login"}
       loggedIn={!!session}
-      loggingIn={false}
-      loginError={false}
-      kakaoName=""
-      onLogin={soon}
-      onCancelLogin={soon}
+      loggingIn={kakao.busy}
+      loginError={kakao.failed || login === "failed"}
+      kakaoName={kakaoName(session)}
+      onLogin={() => {
+        if (login) router.setParams({ login: undefined });
+        kakao.start();
+      }}
+      onCancelLogin={kakao.cancel}
       onDoc={soon}
       onSignup={(name, agreed) => complete.mutateAsync({ name, agreed })}
       issued={issued}
