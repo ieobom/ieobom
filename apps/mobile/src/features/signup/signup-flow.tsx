@@ -94,6 +94,8 @@ export function SignupFlow(p: SignupProps) {
   const [notifyOn, setNotifyOn] = useState(true);
   const [time, setTime] = useState<NotifyTime>("19:00");
   const [busy, setBusy] = useState(false);
+  // 이름 · 동의로 가입을 마쳤는지. 마친 뒤에는 그 단계로 돌아가지 않는다
+  const [joinedApp, setJoinedApp] = useState(false);
 
   const partner = joined?.name ?? p.linked ?? (relation ? asLabel(relation) : ko.family.someone);
   const parent = joined ? joined.parent : relation === "child";
@@ -110,8 +112,12 @@ export function SignupFlow(p: SignupProps) {
   ];
   const at = flow.indexOf(step);
   const linkedNow = !!joined || !!p.linked;
-  // 이어진 뒤에는 연결 단계로 돌아가지 않는다
-  const showBack = step !== "success" && step !== "login" && !(step === "times" && linkedNow);
+  // 가입을 마친 뒤에는 이름 · 동의로, 이어진 뒤에는 연결 단계로 돌아가지 않는다
+  const showBack =
+    step !== "success" &&
+    step !== "login" &&
+    !(step === "family" && joinedApp) &&
+    !(step === "times" && linkedNow);
   const showSkip = step === "times" || step === "questions";
   const big = parent && step !== "code" && step !== "family";
 
@@ -494,7 +500,12 @@ export function SignupFlow(p: SignupProps) {
             setTerms(false);
             setBusy(true);
             p.onSignup(name.trim(), agreed)
-              .then(() => setStep("family"))
+              .then(() => {
+                setJoinedApp(true);
+                setStep("family");
+              })
+              // 실패 안내는 onSignup 쪽이 띄운다
+              .catch(() => undefined)
               .finally(() => setBusy(false));
           }}
         />

@@ -33,7 +33,7 @@ export default function Signup() {
   const kakao = useKakaoLogin((code) =>
     toast(code === "needs_dev_build" ? ko.signup.needsDevBuild : ko.signup.notConfigured),
   );
-  const complete = useSignupComplete();
+  const complete = useSignupComplete(userId);
   const act = useMyAction(userId);
   const issue = useIssueInvite(userId);
   const preview = usePreviewInvite();
