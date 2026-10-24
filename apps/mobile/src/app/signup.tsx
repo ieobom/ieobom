@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Redirect, router } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ko } from "@/copy/ko";
+import { kakaoName, useKakaoLogin } from "@/features/auth/use-kakao-login";
 import { partnerLabel } from "@/features/home/partner";
 import { inviterLabel } from "@/features/invite/labels";
 import {
@@ -15,19 +16,26 @@ import {
 import type { MyPage } from "@/features/my/types";
 import { useMyAction } from "@/features/my/use-my";
 import { SignupFlow } from "@/features/signup/signup-flow";
+import { useShareCode } from "@/features/invite/share-code";
 import { useSignedUp, useSignupComplete } from "@/features/signup/use-signup";
 import { useSession } from "@/lib/session";
 import { useToast } from "@/ui";
 
 // 가입. 로그인 전이면 카카오 로그인부터, 로그인했지만 가입을 마치지 않았으면 이름부터.
-// 아직 없는 것: 카카오 로그인(3-1 · 3-2), 문서 보기(12-2), 카카오톡으로 보내기 · 코드 복사(4-3), 알림 · 마이크 권한(6-2)
+// 아직 없는 것: 문서 보기(12-2), 카카오톡으로 보내기 · 코드 복사(4-3), 알림 · 마이크 권한(6-2)
 export default function Signup() {
   const session = useSession();
   const userId = session?.user.id;
   const signedUp = useSignedUp(userId);
   const toast = useToast();
   const qc = useQueryClient();
-  const complete = useSignupComplete();
+  // 웹(개발 확인용)은 카카오에서 돌아온 화면(/auth/kakao)이 실패하면 ?login=failed 로 보낸다
+  const { login } = useLocalSearchParams<{ login?: string }>();
+  const kakao = useKakaoLogin((code) =>
+    toast(code === "needs_dev_build" ? ko.signup.needsDevBuild : ko.signup.notConfigured),
+  );
+  const complete = useSignupComplete(userId);
+  const shareCode = useShareCode();
   const act = useMyAction(userId);
   const issue = useIssueInvite(userId);
   const preview = usePreviewInvite();
@@ -35,6 +43,8 @@ export default function Signup() {
   const [issued, setIssued] = useState<Issued | undefined>(undefined);
   const [lookup, setLookup] = useState<Lookup | undefined>(undefined);
   const [linked, setLinked] = useState<string | undefined>(undefined);
+  // 이 화면에서 가입을 마친 사람. 남은 단계(가족 · 통화 편한 시간 · 질문 · 알림)를 끝낼 때까지 여기 둔다
+  const [joinedHere, setJoinedHere] = useState<string | null>(null);
   const latest = useRef("");
   const status = useInviteStatus(issued?.id);
   const used = status.data?.status === "used" ? status.data.relationship_id : null;
@@ -52,26 +62,30 @@ export default function Signup() {
   }, [used]);
 
   if (session === undefined || (userId && signedUp.isPending)) return null;
-  // 가입을 마친 사람은 홈으로(가입 흐름 중에는 다시 묻지 않아서 끝날 때까지 여기 있는다)
-  if (session && signedUp.data && !complete.isSuccess) return <Redirect href="/" />;
-  const soon = () => toast(ko.app.comingSoon);
+  // 전에 가입을 마친 사람(다시 로그인)은 홈으로. 이 화면에서 가입했으면 흐름이 끝날 때까지 여기 있는다
+  if (session && signedUp.data && joinedHere !== userId) return <Redirect href="/" />;
 
   return (
     <SignupFlow
       start={session ? "profile" : "login"}
       loggedIn={!!session}
-      loggingIn={false}
-      loginError={false}
-      kakaoName=""
-      onLogin={soon}
-      onCancelLogin={soon}
-      onDoc={soon}
-      onSignup={(name, agreed) => complete.mutateAsync({ name, agreed })}
+      loggingIn={kakao.busy}
+      loginError={kakao.failed || login === "failed"}
+      kakaoName={kakaoName(session)}
+      onLogin={() => {
+        if (login) router.setParams({ login: undefined });
+        kakao.start();
+      }}
+      onCancelLogin={kakao.cancel}
+      onDoc={(key) => router.push({ pathname: "/doc/[key]", params: { key } })}
+      onSignup={async (name, agreed) => {
+        await complete.mutateAsync({ name, agreed });
+        setJoinedHere(userId ?? null);
+      }}
       issued={issued}
       onIssue={(invite_as, my_kind) => issue.mutate({ invite_as, my_kind }, { onSuccess: setIssued })}
-      onKakaoShare={soon}
-      onCopy={soon}
-      onEarlyNotify={soon}
+      onKakaoShare={() => shareCode.share(issued?.code)}
+      onCopy={() => shareCode.copy(issued?.code)}
       linked={linked}
       lookup={lookup}
       onCode={(c) => {

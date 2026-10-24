@@ -1,5 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { ko } from "@/copy/ko";
+import { useShareCode } from "@/features/invite/share-code";
 import { InviteScreen } from "@/features/my/family-screens";
 import { useMyAction, useMyPage } from "@/features/my/use-my";
 import { useSession } from "@/lib/session";
@@ -12,6 +13,7 @@ export default function Invite() {
   const toast = useToast();
   const my = useMyPage(session?.user.id);
   const act = useMyAction(session?.user.id);
+  const shareCode = useShareCode();
   const invite = my.data?.invites.find((i) => i.invite_as === as);
   if (!invite) return null;
   return (
@@ -28,9 +30,9 @@ export default function Invite() {
           { onSuccess: () => toast(ko.my.renewed) },
         )
       }
-      // 카카오톡으로 보내기 · 코드 복사는 4-3에서 붙인다
-      onKakao={() => toast(ko.app.comingSoon)}
-      onCopy={() => toast(ko.app.comingSoon)}
+      // 카카오톡으로 바로 보내기(카카오 메시지 모양)는 4-3. 지금은 휴대폰 공유 창으로
+      onKakao={() => shareCode.share(invite.code)}
+      onCopy={() => shareCode.copy(invite.code)}
       onCancel={() =>
         act.mutate(
           { type: "cancel_invite", invite: invite.id },

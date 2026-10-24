@@ -13,7 +13,8 @@ import { C, Chip, useToast } from "@/ui";
 const CASES: [string, string, SignupStep][] = [
   ["start", "처음부터", "login"],
   ["profile", "로그인함 · 이름부터", "profile"],
-  ["family", "누구와 이어볼까요", "family"],
+  ["me", "나는 누구인가요", "me"],
+  ["family", "자녀 · 엄마 아빠 고르기", "family"],
   ["times", "통화 편한 시간", "times"],
 ];
 

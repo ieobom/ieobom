@@ -17,7 +17,7 @@ export function useSignedUp(userId: string | undefined) {
   });
 }
 
-export function useSignupComplete() {
+export function useSignupComplete(userId: string | undefined) {
   const toast = useToast();
   return useMutation({
     // 자녀 · 부모님은 가족을 고를 때(create_invite · accept_invite) 다시 맞춘다. 처음에는 자녀로 둔다
@@ -27,6 +27,12 @@ export function useSignupComplete() {
         side: "child",
         agreed: a.agreed,
       });
+      // 이미 가입했으면(두 번 눌렀거나 다시 들어온 경우) 이름만 맞추고 이어 간다
+      if (error?.message === "already_signed_up" && userId) {
+        const r = await supabase.from("users").update({ name: a.name }).eq("id", userId);
+        if (r.error) throw r.error;
+        return;
+      }
       if (error) throw error;
     },
     onSuccess: () => track("signup_done"),

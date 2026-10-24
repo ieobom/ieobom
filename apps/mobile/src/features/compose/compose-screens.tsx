@@ -385,7 +385,8 @@ export function NewsEditorScreen({
   onBack: () => void;
   onSend: (d: NewsDraft) => void;
   /** 사진 고르기(9-1) */
-  onAddPhoto: () => void;
+  /** 사진 고르기(9-1). 없으면 사진 칸을 숨긴다 */
+  onAddPhoto?: () => void;
 }) {
   const c = ko.compose;
   const [text, setText] = useState("");
@@ -415,22 +416,26 @@ export function NewsEditorScreen({
           size={17}
           card
         />
-        <T size={15} weight={700} style={styles.sec}>
-          {c.photos}
-          <T size={13} weight={500} color={C.textTertiary}>
-            {c.photosNote}
-          </T>
-        </T>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={c.addPhoto}
-          onPress={onAddPhoto}
-          style={styles.addPhoto}
-        >
-          <T size={28} color={C.textSub}>
-            +
-          </T>
-        </Pressable>
+        {onAddPhoto ? (
+          <>
+            <T size={15} weight={700} style={styles.sec}>
+              {c.photos}
+              <T size={13} weight={500} color={C.textTertiary}>
+                {c.photosNote}
+              </T>
+            </T>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={c.addPhoto}
+              onPress={onAddPhoto}
+              style={styles.addPhoto}
+            >
+              <T size={28} color={C.textSub}>
+                +
+              </T>
+            </Pressable>
+          </>
+        ) : null}
         <T size={15} weight={700} style={styles.sec}>
           {c.topicHead}
           <T size={15} weight={500} color={C.textTertiary}>

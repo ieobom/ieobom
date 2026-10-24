@@ -24,8 +24,8 @@ function SignedInHome({ userId }: { userId: string }) {
   const talk = useTalkList(userId, first?.relationship_id);
   if (!home.data) return null;
 
-  // 아직 만들지 않은 화면(통화)은 안내만 띄운다
-  const soon = () => toast(ko.app.comingSoon);
+  // 앱 안 통화(단위 5)를 붙이기 전에는 안내만 띄운다
+  const soon = () => toast(ko.app.callNotReady);
   // 이용 기록(11-4): 전화 걸기 단추와 홈 카드를 누른 것만 적는다
   const handlers: HomeHandlers = {
     onCall: () => {

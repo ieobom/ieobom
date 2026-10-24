@@ -118,7 +118,6 @@ function SignedInArchive({
         onOpenNews: (item) => act.mutate({ type: "see_news", news: item.id }),
         onEditMemo: (memo) => router.push({ pathname: "/memo", params: { edit: memo } }),
         // 이야기 다시 만들기(7-9, AI)는 아직 없다
-        onRetryTalk: () => toast(ko.app.comingSoon),
       }}
       onInvite={() => router.push("/invite")}
       onCode={() => router.push("/invite/code")}

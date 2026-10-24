@@ -68,11 +68,14 @@ function Heading({ title, sub, subGap = 28 }: { title: string; sub?: string; sub
 // ── 단계 몸통 ──────────────────────────────
 
 export function PickBody({
+  title,
   options,
   sub,
   onPick,
   onHaveCode,
 }: {
+  /** 없으면 '누구와 이어볼까요?' */
+  title?: string;
   options: Choice[];
   sub: string;
   onPick: (key: InviteAs) => void;
@@ -81,7 +84,7 @@ export function PickBody({
   const i = ko.invite;
   return (
     <>
-      <Heading title={i.pickTitle} sub={sub} />
+      <Heading title={title ?? i.pickTitle} sub={sub} />
       <View style={styles.options}>
         {options.map((o) => (
           <Pressable
