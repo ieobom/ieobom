@@ -8,13 +8,7 @@ import { useCallback, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { ko } from "@/copy/ko";
-import {
-  ALL_CHOICES,
-  CodeBody,
-  InviteShowBody,
-  ParentAsBody,
-  PickBody,
-} from "@/features/invite/invite-screens";
+import { CodeBody, InviteShowBody, PickBody, type Choice } from "@/features/invite/invite-screens";
 import { asLabel } from "@/features/invite/labels";
 import type { InviteAs, Issued, Kind, Lookup } from "@/features/invite/use-invite";
 import { BottomBar, MarkList } from "@/features/my/parts";
@@ -41,8 +35,9 @@ import {
   Toggle,
 } from "@/ui";
 
+/** me 나는 누구인가요(자녀 · 엄마 · 아빠) · family 자녀가 엄마 · 아빠 중 초대할 분 고르기 */
 export type SignupStep =
-  "login" | "profile" | "family" | "as" | "invite" | "code" | "success" | "times" | "questions" | "notify";
+  "login" | "profile" | "me" | "family" | "invite" | "code" | "success" | "times" | "questions" | "notify";
 
 export type SignupProps = {
   /** 처음 보일 단계(로그인했지만 가입을 마치지 않았으면 profile) */
@@ -77,6 +72,17 @@ export type SignupProps = {
 
 const NOTIFY_TIMES = Object.keys(ko.my.notifyTimes) as NotifyTime[];
 
+// 나는 누구인가요. 자녀면 엄마 · 아빠 중 한 분을, 엄마 · 아빠면 자녀를 초대한다
+const ME_CHOICES: Choice[] = [
+  { key: "child", label: ko.signup.meChild, desc: ko.invite.childDesc },
+  { key: "mom", label: ko.signup.meMom },
+  { key: "dad", label: ko.signup.meDad },
+];
+const PARENT_CHOICES: Choice[] = [
+  { key: "mom", label: ko.family.mom },
+  { key: "dad", label: ko.family.dad },
+];
+
 export function SignupFlow(p: SignupProps) {
   const s = ko.signup;
   const [picked, setStep] = useState<SignupStep>(p.start ?? "login");
@@ -95,8 +101,9 @@ export function SignupFlow(p: SignupProps) {
       setTerms(true);
     }, []),
   );
+  // 나(자녀 · 엄마 · 아빠)와 초대한 가족
+  const [me, setMe] = useState<InviteAs | undefined>(undefined);
   const [relation, setRelation] = useState<InviteAs | undefined>(undefined);
-  const [kind, setKind] = useState<Kind | undefined>(undefined);
   const [code, setCode] = useState("");
   const [joined, setJoined] = useState<{ name: string; parent: boolean } | undefined>(undefined);
   const [slots, setSlots] = useState<Slot[]>(() => startSlots([]).map((x, i) => ({ ...x, on: i === 0 })));
@@ -109,43 +116,56 @@ export function SignupFlow(p: SignupProps) {
   const [joinedApp, setJoinedApp] = useState(false);
 
   const partner = joined?.name ?? p.linked ?? (relation ? asLabel(relation) : ko.family.someone);
-  const parent = joined ? joined.parent : relation === "child";
+  const parent = joined ? joined.parent : me !== undefined && me !== "child";
+  const linkedNow = !!joined || !!p.linked;
 
+  // 질문 횟수 · 피하고 싶은 주제는 가족과 이어진 뒤에만(코드를 보내 두고 먼저 설정하면 건너뛴다)
   const flow: SignupStep[] = [
     "login",
     "profile",
-    "family",
-    ...(relation === "child" ? (["as"] as const) : []),
+    "me",
+    ...(me === "child" ? (["family"] as const) : []),
     step === "code" ? "code" : "invite",
     "times",
-    "questions",
+    ...(linkedNow ? (["questions"] as const) : []),
     "notify",
   ];
   const at = flow.indexOf(step);
-  const linkedNow = !!joined || !!p.linked;
   // 가입을 마친 뒤에는 이름 · 동의로, 이어진 뒤에는 연결 단계로 돌아가지 않는다
   const showBack =
     step !== "success" &&
     step !== "login" &&
-    !(step === "family" && joinedApp) &&
+    !(step === "me" && joinedApp) &&
     !(step === "times" && linkedNow);
   const showSkip = step === "times" || step === "questions";
-  const big = parent && step !== "code" && step !== "family";
+  const big = parent && step !== "code" && step !== "me";
 
   const back = () => {
     if (step === "profile") return setStep("login");
-    if (step === "family") return setStep("profile");
-    if (step === "as") return setStep("family");
-    if (step === "invite") return setStep(relation === "child" ? "as" : "family");
-    if (step === "code") return setStep("family");
+    if (step === "me") return setStep("profile");
+    if (step === "family") return setStep("me");
+    if (step === "invite") return setStep(me === "child" ? "family" : "me");
+    if (step === "code") return setStep("me");
+    if (step === "times") return setStep("invite");
     if (step === "questions") return setStep("times");
-    if (step === "notify") return setStep("questions");
+    if (step === "notify") return setStep(linkedNow ? "questions" : "times");
   };
-  const pick = (k: InviteAs) => {
+  const pickMe = (k: InviteAs) => {
+    setMe(k);
+    if (k === "child") return setStep("family");
+    // 엄마 · 아빠는 바로 자녀 초대 코드
+    setRelation("child");
+    setStep("invite");
+    p.onIssue("child", k);
+  };
+  const pickParent = (k: InviteAs) => {
     setRelation(k);
-    if (k === "child") return setStep("as");
     setStep("invite");
     p.onIssue(k);
+  };
+  const haveCode = () => {
+    setCode("");
+    setStep("code");
   };
 
   const body = (() => {
@@ -189,20 +209,26 @@ export function SignupFlow(p: SignupProps) {
             />
           </>
         );
+      case "me":
+        return (
+          <PickBody
+            title={s.meTitle}
+            options={ME_CHOICES}
+            sub={s.meSub}
+            onPick={pickMe}
+            onHaveCode={haveCode}
+          />
+        );
       case "family":
         return (
           <PickBody
-            options={ALL_CHOICES}
-            sub={ko.invite.pickSubAll}
-            onPick={pick}
-            onHaveCode={() => {
-              setCode("");
-              setStep("code");
-            }}
+            title={s.parentPickTitle}
+            options={PARENT_CHOICES}
+            sub={s.parentPickSub}
+            onPick={pickParent}
+            onHaveCode={haveCode}
           />
         );
-      case "as":
-        return <ParentAsBody value={kind} saved={false} onChange={setKind} />;
       case "invite":
         return (
           <InviteShowBody
@@ -396,16 +422,11 @@ export function SignupFlow(p: SignupProps) {
             {s.next}
           </Button>
         );
-      case "as":
+      case "invite":
+        // 상대를 기다리지 않고 남은 설정(통화 편한 시간 · 알림)을 먼저 한다. 상대가 코드를 넣으면 홈에 바로 나온다
         return (
-          <Button
-            disabled={!kind}
-            onPress={() => {
-              setStep("invite");
-              p.onIssue("child", kind);
-            }}
-          >
-            {s.next}
+          <Button variant="secondary" onPress={() => setStep("times")}>
+            {s.waitLater}
           </Button>
         );
       case "code":
@@ -431,7 +452,7 @@ export function SignupFlow(p: SignupProps) {
             disabled={!slots.some((x) => x.on)}
             onPress={() => {
               p.onTimes(slots.filter((x) => x.on).map((x) => x.t));
-              setStep("questions");
+              setStep(linkedNow ? "questions" : "notify");
             }}
           >
             {s.next}
@@ -487,7 +508,7 @@ export function SignupFlow(p: SignupProps) {
               {showSkip ? (
                 <Pressable
                   accessibilityRole="button"
-                  onPress={() => setStep(step === "times" ? "questions" : "notify")}
+                  onPress={() => setStep(step === "times" && linkedNow ? "questions" : "notify")}
                   style={styles.skip}
                 >
                   <T size={16} weight={600} color={C.textSub}>
